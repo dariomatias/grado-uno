@@ -1078,7 +1078,7 @@ function renderVideoPanel(song) {
   if (!song.youtubeVideoId) {
     const hint = document.createElement("span");
     hint.className = "hint";
-    hint.textContent = "Video pendiente de confirmación.";
+    hint.textContent = "Video no disponible.";
     actions.appendChild(hint);
   }
   panel.appendChild(actions);
