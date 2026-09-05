@@ -1,0 +1,14 @@
+{
+  "name": "worship-setlist-transponible",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.mjs\"",
+    "check:links": "node scripts/check-links.mjs",
+    "build:hosting": "node scripts/build-hosting.mjs",
+    "deploy": "npm run build:hosting && firebase deploy --only hosting"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,10 @@
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+dev-dist/
+public/
+.firebase/
+*.tsbuildinfo
+*.local
+.DS_Store

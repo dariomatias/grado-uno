@@ -1,0 +1,1318 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Setlist de Worship — Transponible</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --panel: #171a21;
+        --panel-2: #1f232c;
+        --text: #f3f4f6;
+        --muted: #9aa3b2;
+        --gold: #e7b45a;
+        --gold-strong: #f4c777;
+        --error: #f2777a;
+        --ok: #7ac77a;
+        --border: #2a2f3a;
+        --focus: #8ab4ff;
+        --radius: 12px;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        -webkit-text-size-adjust: 100%;
+      }
+      .skip-link {
+        position: absolute; left: -999px; top: 0;
+        background: var(--gold); color: #111; padding: 10px 14px; border-radius: 0 0 8px 0;
+        z-index: 100;
+      }
+      .skip-link:focus { left: 0; }
+      a { color: var(--gold-strong); }
+      button, select, input, textarea {
+        font: inherit; color: inherit;
+      }
+      button {
+        background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+        border-radius: 10px; padding: 10px 14px; cursor: pointer;
+        min-height: 44px;
+      }
+      button:hover { border-color: var(--gold); }
+      button:disabled { opacity: .45; cursor: not-allowed; }
+      button.primary { background: var(--gold); color: #14161b; border-color: var(--gold); font-weight: 700; }
+      :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+      header.app {
+        padding: 14px 16px; border-bottom: 1px solid var(--border);
+        display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+      }
+      header.app h1 { font-size: 1.15rem; margin: 0; }
+      header.app p { margin: 0; color: var(--muted); font-size: .85rem; }
+      main { padding: 16px; max-width: 1100px; margin: 0 auto; }
+      #statusMessage {
+        position: fixed; bottom: 0; left: 0; right: 0; margin: 0;
+        background: var(--panel); border-top: 1px solid var(--border);
+        color: var(--gold-strong); padding: 8px 16px; font-size: .9rem; min-height: 1.5rem;
+        text-align: center; z-index: 40;
+      }
+      #statusMessage:empty { display: none; }
+
+      /* Tabs */
+      [role="tablist"] { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+      [role="tab"] {
+        background: var(--panel); border: 1px solid var(--border); color: var(--muted);
+        padding: 10px 16px; border-radius: 999px; min-height: 44px;
+      }
+      [role="tab"][aria-selected="true"] {
+        background: var(--panel-2); color: var(--gold-strong); border-color: var(--gold);
+        font-weight: 700;
+      }
+
+      /* Setlist cards */
+      .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+      @media (min-width: 1100px) { .cards { grid-template-columns: 1fr 1fr; } }
+      .card {
+        background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 14px; display: flex; flex-direction: column; gap: 8px;
+      }
+      .card.selected { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
+      .card .row1 { display: flex; align-items: baseline; gap: 10px; }
+      .card .num {
+        font-variant-numeric: tabular-nums; color: var(--gold-strong); font-weight: 700;
+        min-width: 1.5em;
+      }
+      .card .title { font-size: 1.05rem; font-weight: 600; }
+      .card .meta { color: var(--muted); font-size: .85rem; }
+      .card .keys { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px;
+        padding: 4px 8px; font-size: .85rem;
+      }
+      .badge .k { color: var(--gold-strong); font-weight: 700; }
+      .card .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+      .pending { color: var(--muted); font-style: italic; }
+
+      /* Stage */
+      #stageView .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+      #stageView .position { color: var(--muted); font-variant-numeric: tabular-nums; }
+      #stageView h2 { margin: 4px 0; font-size: clamp(1.3rem, 4vw, 2rem); }
+      .keyline { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+      .transpose-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      .sections { list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 14px; }
+      .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+      .section .slabel { color: var(--gold-strong); font-weight: 700; margin-bottom: 8px; display: flex; gap: 8px; align-items: baseline; }
+      .section .repeats { color: var(--muted); font-size: .85rem; }
+      .measures { display: flex; flex-wrap: wrap; gap: 8px; }
+      .measure {
+        display: flex; gap: 8px; align-items: center;
+        border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
+        font-size: clamp(1.1rem, 3.5vw, 1.6rem); font-weight: 700;
+      }
+      .chord { color: var(--gold-strong); }
+      .panel {
+        background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 12px; margin: 12px 0;
+      }
+      .panel h3 { margin: 0 0 8px; font-size: 1rem; }
+      .lyrics-text { white-space: pre-wrap; font-size: 1rem; line-height: 1.6; }
+      .nav-row { display: flex; justify-content: space-between; gap: 8px; margin-top: 16px; }
+      .metronome-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      .metronome-controls input[type="number"] { width: 5em; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-2); min-height: 44px; }
+      .metronome-controls input[type="range"] { min-height: 44px; }
+      dialog {
+        background: var(--panel); color: var(--text); border: 1px solid var(--border);
+        border-radius: var(--radius); max-width: 640px; width: calc(100% - 32px); padding: 16px;
+      }
+      dialog::backdrop { background: rgba(0,0,0,.6); }
+      dialog textarea { width: 100%; min-height: 200px; background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+      .dialog-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 12px; }
+      .hint { color: var(--muted); font-size: .85rem; }
+      .err { color: var(--error); }
+      select { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; min-height: 44px; }
+      #youtubeContainer iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; }
+      @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#mainContent">Saltar al contenido</a>
+    <header class="app">
+      <h1>Setlist de Worship</h1>
+      <p>Cuatro reuniones · acordes transponibles · letras locales</p>
+    </header>
+
+    <main id="mainContent">
+      <section id="setlistView" aria-label="Listado de canciones por reunión">
+        <div id="tablist" role="tablist" aria-label="Reuniones"></div>
+        <div id="tabpanel" role="tabpanel">
+          <ol class="cards" id="songCards"></ol>
+        </div>
+      </section>
+
+      <section id="stageView" hidden aria-label="Visor de escenario"></section>
+    </main>
+
+    <p id="statusMessage" aria-live="polite" role="status"></p>
+
+    <dialog id="lyricsDialog" aria-labelledby="lyricsDialogTitle">
+      <h3 id="lyricsDialogTitle">Letra de la canción</h3>
+      <p class="hint" id="lyricsDialogHint">
+        Pegá una letra que hayas aportado o para la que tengas autorización, o cargá un archivo .txt (UTF-8, máx. 200 KiB).
+      </p>
+      <textarea id="lyricsTextarea" aria-describedby="lyricsDialogHint lyricsDialogError"></textarea>
+      <p id="lyricsDialogError" class="err" role="alert"></p>
+      <div class="dialog-actions">
+        <label class="badge">
+          Cargar .txt
+          <input type="file" id="lyricsFile" accept=".txt,text/plain" style="max-width: 12em;" />
+        </label>
+        <button type="button" id="lyricsCancel">Cancelar</button>
+        <button type="button" class="primary" id="lyricsSave">Guardar</button>
+      </div>
+    </dialog>
+
+    <script type="module">
+/* content-module:start */
+export const setlists = [
+  {
+    id: "2026-09-04",
+    label: "Viernes 4",
+    shortLabel: "Vie 4",
+    date: "2026-09-04",
+    songs: [
+      song("todo-es-posible", "Todo es posible", "D"),
+      song("a-jesus-seguire", "A Jesús seguiré", "G"),
+      song("creere", "Creeré", "A"),
+      song("santo-una-cosa", "Santo una cosa", "A"),
+      song("al-que-esta-sentado", "Al que está sentado", "A"),
+      song("digno-de-alabar", "Digno de alabar", "D"),
+      song("dios-de-avivamiento", "Dios de avivamiento", "C")
+    ]
+  },
+  {
+    id: "2026-09-13",
+    label: "Domingo 13",
+    shortLabel: "Dom 13",
+    date: "2026-09-13",
+    songs: [
+      song("jehova", "Jehová", "E"),
+      song("lavado", "Lavado", "B"),
+      song("nadie", "Nadie", "G", {
+        artist: "Elevation Worship",
+        sourceKey: "D",
+        lyricsUrl: "https://www.worshiptogether.com/es/canciones/nadie-elevation-worship/",
+        tempoBpm: 136,
+        beatsPerMeasure: 4,
+        // BORRADOR normalizado a G desde worshiptogether (D). Revisar con Darío.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["D/G", "G"], ["D/C", "C"]] },
+          { type: "verse", label: "Verso", repeats: 2, measures: [["G"], ["D"], ["C"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["D"], ["C"], ["Em"], ["D"], ["G/B"], ["C"]] },
+          { type: "bridge", label: "Puente", repeats: 2, measures: [["D/G", "G"], ["D/C", "C"]] }
+        ]
+      }),
+      song("quien-mas", "Quién Más", "G", {
+        artist: "Gateway Worship Español feat. Waleska Morales",
+        sourceKey: "Ab",
+        lyricsUrl: "https://www.worshiptogether.com/es/canciones/quien-mas-gateway-worship-espanol/",
+        tempoBpm: 68,
+        beatsPerMeasure: 4,
+        // BORRADOR normalizado a G desde worshiptogether (Ab). Revisar con Darío.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["G"]] },
+          { type: "verse", label: "Verso", repeats: 2, measures: [["G"], ["D"], ["Em7"], ["D"], ["C2"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["G"], ["Am7"], ["Em7"], ["C2"]] },
+          { type: "bridge", label: "Puente", repeats: 2, measures: [["C2"], ["D"], ["Em7"], ["Gsus", "G"], ["D"]] },
+          { type: "tag", label: "Tag", repeats: 2, measures: [["Em7"], ["C2"]] }
+        ]
+      }),
+      song("canta-al-senor", "Canta al Señor", "G"),
+      song("no-hay-otro-nombre", "No Hay Otro Nombre", "G", {
+        artist: "Hillsong Worship",
+        sourceKey: "G",
+        lyricsUrl: "https://www.worshiptogether.com/es/canciones/no-hay-otro-nombre-hillsong-worship/",
+        tempoBpm: 74,
+        beatsPerMeasure: 4,
+        // BORRADOR (simplificado) desde worshiptogether (G). Revisar con Darío.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["G", "D/F#"], ["G", "Am", "G", "D/F#"], ["Em"]] },
+          { type: "verse", label: "Verso", repeats: 2, measures: [["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["C", "G"], ["Em"], ["Bm", "C"], ["Em"]] },
+          { type: "bridge", label: "Puente", repeats: 2, measures: [["G", "Em"], ["C", "Em"]] }
+        ]
+      }),
+      song("el-nombre-de-jesus", "El Nombre de Jesús", "D")
+    ]
+  },
+  {
+    id: "2026-09-18",
+    label: "Viernes 18",
+    shortLabel: "Vie 18",
+    date: "2026-09-18",
+    songs: [
+      song("senor-eres-fiel", "Señor eres fiel", "C"),
+      song("en-el-nombre-de-jesus", "En el nombre de Jesús", "C"),
+      song("clamo-a-cristo", "Clamo a Cristo", "E"),
+      song("como-no-voy-a-creer", "Cómo no voy a creer", "E"),
+      song("para-siempre-cristo", "Para siempre Cristo", "E"),
+      song("agnus-dei", "Agnus Dei", "E"),
+      song("alabare-al-senor", "Alabaré al Señor", "D")
+    ]
+  },
+  {
+    id: "2026-09-27",
+    label: "Domingo 27",
+    shortLabel: "Dom 27",
+    date: "2026-09-27",
+    songs: [
+      song("jubilo", "Júbilo", "C"),
+      song("eres-libre", "Eres libre", "G"),
+      song("adios-al-ayer", "Adiós al ayer", "F"),
+      song("clamo-a-dios", "Clamo a Dios", "D"),
+      song("es-el", "Es Él", "A"),
+      song("vida-nueva", "Vida nueva", "A"),
+      song("de-gracia-en-gracia", "De gracia en gracia", "Eb")
+    ]
+  }
+];
+
+/**
+ * Fábrica de canción con estado inicial "pending": sin fuente confirmada, sin
+ * acordes inventados y sin letra precargada. Las fuentes confirmadas se
+ * completan en la fase de investigación de contenido.
+ */
+function song(id, title, assignedKey, overrides = {}) {
+  const base = {
+    id,
+    title,
+    artist: "Versión por confirmar",
+    assignedKey,
+    sourceKey: null,
+    sourceStatus: "pending",
+    lyricsUrl: null,
+    youtubeUrl: null,
+    youtubeVideoId: null,
+    tempoBpm: null,
+    beatsPerMeasure: 4,
+    sections: []
+  };
+  const merged = { ...base, ...overrides };
+  // Una fuente con acordes capturados se considera confirmada.
+  if (merged.sections.length > 0) merged.sourceStatus = "confirmed";
+  return merged;
+}
+
+export const appearanceKey = (setlistId, songId) => `${setlistId}:${songId}`;
+
+export function validateSetlists(items) {
+  const errors = [];
+  for (const setlist of items) {
+    if (setlist.songs.length !== 7) errors.push(`${setlist.id}: expected 7 songs`);
+    const ids = new Set();
+    for (const s of setlist.songs) {
+      if (ids.has(s.id)) errors.push(`${setlist.id}: duplicate ${s.id}`);
+      ids.add(s.id);
+      if (!/^[A-G](?:#|b)?$/.test(s.assignedKey)) errors.push(`${setlist.id}:${s.id}: invalid key`);
+      if (s.sourceStatus === "pending" && s.sections.length) errors.push(`${setlist.id}:${s.id}: pending source has sections`);
+      if (s.sourceStatus === "pending" && (s.lyricsUrl || s.youtubeUrl || s.youtubeVideoId)) {
+        errors.push(`${setlist.id}:${s.id}: pending source has external links`);
+      }
+    }
+  }
+  return errors;
+}
+
+export const allAppearanceKeys = () =>
+  setlists.flatMap((sl) => sl.songs.map((s) => appearanceKey(sl.id, s.id)));
+/* content-module:end */
+
+/* transposer-module:start */
+export const TRANSPOSE_LIMIT = 11;
+const SHARP_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const FLAT_NOTES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+const ROOT_PATTERN = /^([A-G](?:#|b)?)([^/]*)(?:\/([A-G](?:#|b)?))?$/;
+
+const NOTE_INDEX = (() => {
+  const map = Object.create(null);
+  SHARP_NOTES.forEach((n, i) => { map[n] = i; });
+  FLAT_NOTES.forEach((n, i) => { map[n] = i; });
+  // Enharmónicos poco comunes que podrían aparecer en fuentes.
+  Object.assign(map, { "E#": 5, "B#": 0, "Cb": 11, "Fb": 4 });
+  return map;
+})();
+
+const mod12 = (n) => ((n % 12) + 12) % 12;
+
+export function keyToPitchClass(key) {
+  const pc = NOTE_INDEX[key];
+  return pc === undefined ? null : pc;
+}
+
+export function parseChord(chord) {
+  if (typeof chord !== "string") return null;
+  const match = ROOT_PATTERN.exec(chord.trim());
+  if (!match) return null;
+  const [, root, suffix, bass] = match;
+  if (keyToPitchClass(root) === null) return null;
+  if (bass && keyToPitchClass(bass) === null) return null;
+  return { root, suffix: suffix ?? "", bass: bass ?? null };
+}
+
+export function semitoneDistance(from, to) {
+  const a = keyToPitchClass(from);
+  const b = keyToPitchClass(to);
+  if (a === null || b === null) return 0;
+  let d = mod12(b - a);
+  if (d > 6) d -= 12;
+  return d;
+}
+
+export function transposeChord(chord, semitones, accidentalMode = "sharp") {
+  const parsed = parseChord(chord);
+  if (!parsed) return chord;
+  const table = accidentalMode === "flat" ? FLAT_NOTES : SHARP_NOTES;
+  const newRoot = table[mod12(keyToPitchClass(parsed.root) + semitones)];
+  const newBass = parsed.bass
+    ? table[mod12(keyToPitchClass(parsed.bass) + semitones)]
+    : null;
+  return newRoot + parsed.suffix + (newBass ? `/${newBass}` : "");
+}
+
+export function transposeSections(sections, semitones, accidentalMode = "sharp") {
+  return sections.map((section) => ({
+    ...section,
+    measures: section.measures.map((measure) =>
+      measure.map((chord) => transposeChord(chord, semitones, accidentalMode))
+    )
+  }));
+}
+/* transposer-module:end */
+
+/* navigation-module:start */
+export function initialState() {
+  return {
+    view: "setlist",
+    activeSetlistIndex: 0,
+    selectedSongIndex: 0,
+    transpositions: {},
+    tempoOverrides: {},
+    meterOverrides: {},
+    accidentalMode: "sharp",
+    metronomeRunning: false
+  };
+}
+
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+export function selectSetlist(state, index) {
+  return {
+    ...state,
+    activeSetlistIndex: clamp(index, 0, 3),
+    selectedSongIndex: 0,
+    metronomeRunning: false
+  };
+}
+
+export function selectSong(state, index) {
+  return {
+    ...state,
+    selectedSongIndex: clamp(index, 0, 6),
+    metronomeRunning: false
+  };
+}
+
+export function moveSong(state, delta) {
+  return {
+    ...state,
+    selectedSongIndex: clamp(state.selectedSongIndex + delta, 0, 6),
+    metronomeRunning: false
+  };
+}
+
+export function setTranspose(state, setlistId, songId, semitones) {
+  const key = `${setlistId}:${songId}`;
+  return {
+    ...state,
+    transpositions: {
+      ...state.transpositions,
+      [key]: clamp(Math.trunc(semitones), -11, 11)
+    }
+  };
+}
+/* navigation-module:end */
+
+/* lyrics-store-module:start */
+export const MAX_LYRIC_BYTES = 200 * 1024;
+
+export function validateLyricText(text) {
+  if (typeof text !== "string" || !text.trim()) {
+    return { ok: false, error: "La letra está vacía" };
+  }
+  if (text.includes("�")) {
+    return { ok: false, error: "El archivo no contiene texto UTF-8 legible" };
+  }
+  if (new TextEncoder().encode(text).byteLength > MAX_LYRIC_BYTES) {
+    return { ok: false, error: "La letra supera 200 KiB" };
+  }
+  return { ok: true };
+}
+
+export function parseLyricsBackup(json, validKeys) {
+  const valid = new Set(validKeys);
+  const errors = [];
+  let data;
+  try {
+    data = typeof json === "string" ? JSON.parse(json) : json;
+  } catch {
+    return { ok: false, lyrics: {}, errors: ["JSON inválido"] };
+  }
+  if (!data || data.schemaVersion !== 1 || typeof data.lyrics !== "object") {
+    return { ok: false, lyrics: {}, errors: ["Esquema desconocido"] };
+  }
+  const lyrics = {};
+  for (const [key, value] of Object.entries(data.lyrics)) {
+    if (!valid.has(key)) { errors.push(`Clave inexistente: ${key}`); continue; }
+    if (!value || typeof value.text !== "string") { errors.push(`Valor inválido: ${key}`); continue; }
+    if (!validateLyricText(value.text).ok) { errors.push(`Texto inválido: ${key}`); continue; }
+    lyrics[key] = {
+      text: value.text,
+      updatedAt: typeof value.updatedAt === "string" ? value.updatedAt : new Date().toISOString()
+    };
+  }
+  return { ok: errors.length === 0, lyrics, errors };
+}
+
+export function mergeLyrics(current, incoming) {
+  const collisions = Object.keys(incoming).filter((k) => k in current);
+  return { merged: { ...current, ...incoming }, collisions };
+}
+
+export function serializeLyricsBackup(lyrics, now = new Date().toISOString()) {
+  return JSON.stringify({ schemaVersion: 1, exportedAt: now, lyrics }, null, 2);
+}
+/* lyrics-store-module:end */
+
+/* youtube-module:start */
+const YT_HOSTS = new Set(["youtube.com", "www.youtube.com", "m.youtube.com", "music.youtube.com", "youtu.be"]);
+
+export const isValidYouTubeId = (id) => /^[A-Za-z0-9_-]{11}$/.test(id ?? "");
+
+export function extractYouTubeId(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+  if (!YT_HOSTS.has(parsed.hostname)) return null;
+  let id = null;
+  if (parsed.hostname === "youtu.be") {
+    id = parsed.pathname.slice(1).split("/")[0];
+  } else if (parsed.pathname === "/watch") {
+    id = parsed.searchParams.get("v");
+  } else if (parsed.pathname.startsWith("/embed/")) {
+    id = parsed.pathname.slice("/embed/".length).split("/")[0];
+  }
+  return isValidYouTubeId(id) ? id : null;
+}
+
+export function buildYouTubeEmbedUrl(id) {
+  if (!isValidYouTubeId(id)) throw new TypeError("Invalid YouTube video id");
+  return `https://www.youtube-nocookie.com/embed/${id}`;
+}
+/* youtube-module:end */
+
+/* metronome-module:start */
+export const clampBpm = (value) => Math.max(40, Math.min(240, Math.round(Number(value) || 120)));
+export const normalizeMeter = (value) => ([2, 3, 4, 6].includes(Number(value)) ? Number(value) : 4);
+export const secondsPerBeat = (bpm) => 60 / clampBpm(bpm);
+export function advanceBeat(currentBeat, beatsPerMeasure) {
+  const beat = (currentBeat + 1) % normalizeMeter(beatsPerMeasure);
+  return { beat, accented: beat === 0 };
+}
+/* metronome-module:end */
+
+/* ============================================================
+   Capa DOM (impura): consume los módulos puros de arriba.
+   ============================================================ */
+
+const LYRICS_STORAGE_KEY = "worship-setlist:lyrics:v1";
+const CHROMATIC = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+const el = {
+  setlistView: document.getElementById("setlistView"),
+  stageView: document.getElementById("stageView"),
+  status: document.getElementById("statusMessage"),
+  tablist: document.getElementById("tablist"),
+  cards: document.getElementById("songCards"),
+  dialog: document.getElementById("lyricsDialog"),
+  textarea: document.getElementById("lyricsTextarea"),
+  dialogError: document.getElementById("lyricsDialogError"),
+  lyricsFile: document.getElementById("lyricsFile"),
+  lyricsSave: document.getElementById("lyricsSave"),
+  lyricsCancel: document.getElementById("lyricsCancel")
+};
+
+let state = initialState();
+let scrollBySetlist = {};
+let lastOpenerButton = null;
+let dialogTargetKey = null;
+let metronome = null;
+
+/* ---- Almacenamiento de letras (defensivo) ---- */
+const lyricsStore = (() => {
+  let memory = {};
+  let persistent = true;
+  try {
+    const raw = localStorage.getItem(LYRICS_STORAGE_KEY);
+    memory = raw ? JSON.parse(raw) : {};
+  } catch {
+    persistent = false;
+    memory = {};
+  }
+  const flush = () => {
+    if (!persistent) return false;
+    try {
+      localStorage.setItem(LYRICS_STORAGE_KEY, JSON.stringify(memory));
+      return true;
+    } catch {
+      persistent = false;
+      return false;
+    }
+  };
+  return {
+    get: (key) => memory[key]?.text ?? null,
+    has: (key) => key in memory,
+    all: () => ({ ...memory }),
+    set(key, text) {
+      memory[key] = { text, updatedAt: new Date().toISOString() };
+      return flush();
+    },
+    remove(key) {
+      delete memory[key];
+      return flush();
+    },
+    replaceAll(next) {
+      memory = { ...next };
+      return flush();
+    },
+    get persistent() { return persistent; }
+  };
+})();
+
+function announce(message) {
+  el.status.textContent = message;
+}
+
+function activeSetlist() {
+  return setlists[state.activeSetlistIndex];
+}
+function selectedSong() {
+  return activeSetlist().songs[state.selectedSongIndex];
+}
+function keyFor(song) {
+  return appearanceKey(activeSetlist().id, song.id);
+}
+function transposeFor(song) {
+  return state.transpositions[keyFor(song)] ?? 0;
+}
+function currentKey(song) {
+  const semis = transposeFor(song);
+  const idx = keyToPitchClass(song.assignedKey);
+  if (idx === null) return song.assignedKey;
+  const table = state.accidentalMode === "flat"
+    ? ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+    : CHROMATIC;
+  return table[((idx + semis) % 12 + 12) % 12];
+}
+
+/* ---- Render: pestañas ---- */
+function renderTabs() {
+  el.tablist.innerHTML = "";
+  setlists.forEach((sl, index) => {
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.role = "tab";
+    tab.id = `tab-${sl.id}`;
+    tab.textContent = sl.shortLabel;
+    tab.setAttribute("aria-controls", "tabpanel");
+    const selected = index === state.activeSetlistIndex;
+    tab.setAttribute("aria-selected", String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    tab.addEventListener("click", () => {
+      state = selectSetlist(state, index);
+      renderTabs();
+      renderSetlist();
+      tab.focus();
+    });
+    tab.addEventListener("keydown", (e) => onTabKeydown(e, index));
+    el.tablist.appendChild(tab);
+  });
+}
+
+function onTabKeydown(e, index) {
+  let next = null;
+  if (e.key === "ArrowRight") next = (index + 1) % setlists.length;
+  else if (e.key === "ArrowLeft") next = (index - 1 + setlists.length) % setlists.length;
+  else if (e.key === "Home") next = 0;
+  else if (e.key === "End") next = setlists.length - 1;
+  if (next === null) return;
+  e.preventDefault();
+  state = selectSetlist(state, next);
+  renderTabs();
+  renderSetlist();
+  el.tablist.children[next].focus();
+}
+
+/* ---- Render: setlist ---- */
+function renderSetlist() {
+  el.cards.innerHTML = "";
+  const sl = activeSetlist();
+  sl.songs.forEach((song, index) => {
+    const li = document.createElement("li");
+    li.className = "card" + (index === state.selectedSongIndex ? " selected" : "");
+
+    const row1 = document.createElement("div");
+    row1.className = "row1";
+    row1.innerHTML =
+      `<span class="num">${index + 1}</span>` +
+      `<span class="title"></span>`;
+    row1.querySelector(".title").textContent = song.title;
+    li.appendChild(row1);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = song.artist;
+    li.appendChild(meta);
+
+    const keys = document.createElement("div");
+    keys.className = "keys";
+    const semis = transposeFor(song);
+    keys.innerHTML =
+      `<span class="badge">Tono <span class="k">${song.assignedKey}</span></span>` +
+      (semis !== 0 ? `<span class="badge">Sesión <span class="k">${currentKey(song)}</span></span>` : "");
+    li.appendChild(keys);
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.className = "primary";
+    if (song.sourceStatus === "pending") {
+      openBtn.textContent = "Partitura no disponible";
+      openBtn.disabled = true;
+    } else {
+      openBtn.textContent = "Abrir partitura";
+      openBtn.addEventListener("click", () => openStage(index, openBtn));
+    }
+    actions.appendChild(openBtn);
+
+    const lyricBtn = document.createElement("button");
+    lyricBtn.type = "button";
+    lyricBtn.textContent = lyricsStore.has(keyFor(song)) ? "Editar letra" : "Agregar letra";
+    lyricBtn.addEventListener("click", () => openLyricsDialog(keyFor(song), lyricBtn));
+    actions.appendChild(lyricBtn);
+
+    actions.appendChild(externalLink("Letra completa", song.lyricsUrl));
+    actions.appendChild(externalLink("YouTube", song.youtubeUrl));
+
+    li.appendChild(actions);
+    el.cards.appendChild(li);
+  });
+}
+
+function externalLink(label, url) {
+  if (!url) {
+    const span = document.createElement("span");
+    span.className = "badge pending";
+    span.textContent = `${label}: enlace no disponible`;
+    return span;
+  }
+  const a = document.createElement("a");
+  a.className = "badge";
+  a.textContent = label;
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  return a;
+}
+
+/* ---- Stage ---- */
+function openStage(index, opener) {
+  scrollBySetlist[state.activeSetlistIndex] = window.scrollY;
+  lastOpenerButton = opener ?? null;
+  state = { ...selectSong(state, index), view: "stage" };
+  renderStage();
+  el.setlistView.hidden = true;
+  el.stageView.hidden = false;
+  window.scrollTo(0, 0);
+}
+
+function backToSetlist() {
+  stopMetronome();
+  destroyVideo();
+  state = { ...state, view: "setlist" };
+  el.stageView.hidden = true;
+  el.setlistView.hidden = false;
+  renderTabs();
+  renderSetlist();
+  window.scrollTo(0, scrollBySetlist[state.activeSetlistIndex] ?? 0);
+  if (lastOpenerButton && document.contains(lastOpenerButton)) lastOpenerButton.focus();
+}
+
+function renderStage() {
+  const song = selectedSong();
+  const sl = activeSetlist();
+  const semis = transposeFor(song);
+  el.stageView.innerHTML = "";
+
+  const toolbar = document.createElement("div");
+  toolbar.className = "toolbar";
+  const back = button("Volver al setlist", () => backToSetlist());
+  const pos = document.createElement("span");
+  pos.className = "position";
+  pos.textContent = `${state.selectedSongIndex + 1} de ${sl.songs.length}`;
+  const fs = button("Pantalla completa", toggleFullscreen);
+  fs.id = "fullscreenBtn";
+  toolbar.append(back, pos, fs);
+  el.stageView.appendChild(toolbar);
+
+  const h2 = document.createElement("h2");
+  h2.textContent = song.title;
+  el.stageView.appendChild(h2);
+
+  const artist = document.createElement("div");
+  artist.className = "meta";
+  artist.textContent = song.artist;
+  el.stageView.appendChild(artist);
+
+  // Key line + transpose controls
+  const keyline = document.createElement("div");
+  keyline.className = "keyline";
+  keyline.innerHTML =
+    `<span class="badge">Asignada <span class="k">${song.assignedKey}</span></span>` +
+    `<span class="badge">Actual <span class="k" id="currentKeyBadge">${currentKey(song)}</span></span>`;
+  const controls = document.createElement("div");
+  controls.className = "transpose-controls";
+  controls.append(
+    button("−½", () => applyTranspose(song, semis - 1), "Bajar medio tono"),
+    button("+½", () => applyTranspose(song, semis + 1), "Subir medio tono"),
+    keySelect(song),
+    accidentalSelect(),
+    button("Restablecer tono", () => applyTranspose(song, 0))
+  );
+  keyline.appendChild(controls);
+  el.stageView.appendChild(keyline);
+
+  // Sections
+  if (song.sections.length === 0) {
+    const p = document.createElement("p");
+    p.className = "pending";
+    p.textContent = "Partitura no disponible.";
+    el.stageView.appendChild(p);
+  } else {
+    const transposed = transposeSections(song.sections, semis, state.accidentalMode);
+    const ol = document.createElement("ol");
+    ol.className = "sections";
+    transposed.forEach((section) => ol.appendChild(renderSection(section)));
+    el.stageView.appendChild(ol);
+  }
+
+  el.stageView.appendChild(renderLyricsPanel(song));
+  el.stageView.appendChild(renderVideoPanel(song));
+  el.stageView.appendChild(renderMetronomePanel(song));
+
+  // Prev / next
+  const nav = document.createElement("div");
+  nav.className = "nav-row";
+  const prev = button("← Anterior", () => stepSong(-1));
+  prev.disabled = state.selectedSongIndex === 0;
+  const next = button("Siguiente →", () => stepSong(1));
+  next.disabled = state.selectedSongIndex === sl.songs.length - 1;
+  nav.append(prev, next);
+  el.stageView.appendChild(nav);
+}
+
+function renderSection(section) {
+  const li = document.createElement("li");
+  li.className = "section";
+  const label = document.createElement("div");
+  label.className = "slabel";
+  label.innerHTML = `<span></span>` + (section.repeats > 1 ? `<span class="repeats">× ${section.repeats}</span>` : "");
+  label.querySelector("span").textContent = section.label;
+  li.appendChild(label);
+
+  const measures = document.createElement("div");
+  measures.className = "measures";
+  section.measures.forEach((measure) => {
+    const m = document.createElement("div");
+    m.className = "measure";
+    measure.forEach((chord) => {
+      const c = document.createElement("span");
+      c.className = "chord";
+      c.textContent = chord;
+      m.appendChild(c);
+    });
+    measures.appendChild(m);
+  });
+  li.appendChild(measures);
+  return li;
+}
+
+function keySelect(song) {
+  const select = document.createElement("select");
+  select.setAttribute("aria-label", "Elegir tonalidad");
+  const table = state.accidentalMode === "flat"
+    ? ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+    : CHROMATIC;
+  const assignedIdx = keyToPitchClass(song.assignedKey);
+  table.forEach((name, idx) => {
+    const opt = document.createElement("option");
+    opt.value = String(idx);
+    opt.textContent = name;
+    if (assignedIdx !== null && ((assignedIdx + transposeFor(song)) % 12 + 12) % 12 === idx) {
+      opt.selected = true;
+    }
+    select.appendChild(opt);
+  });
+  select.addEventListener("change", () => {
+    const targetIdx = Number(select.value);
+    const assigned = keyToPitchClass(song.assignedKey);
+    let semis = ((targetIdx - assigned) % 12 + 12) % 12;
+    if (semis > 6) semis -= 12;
+    applyTranspose(song, semis);
+  });
+  return select;
+}
+
+function accidentalSelect() {
+  const select = document.createElement("select");
+  select.setAttribute("aria-label", "Bemoles o sostenidos");
+  [["sharp", "Sostenidos (♯)"], ["flat", "Bemoles (♭)"]].forEach(([value, text]) => {
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = text;
+    if (state.accidentalMode === value) opt.selected = true;
+    select.appendChild(opt);
+  });
+  select.addEventListener("change", () => {
+    state = { ...state, accidentalMode: select.value };
+    renderStage();
+  });
+  return select;
+}
+
+function applyTranspose(song, semitones) {
+  state = setTranspose(state, activeSetlist().id, song.id, semitones);
+  renderStage();
+  announce(`Tonalidad actual: ${currentKey(song)}`);
+}
+
+function stepSong(delta) {
+  stopMetronome();
+  destroyVideo();
+  state = moveSong(state, delta);
+  renderStage();
+  window.scrollTo(0, 0);
+}
+
+/* ---- Lyrics panel & dialog ---- */
+function renderLyricsPanel(song) {
+  const panel = document.createElement("div");
+  panel.className = "panel";
+  const key = keyFor(song);
+  const text = lyricsStore.get(key);
+  const h3 = document.createElement("h3");
+  h3.textContent = "Letra";
+  panel.appendChild(h3);
+
+  if (text) {
+    const body = document.createElement("div");
+    body.className = "lyrics-text";
+    body.textContent = text;
+    panel.appendChild(body);
+  } else {
+    const hint = document.createElement("p");
+    hint.className = "hint";
+    hint.textContent = "No hay letra local. Podés agregar una que hayas aportado o usar el enlace externo.";
+    panel.appendChild(hint);
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+  actions.appendChild(button(text ? "Editar letra" : "Agregar letra", () => openLyricsDialog(key)));
+  if (text) {
+    actions.appendChild(button("Eliminar letra", () => {
+      if (confirm("¿Eliminar la letra local de esta canción?")) {
+        lyricsStore.remove(key);
+        renderStage();
+        announce("Letra eliminada");
+      }
+    }));
+  }
+  actions.appendChild(button("Exportar letras", exportLyrics));
+  const importLabel = document.createElement("label");
+  importLabel.className = "badge";
+  importLabel.textContent = "Importar respaldo ";
+  const importInput = document.createElement("input");
+  importInput.type = "file";
+  importInput.accept = "application/json,.json";
+  importInput.style.maxWidth = "12em";
+  importInput.addEventListener("change", () => importLyrics(importInput));
+  importLabel.appendChild(importInput);
+  actions.appendChild(importLabel);
+  actions.appendChild(externalLink("Letra completa", song.lyricsUrl));
+  panel.appendChild(actions);
+
+  if (!lyricsStore.persistent) {
+    const warn = document.createElement("p");
+    warn.className = "hint err";
+    warn.textContent = "La letra estará disponible sólo durante esta sesión.";
+    panel.appendChild(warn);
+  }
+  return panel;
+}
+
+function openLyricsDialog(key, opener) {
+  dialogTargetKey = key;
+  lastOpenerButton = opener ?? lastOpenerButton;
+  el.textarea.value = lyricsStore.get(key) ?? "";
+  el.dialogError.textContent = "";
+  if (typeof el.dialog.showModal === "function") el.dialog.showModal();
+}
+
+el.lyricsCancel.addEventListener("click", () => el.dialog.close());
+el.lyricsSave.addEventListener("click", () => {
+  const text = el.textarea.value;
+  const result = validateLyricText(text);
+  if (!result.ok) {
+    el.dialogError.textContent = result.error;
+    return;
+  }
+  const persisted = lyricsStore.set(dialogTargetKey, text);
+  el.dialog.close();
+  if (state.view === "stage") renderStage(); else renderSetlist();
+  announce(persisted ? "Letra guardada" : "Letra guardada sólo para esta sesión");
+});
+el.lyricsFile.addEventListener("change", () => {
+  const file = el.lyricsFile.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = String(reader.result ?? "");
+    const result = validateLyricText(text);
+    if (!result.ok) { el.dialogError.textContent = result.error; return; }
+    el.textarea.value = text;
+    el.dialogError.textContent = "";
+  };
+  reader.onerror = () => { el.dialogError.textContent = "No se pudo leer el archivo"; };
+  reader.readAsText(file, "utf-8");
+});
+
+function exportLyrics() {
+  const json = serializeLyricsBackup(lyricsStore.all());
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `worship-setlist-lyrics-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  announce("Respaldo de letras exportado");
+}
+
+function importLyrics(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const parsed = parseLyricsBackup(String(reader.result ?? ""), allAppearanceKeys());
+    if (Object.keys(parsed.lyrics).length === 0) {
+      announce("No se importaron letras válidas");
+      return;
+    }
+    const { merged, collisions } = mergeLyrics(lyricsStore.all(), parsed.lyrics);
+    if (collisions.length && !confirm(`Se sobrescribirán ${collisions.length} letra(s) existente(s). ¿Continuar?`)) {
+      // Import only non-colliding entries.
+      const safe = { ...lyricsStore.all() };
+      for (const [k, v] of Object.entries(parsed.lyrics)) if (!(k in safe)) safe[k] = v;
+      lyricsStore.replaceAll(safe);
+    } else {
+      lyricsStore.replaceAll(merged);
+    }
+    if (state.view === "stage") renderStage(); else renderSetlist();
+    announce(`Letras importadas${parsed.errors.length ? ` (${parsed.errors.length} omitidas)` : ""}`);
+  };
+  reader.readAsText(file, "utf-8");
+  input.value = "";
+}
+
+/* ---- YouTube on demand ---- */
+function renderVideoPanel(song) {
+  const panel = document.createElement("div");
+  panel.className = "panel";
+  const h3 = document.createElement("h3");
+  h3.textContent = "Video oficial";
+  panel.appendChild(h3);
+
+  const container = document.createElement("div");
+  container.id = "youtubeContainer";
+  panel.appendChild(container);
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+  const loadBtn = document.createElement("button");
+  loadBtn.type = "button";
+  loadBtn.textContent = "Cargar video";
+  loadBtn.disabled = !song.youtubeVideoId;
+  loadBtn.addEventListener("click", () => loadVideo(song, container));
+  actions.appendChild(loadBtn);
+  actions.appendChild(externalLink("Abrir en YouTube", song.youtubeUrl));
+  if (!song.youtubeVideoId) {
+    const hint = document.createElement("span");
+    hint.className = "hint";
+    hint.textContent = "Video pendiente de confirmación.";
+    actions.appendChild(hint);
+  }
+  panel.appendChild(actions);
+  return panel;
+}
+
+function loadVideo(song, container) {
+  try {
+    const src = buildYouTubeEmbedUrl(song.youtubeVideoId);
+    container.replaceChildren();
+    const iframe = document.createElement("iframe");
+    iframe.src = src;
+    iframe.title = `Video oficial de ${song.title}`;
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    iframe.allow = "accelerometer; autoplay; encrypted-media; picture-in-picture";
+    iframe.allowFullscreen = true;
+    container.appendChild(iframe);
+  } catch {
+    announce("No se pudo cargar el video. Usá el enlace para abrirlo en YouTube.");
+  }
+}
+
+function destroyVideo() {
+  const container = document.getElementById("youtubeContainer");
+  if (container) container.replaceChildren();
+}
+
+/* ---- Metronome ---- */
+class MetronomeController {
+  constructor() {
+    this.ctx = null;
+    this.timer = null;
+    this.nextTime = 0;
+    this.beat = 0;
+    this.bpm = 120;
+    this.meter = 4;
+    this.volume = 0.6;
+    this.muted = false;
+    this.onBeat = null;
+    this._running = false;
+  }
+  get running() { return this._running; }
+  start({ bpm, beatsPerMeasure, volume, onBeat }) {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) throw new Error("Web Audio API unavailable");
+    if (!this.ctx) this.ctx = new Ctx();
+    this.bpm = clampBpm(bpm);
+    this.meter = normalizeMeter(beatsPerMeasure);
+    if (typeof volume === "number") this.volume = volume;
+    this.onBeat = onBeat ?? null;
+    this.beat = -1;
+    this.nextTime = this.ctx.currentTime + 0.1;
+    this._running = true;
+    this.timer = setInterval(() => this._schedule(), 25);
+  }
+  _schedule() {
+    if (!this.ctx) return;
+    while (this.nextTime < this.ctx.currentTime + 0.1) {
+      const { beat, accented } = advanceBeat(this.beat, this.meter);
+      this.beat = beat;
+      this._click(this.nextTime, accented);
+      if (this.onBeat) this.onBeat(beat, accented);
+      this.nextTime += secondsPerBeat(this.bpm);
+    }
+  }
+  _click(time, accented) {
+    if (this.muted || !this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.frequency.value = accented ? 1200 : 800;
+    gain.gain.setValueAtTime(this.volume, time);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.03);
+    osc.connect(gain).connect(this.ctx.destination);
+    osc.start(time);
+    osc.stop(time + 0.03);
+  }
+  stop() {
+    this._running = false;
+    if (this.timer) clearInterval(this.timer);
+    this.timer = null;
+  }
+  setBpm(bpm) { this.bpm = clampBpm(bpm); }
+  setMeter(m) { this.meter = normalizeMeter(m); }
+  setVolume(v) { this.volume = Math.max(0, Math.min(1, v)); }
+  setMuted(m) { this.muted = !!m; }
+}
+
+function renderMetronomePanel(song) {
+  const panel = document.createElement("div");
+  panel.className = "panel";
+  panel.id = "metronomePanel";
+  const h3 = document.createElement("h3");
+  h3.textContent = "Metrónomo";
+  panel.appendChild(h3);
+
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) {
+    const p = document.createElement("p");
+    p.className = "hint";
+    p.textContent = "Metrónomo no disponible.";
+    panel.appendChild(p);
+    return panel;
+  }
+
+  const key = keyFor(song);
+  const bpm = state.tempoOverrides[key] ?? song.tempoBpm ?? 120;
+  const meter = state.meterOverrides[key] ?? song.beatsPerMeasure ?? 4;
+  const unset = song.tempoBpm == null && state.tempoOverrides[key] == null;
+
+  const controls = document.createElement("div");
+  controls.className = "metronome-controls";
+
+  const bpmInput = document.createElement("input");
+  bpmInput.type = "number";
+  bpmInput.min = "40"; bpmInput.max = "240"; bpmInput.value = String(clampBpm(bpm));
+  bpmInput.setAttribute("aria-label", "Tempo en BPM");
+
+  const label = document.createElement("span");
+  label.className = "hint";
+  label.textContent = unset ? "Tempo sin configurar" : "BPM";
+
+  const setBpm = (v) => {
+    const value = clampBpm(v);
+    bpmInput.value = String(value);
+    state = { ...state, tempoOverrides: { ...state.tempoOverrides, [key]: value } };
+    label.textContent = "BPM";
+    metronome?.setBpm(value);
+    announce(`Tempo ${value} BPM`);
+  };
+  bpmInput.addEventListener("change", () => setBpm(bpmInput.value));
+
+  const meterSelect = document.createElement("select");
+  meterSelect.setAttribute("aria-label", "Compás");
+  [2, 3, 4, 6].forEach((n) => {
+    const opt = document.createElement("option");
+    opt.value = String(n); opt.textContent = `${n}/4`;
+    if (n === normalizeMeter(meter)) opt.selected = true;
+    meterSelect.appendChild(opt);
+  });
+  meterSelect.addEventListener("change", () => {
+    const m = normalizeMeter(Number(meterSelect.value));
+    state = { ...state, meterOverrides: { ...state.meterOverrides, [key]: m } };
+    metronome?.setMeter(m);
+  });
+
+  const startBtn = document.createElement("button");
+  startBtn.type = "button";
+  startBtn.textContent = "Iniciar";
+  startBtn.addEventListener("click", () => {
+    if (metronome?.running) {
+      stopMetronome();
+      startBtn.textContent = "Iniciar";
+    } else {
+      startMetronome(clampBpm(bpmInput.value), normalizeMeter(Number(meterSelect.value)), volumeInput.valueAsNumber, muteBtn.getAttribute("aria-pressed") === "true");
+      startBtn.textContent = "Detener";
+      announce("Metrónomo iniciado");
+    }
+  });
+
+  const volumeInput = document.createElement("input");
+  volumeInput.type = "range";
+  volumeInput.min = "0"; volumeInput.max = "1"; volumeInput.step = "0.05"; volumeInput.value = "0.6";
+  volumeInput.setAttribute("aria-label", "Volumen del metrónomo");
+  volumeInput.addEventListener("input", () => metronome?.setVolume(volumeInput.valueAsNumber));
+
+  const muteBtn = document.createElement("button");
+  muteBtn.type = "button";
+  muteBtn.textContent = "Silenciar";
+  muteBtn.setAttribute("aria-pressed", "false");
+  muteBtn.addEventListener("click", () => {
+    const muted = muteBtn.getAttribute("aria-pressed") !== "true";
+    muteBtn.setAttribute("aria-pressed", String(muted));
+    muteBtn.textContent = muted ? "Activar sonido" : "Silenciar";
+    metronome?.setMuted(muted);
+  });
+
+  controls.append(
+    button("−1", () => setBpm(Number(bpmInput.value) - 1), "Bajar 1 BPM"),
+    bpmInput, label,
+    button("+1", () => setBpm(Number(bpmInput.value) + 1), "Subir 1 BPM"),
+    meterSelect, startBtn, volumeInput, muteBtn
+  );
+  panel.appendChild(controls);
+  return panel;
+}
+
+function startMetronome(bpm, meter, volume, muted) {
+  try {
+    if (!metronome) metronome = new MetronomeController();
+    metronome.setMuted(muted);
+    metronome.start({ bpm, beatsPerMeasure: meter, volume });
+    state = { ...state, metronomeRunning: true };
+  } catch {
+    announce("Metrónomo no disponible");
+  }
+}
+function stopMetronome() {
+  if (metronome?.running) {
+    metronome.stop();
+    state = { ...state, metronomeRunning: false };
+  }
+}
+
+/* ---- Fullscreen ---- */
+async function toggleFullscreen() {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else if (el.stageView.requestFullscreen) await el.stageView.requestFullscreen();
+    else throw new Error("Fullscreen API unavailable");
+  } catch {
+    announce("No se pudo activar pantalla completa");
+  }
+}
+document.addEventListener("fullscreenchange", () => {
+  const btn = document.getElementById("fullscreenBtn");
+  if (btn) btn.textContent = document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa";
+});
+
+/* ---- Helpers ---- */
+function button(label, onClick, ariaLabel) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = label;
+  if (ariaLabel) b.setAttribute("aria-label", ariaLabel);
+  b.addEventListener("click", onClick);
+  return b;
+}
+
+window.addEventListener("pagehide", stopMetronome);
+
+/* ---- Boot ---- */
+renderTabs();
+renderSetlist();
+    </script>
+  </body>
+</html>
