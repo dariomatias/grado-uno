@@ -41,7 +41,11 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
     esté dice "Digitación no disponible": pasame los acordes que veas así y
     los agrego; también si preferís otra digitación para alguno (p. ej. G
     320003 en vez de 320033).
-14. **Capo manual:** hoy el capo del escenario es sólo una sugerencia automática
+14. **Service worker propio para el worship app (offline):** el diseño pide que
+    UI, acordes y transposición funcionen sin conexión; hoy sólo hay caché del
+    navegador. Cuando se haga, reemplaza a `hosting/sw.js` (el SW "kamikaze"
+    que purga el SW viejo de Grado Uno que quedó registrado en `/`).
+15. **Capo manual:** hoy el capo del escenario es sólo una sugerencia automática
     por tonalidad (la menor que cae en C/D/E/G/A). Si querés elegir otro capo
     (p. ej. F con capo 3 en D en vez de capo 1 en E), agrego un selector.
 

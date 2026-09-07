@@ -21,6 +21,11 @@ mkdirSync(out, { recursive: true });
 cpSync(join(root, "index.html"), join(out, "index.html"));
 console.log("✔ worship → public/index.html");
 
+// 1b) Archivos estáticos de la raíz del hosting (p. ej. hosting/sw.js, el
+//     service worker que purga el SW viejo de Grado Uno registrado en "/").
+cpSync(join(root, "hosting"), out, { recursive: true });
+console.log("✔ hosting/* → public/");
+
 // 2) Grado Uno (feature) construido y copiado bajo /grado-uno/.
 const gradoUno = join(root, "grado-uno");
 console.log("… building grado-uno (base /grado-uno/)");
