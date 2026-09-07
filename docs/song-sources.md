@@ -84,7 +84,22 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 - Acordes: e-chords bloqueado. Letra/cifra (spec): https://www.e-chords.com/es/acordes/elevation-worship/el-nombre-de-jesus
 - Videos candidatos: Elevation Español oficial con letras https://www.youtube.com/watch?v=Su2LSzHgb9s · en vivo Charlotte https://www.youtube.com/watch?v=D3tmEakS1dQ · multitrack (Db, 64 BPM) https://www.youtube.com/watch?v=QDsXV78Pb9s
 
-## 3. Vie 4, Vie 18 y Dom 27
-Versiones validadas según la tabla; **sin acordes ni videos todavía** (todas
-`pending` → "Partitura no disponible"). Con la versión confirmada, la búsqueda
-de charts y videos oficiales es ahora precisa.
+## 3. Acordes — Viernes 4 (detalle)
+
+### Todo es posible — Bethel Music, Dante Bowe — D — `confirmado (chart oficial)`
+- **Chart:** PDF oficial de Bethel Music *Anything Is Possible* (CCLI 7148926),
+  aportado por Darío el 2026-09-07. Tono original **Bb**, **122 BPM**, 4/4.
+- **Normalizado a D (+4)** con el motor de transposición; un test dorado
+  (`tests/content.test.mjs`) verifica que la transcripción en Bb transpuesta
+  coincide con lo almacenado.
+- **Orden de ejecución:** Verso 1 · Verso 2 · Coro · Verso 3 · Coro · Canal ×2 ·
+  Puente · Puente (acordes alternos) ×2 · Coro · Instrumental.
+- **Sin letra**: el PDF tiene copyright; sólo se cargaron acordes, compases y
+  repeticiones. `lyricsUrl` = null (no hay URL pública del PDF).
+- **Video:** pendiente de elección de Darío (la versión es *Anything Is Possible
+  (Live)*, Bethel Music / Dante Bowe).
+
+### Resto de Vie 4, Vie 18 y Dom 27
+Versiones validadas según la tabla; **sin acordes ni videos todavía**
+(`pending` → "Partitura no disponible"). Con la versión confirmada, la
+búsqueda de charts y videos oficiales es ahora precisa.

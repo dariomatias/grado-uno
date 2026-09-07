@@ -198,6 +198,11 @@
 
     <script type="module">
 /* content-module:start */
+// Coro de "Todo es posible" (chart oficial Bethel, Bb → D). Se reutiliza en
+// cada aparición del coro dentro del orden de ejecución.
+const TODO_ES_POSIBLE_CORO = [["G"], ["D", "A"], ["G"], ["D", "A"], ["G"], ["Bm", "D"], ["G"], ["D", "A", "D"]];
+const TODO_ES_POSIBLE_VERSO = [["D"], ["D/F#", "G"], ["D"], ["D/F#", "G"], ["Bm", "A"], ["D/F#", "G"], ["D"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -205,7 +210,26 @@ export const setlists = [
     shortLabel: "Vie 4",
     date: "2026-09-04",
     songs: [
-      song("todo-es-posible", "Todo es posible", "D", { artist: "Bethel Music, Dante Bowe (Anything Is Possible · Live)" }),
+      song("todo-es-posible", "Todo es posible", "D", {
+        artist: "Bethel Music, Dante Bowe (Anything Is Possible · Live)",
+        sourceKey: "Bb",
+        tempoBpm: 122,
+        beatsPerMeasure: 4,
+        // Chart oficial de Bethel Music (CCLI 7148926, tono original Bb,
+        // 122 BPM) aportado por Darío; normalizado a D (+4). Sólo acordes.
+        sections: [
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D"], ["D"], ["D"], ["D"], ["Bm"], ["G"], ["D"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: TODO_ES_POSIBLE_VERSO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
+          { type: "verse", label: "Verso 3", repeats: 1, measures: TODO_ES_POSIBLE_VERSO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
+          { type: "instrumental", label: "Canal", repeats: 2, measures: [["D"], ["D"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["D"], ["D"], ["D"], ["D"]] },
+          { type: "bridge", label: "Puente (acordes alternos)", repeats: 2, measures: [["Bm"], ["A"], ["D/F#"], ["G"], ["Bm"], ["A"], ["D"], ["G"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
+          { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["G"], ["G"], ["D"], ["A"], ["G"], ["G"], ["D"], ["A"], ["G"], ["G"], ["Bm"], ["D"], ["G"], ["G"], ["D"], ["A"]] }
+        ]
+      }),
       song("a-jesus-seguire", "A Jesús seguiré", "G", { artist: "TWICE, Job González" }),
       song("creere", "Creeré", "A", { artist: "Bethel Music, Jonathan David Helser, Melissa Helser" }),
       song("santo-una-cosa", "Santo una cosa", "A", { artist: "Toma Tu Lugar, Lucas Conslie" }),
