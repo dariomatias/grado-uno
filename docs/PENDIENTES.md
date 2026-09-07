@@ -5,7 +5,7 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 **Última actualización:** 2026-09-06
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
-**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" — 22 de 28 validadas (17 por la playlist + 4 por videos oficiales que pasó Darío: Digno de alabar, Lavado, Nadie, El Nombre de Jesús; + Canta al Señor por el chart de Ingrid Rosario que indicó). **Dom 13: las 7 con chart.**
+**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" — 22 de 28 validadas (17 por la playlist + 4 por videos oficiales que pasó Darío: Digno de alabar, Lavado, Nadie, El Nombre de Jesús; + Canta al Señor por el chart de Ingrid Rosario que indicó). **Vie 4 y Dom 13: las 14 con chart.**
 
 ## Lo que Darío me debe (bloquea contenido)
 
@@ -19,14 +19,17 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    Señor (Cifra Club vía web, A→G). Vinieron por extracción web, no por PDF
    renderizado, así que conviene un vistazo; están normalizados a G con el
    motor de transposición.
+   **Del Vie 4, dos detalles a revisar:** el `D11+` de *Al que está sentado*
+   (notación rara del chart, quedó literal sin digitación) y que el chart de
+   *Dios de avivamiento* omite los coros repetidos (se cargó tal cual; decime
+   dónde vuelve el coro y lo agrego).
 4. **Videos que faltan:** *Canta al Señor* y las 21 canciones de Vie 4 /
    Vie 18 / Dom 27 salvo *Digno de alabar*. Los 6 del Dom 13 con link ya están
    fijados (el de *Quién Más* es un cover elegido a sabiendas por Darío).
 5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
-   `pending`: las 18 de Vie 4 / Vie 18 / Dom 27 sin chart. El Dom 13 ya está
-   completo; de las otras fechas tienen chart Todo es posible, A Jesús seguiré
-   y Creeré.
+   `pending`: las 14 de Vie 18 / Dom 27 sin chart. **Vie 4 y Dom 13 ya están
+   completos (14/14 con chart).**
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 

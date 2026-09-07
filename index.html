@@ -253,6 +253,13 @@ const NOMBRE_JESUS_CORO3 = [["Em", "G"], ["D", "Bm", "A"], ["Em", "G"], ["D", "B
 // prestado (G en el chart original).
 const CANTA_VERSO = [["G", "D"], ["Em", "D", "C"], ["G", "C", "G"], ["F", "C", "D"]];
 
+// "Al que está sentado" (Marcos Brunet, chart en A = asignado). Bloques repetidos.
+const SENTADO_VERSO = [["A2"], ["F#m"], ["E", "D"], ["D11+", "D"], ["F#m"], ["E"], ["D"], ["E4", "E"]];
+const SENTADO_TAG = [["Bm", "A/C#"], ["D", "E"]];
+
+// "Digno de alabar" = Worthy Of It All (CeCe Winans, chart en D = asignado).
+const WORTHY_CORO_B = [["D"], ["A"], ["D/F#", "G"], ["Bm", "A"], ["D"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -328,14 +335,77 @@ export const setlists = [
           { type: "chorus", label: "Coro", repeats: 1, measures: CREERE_CORO }
         ]
       }),
-      song("santo-una-cosa", "Santo una cosa", "A", { artist: "Toma Tu Lugar, Lucas Conslie" }),
-      song("al-que-esta-sentado", "Al que está sentado", "A", { artist: "Marco Barrientos, Marcos Brunet" }),
+      song("santo-una-cosa", "Santo una cosa", "A", {
+        artist: "Toma Tu Lugar, Lucas Conslie",
+        sourceKey: "G",
+        beatsPerMeasure: 4,
+        // Chart Cifra Club (TOMATULUGAR) aportado por Darío el 2026-09-08, en G;
+        // normalizado a A (+2). "C9" del chart = Cadd9 → "D9". Sin BPM. Sólo acordes.
+        sections: [
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A"], ["D9"], ["F#m", "D9"], ["E", "D9"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A"], ["D9"], ["F#m"], ["D9", "E", "D9"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["A"], ["D9"], ["A"], ["D9"], ["C#m", "B"], ["A"], ["C#m", "B", "A"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["A", "D9"], ["F#m"], ["D9"], ["F#m"], ["E"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["Bm", "G#m", "A"], ["B"]] }
+        ]
+      }),
+      song("al-que-esta-sentado", "Al que está sentado", "A", {
+        artist: "Marco Barrientos, Marcos Brunet",
+        sourceKey: "A",
+        beatsPerMeasure: 4,
+        // Chart Cifra Club (Marcos Brunet) aportado por Darío el 2026-09-08, en A
+        // = asignado, sin transposición. "D9"=Dadd9, "A2"=Aadd9, "E4"=Esus4;
+        // "D11+" se conserva literal (revisar). Sin BPM. Sólo acordes.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["D9", "F#m", "A"], ["D9", "F#m", "A", "E"], ["D9", "F#m", "A"], ["D9", "F#m", "A/C#", "E", "E4"], ["D9", "E", "D9", "E"]] },
+          { type: "verse", label: "Verso", repeats: 1, measures: SENTADO_VERSO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "E", "E4"], ["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "D11+"], ["E", "E4"]] },
+          { type: "instrumental", label: "Interludio", repeats: 1, measures: [["D", "F#m", "A2"], ["D", "F#m", "E/G#"], ["D", "D11+", "D"]] },
+          { type: "verse", label: "Verso", repeats: 1, measures: SENTADO_VERSO },
+          { type: "chorus", label: "Coro 2", repeats: 1, measures: [["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "D11+"], ["E"], ["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "E"], ["Bm", "A/C#"], ["D", "E", "E4"], ["Bm", "A/C#"], ["D", "E"]] },
+          { type: "instrumental", label: "Interludio 2", repeats: 1, measures: [["D", "F#m", "A"], ["Bm", "F#m", "C#m7"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["D", "F#m", "A2"], ["D", "F#m", "A2"], ["Bm", "C#m"], ["D", "E"]] },
+          { type: "chorus", label: "Coro final", repeats: 1, measures: [["A2"], ["E/G#"], ["F#m"], ["Bm", "A/C#"], ["D", "E"], ["A2"], ["E/G#"], ["F#m"], ["Bm", "A/C#"], ["D", "E"]] },
+          { type: "tag", label: "Tag", repeats: 4, measures: SENTADO_TAG }
+        ]
+      }),
       song("digno-de-alabar", "Digno de alabar", "D", {
         artist: "CeCe Winans (Worthy of It All · Official Audio)",
+        sourceKey: "D",
+        beatsPerMeasure: 4,
         youtubeUrl: "https://www.youtube.com/watch?v=JzZSrOPeolc",
-        youtubeVideoId: "JzZSrOPeolc"
+        youtubeVideoId: "JzZSrOPeolc",
+        // Chart Cifra Club (Worthy Of It All, CeCe Winans) aportado por Darío el
+        // 2026-09-08, en D = asignado, sin transposición. Sin BPM. Sólo acordes.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["G", "A"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["G", "A"], ["G", "A"], ["G", "A", "D/F#"], ["G", "A"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["A"], ["D/F#", "G"], ["A"], ["D"]] },
+          { type: "instrumental", label: "Interludio", repeats: 1, measures: [["G", "A"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["G", "A"], ["G", "A"], ["G", "A", "D/F#"], ["G", "A", "D"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: WORTHY_CORO_B },
+          { type: "instrumental", label: "Interludio 2", repeats: 1, measures: [["D", "F#m/C#", "Bm", "G"], ["D", "F#m/C#", "Em", "G"]] },
+          { type: "bridge", label: "Puente", repeats: 2, measures: [["D"], ["F#m/C#"], ["Bm"], ["G"], ["D/A#"], ["D/A#"], ["Em"], ["G"]] },
+          { type: "chorus", label: "Coro final", repeats: 2, measures: WORTHY_CORO_B }
+        ]
       }),
-      song("dios-de-avivamiento", "Dios de avivamiento", "C", { artist: "Bethel Music, Brian Johnson, Jenn Johnson (God of Revival · Live)" })
+      song("dios-de-avivamiento", "Dios de avivamiento", "C", {
+        artist: "Bethel Music, Brian Johnson, Jenn Johnson (God of Revival · Live)",
+        sourceKey: "C",
+        beatsPerMeasure: 4,
+        // Chart Cifra Club (Bethel Music) aportado por Darío el 2026-09-08, en C
+        // = asignado, sin transposición. El chart omite coros repetidos; se carga
+        // tal cual. Sin BPM. Sólo acordes.
+        sections: [
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["F", "C"], ["Am"], ["G"], ["F", "C"], ["Am"], ["G"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["F"], ["Am"], ["C", "G"], ["F"], ["Am"], ["C"], ["G"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["F"], ["G", "Am"], ["G/B", "C"], ["G"], ["F"], ["G", "Am"], ["G/B", "C"], ["G"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["F", "C"], ["Am"], ["G"], ["F", "C", "Am"], ["G"], ["F"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["C"], ["Am"], ["G"], ["C"], ["Am"], ["G"]] },
+          { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["F", "G", "Am"], ["G/B", "C", "G"], ["F", "G", "Am"], ["G/B", "C", "G"]] },
+          { type: "prechorus", label: "Pre-coro final", repeats: 1, measures: [["F"], ["Am"], ["C", "G"], ["F"], ["Am"], ["C"], ["G"], ["C"]] }
+        ]
+      })
     ]
   },
   {
@@ -832,8 +902,10 @@ export function advanceBeat(currentBeat, beatsPerMeasure) {
 export const OPEN_KEYS = ["C", "D", "E", "G", "A"];
 export const MAX_SUGGESTED_CAPO = 7;
 
+// "C9" en charts de worship (Cifra Club, TOMATULUGAR…) es el voicing add9, no
+// el dominante con novena; "E4" es Esus4. Se resuelven como alias de forma.
 const SUFFIX_ALIASES = {
-  "2": "add9", "sus": "sus4", "M7": "maj7", "Maj7": "maj7", "maj": "",
+  "2": "add9", "9": "add9", "4": "sus4", "sus": "sus4", "M7": "maj7", "Maj7": "maj7", "maj": "",
   "min": "m", "-": "m", "-7": "m7"
 };
 const CHORD_RE = /^([A-G](?:#|b)?)([^/]*)(?:\/([A-G](?:#|b)?))?$/;

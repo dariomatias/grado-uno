@@ -78,9 +78,11 @@ test("every youtubeVideoId, when present, is a valid 11-char id matching its url
 
 test("confirmed songs have a real artist and sections; links, if any, are http(s)", () => {
   const confirmed = setlists.flatMap((sl) => sl.songs).filter((s) => s.sourceStatus === "confirmed");
-  assert.ok(confirmed.length >= 10, "expected all seven Dom 13 songs plus Todo es posible, A Jesús seguiré and Creeré");
-  // El Dom 13 completo tiene chart.
-  for (const s of setlists[1].songs) assert.equal(s.sourceStatus, "confirmed", `${s.id} should have a chart`);
+  assert.ok(confirmed.length >= 14, "expected all of Vie 4 and Dom 13 to have charts");
+  // Vie 4 y Dom 13 completos.
+  for (const sl of [setlists[0], setlists[1]]) {
+    for (const s of sl.songs) assert.equal(s.sourceStatus, "confirmed", `${s.id} should have a chart`);
+  }
   for (const s of confirmed) {
     assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: needs real artist`);
     assert.ok(s.sections.length > 0, `${s.id}: needs sections`);
@@ -336,6 +338,72 @@ test("Canta al Señor: Ingrid Rosario chart in A normalized to G via the transpo
   // El G del chart original (bVII prestado) es F en G; todo abierto, sin cejillas.
   const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
   assert.deepEqual([...chords].sort(), ["C", "D", "Em", "F", "G"]);
+});
+
+test("Santo una cosa: TOMATULUGAR chart in G normalized to A via the transposer", () => {
+  const song = setlists[0].songs[3];
+  assert.equal(song.title, "Santo una cosa");
+  assert.equal(song.sourceKey, "G");
+  assert.equal(song.assignedKey, "A");
+  assert.equal(song.sourceStatus, "confirmed");
+  const sourceG = [
+    { label: "Verso 1", measures: [["G"], ["C9"], ["Em", "C9"], ["D", "C9"]] },
+    { label: "Verso 2", measures: [["G"], ["C9"], ["Em"], ["C9", "D", "C9"]] },
+    { label: "Pre-coro", measures: [["G"], ["C9"], ["G"], ["C9"], ["Bm", "A"], ["G"], ["Bm", "A", "G"]] },
+    { label: "Coro", measures: [["G", "C9"], ["Em"], ["C9"], ["Em"], ["D"]] },
+    { label: "Puente", measures: [["Am", "F#m", "G"], ["A"]] }
+  ];
+  const shift = semitoneDistance("G", "A");
+  assert.equal(shift, 2);
+  const normalized = transposeSections(sourceG, shift, "sharp");
+  assert.deepEqual(song.sections.map((s) => s.label), sourceG.map((s) => s.label));
+  assert.deepEqual(song.sections.map((s) => s.measures), normalized.map((s) => s.measures));
+  // El "C9" del chart se conserva como sufijo 9 (D9) y se digita como Dadd9.
+  assert.ok(song.sections.flatMap((s) => s.measures.flat()).includes("D9"));
+});
+
+test("Al que está sentado: Marcos Brunet chart in A stored as-is", () => {
+  const song = setlists[0].songs[4];
+  assert.equal(song.title, "Al que está sentado");
+  assert.equal(song.sourceKey, "A");
+  assert.equal(song.assignedKey, "A");
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.deepEqual(song.sections.map((s) => s.label), [
+    "Intro", "Verso", "Coro", "Interludio", "Verso", "Coro 2", "Interludio 2", "Puente", "Coro final", "Tag"
+  ]);
+  assert.equal(song.sections.at(-1).repeats, 4);
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  for (const c of ["A2", "D9", "E4", "F#m", "Bm", "A/C#", "E/G#", "C#m7", "C#m", "D11+"]) {
+    assert.ok(chords.has(c), `missing ${c}`);
+  }
+});
+
+test("Digno de alabar: Worthy Of It All chart in D stored as-is", () => {
+  const song = setlists[0].songs[5];
+  assert.equal(song.title, "Digno de alabar");
+  assert.equal(song.sourceKey, "D");
+  assert.equal(song.assignedKey, "D");
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.equal(song.youtubeVideoId, "JzZSrOPeolc"); // el video que eligió Darío sigue
+  assert.deepEqual(song.sections.map((s) => [s.label, s.repeats]), [
+    ["Intro", 1], ["Verso 1", 1], ["Coro", 1], ["Interludio", 1], ["Verso 2", 1],
+    ["Coro", 2], ["Interludio 2", 1], ["Puente", 2], ["Coro final", 2]
+  ]);
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.deepEqual([...chords].sort(), ["A", "Bm", "D", "D/A#", "D/F#", "Em", "F#m/C#", "G"]);
+});
+
+test("Dios de avivamiento: Bethel chart in C stored as-is, five open chords", () => {
+  const song = setlists[0].songs[6];
+  assert.equal(song.title, "Dios de avivamiento");
+  assert.equal(song.sourceKey, "C");
+  assert.equal(song.assignedKey, "C");
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.deepEqual(song.sections.map((s) => s.label), [
+    "Verso 1", "Pre-coro", "Coro", "Verso 2", "Puente", "Instrumental", "Pre-coro final"
+  ]);
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.deepEqual([...chords].sort(), ["Am", "C", "F", "G", "G/B"]);
 });
 
 test("appearanceKey composes setlist and song ids", () => {

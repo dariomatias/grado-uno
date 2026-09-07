@@ -21,11 +21,16 @@ test("worship-standard shapes are the ones served", () => {
   assert.deepEqual(findVoicing("F").frets, ["x", "x", 3, 2, 1, 1]);  // F compacta
 });
 
-test("suffix aliases resolve (2 → add9, sus → sus4, M7 → maj7)", () => {
+test("suffix aliases resolve (2/9 → add9, 4/sus → sus4, M7 → maj7)", () => {
   assert.equal(normalizeChordSymbol("C2").symbol, "Cadd9");
   assert.deepEqual(findVoicing("C2").frets, ["x", 3, 2, 0, 3, 3]);
   assert.equal(findVoicing("Dsus").symbol, "Dsus4");
   assert.equal(findVoicing("CM7").symbol, "Cmaj7");
+  // Convenciones de Cifra Club / charts de worship.
+  assert.equal(findVoicing("C9").symbol, "Cadd9");
+  assert.equal(findVoicing("D9").symbol, "Dadd9");
+  assert.equal(findVoicing("E4").symbol, "Esus4");
+  assert.equal(findVoicing("A2").symbol, "Aadd9");
 });
 
 test("slash chord without a specific shape falls back to its base and says so", () => {

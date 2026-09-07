@@ -201,7 +201,44 @@ el que quiere, así que **se cargó como elección deliberada**.
 - **Sin letra**: sólo acordes, compases y repeticiones. `lyricsUrl` null.
 - **Video:** pendiente de elección de Darío.
 
-### Resto de Vie 4, Vie 18 y Dom 27
+### Santo una cosa — Toma Tu Lugar, Lucas Conslie — A — `confirmado`
+- **Chart:** PDF Cifra Club *Santo (una cosa) — TOMATULUGAR* aportado por Darío
+  el 2026-09-08. **Key G**, sin BPM. Acordes G · C9 · Em · D · Bm · A · Am · F#m.
+- **Normalizado a A (+2)** con el motor (G→A, C9→D9, Em→F#m, D→E, Bm→C#m,
+  A→B, Am→Bm, F#m→G#m). Test dorado. El `C9` del chart es el voicing Cadd9
+  (convención de worship): se agregó el alias `9→add9` a las digitaciones.
+- **Orden (5 secciones):** Verso 1 · Verso 2 · Pre-coro · Coro · Puente.
+- **Capo:** en A hay 5 cejillas; con **capo 2** se vuelve a las formas de G del
+  chart. Sin letra.
+
+### Al que está sentado — Marco Barrientos, Marcos Brunet — A — `confirmado`
+- **Chart:** PDF Cifra Club *Al Que Está Sentado En El Trono — Marcos Brunet*
+  (compuesto por Lucas Conslie), aportado el 2026-09-08. **Key A** = asignado,
+  sin transposición, sin BPM.
+- **Notación Cifra Club:** `D9`=Dadd9, `A2`=Aadd9, `E4`=Esus4 (alias `4→sus4`
+  agregado). **`D11+` se conservó literal**: es una notación rara (¿D con #11?),
+  sin digitación en la tabla → "Digitación no disponible". **Revisar.**
+- **Orden (10 secciones):** Intro · Verso · Coro · Interludio · Verso · Coro 2 ·
+  Interludio 2 · Puente · Coro final · Tag ×4. Sin letra.
+
+### Digno de alabar — CeCe Winans (*Worthy Of It All*) — D — `confirmado`
+- **Chart:** PDF Cifra Club *Worthy Of It All — Cece Winans* (Ryan Hall / David
+  Brymer), aportado el 2026-09-08. **Key D** = asignado, sin transposición, sin
+  BPM. Letra en inglés en el PDF; no se copió.
+- **Bajos de paso:** `F#m/C#` y `D/A#` no tienen forma propia en la tabla; el
+  popover cae a la forma base (F#m, D) y lo aclara.
+- **Orden (9 secciones):** Intro · Verso 1 · Coro · Interludio · Verso 2 · Coro ×2
+  · Interludio 2 · Puente ×2 · Coro final ×2. Video ya fijado (`JzZSrOPeolc`).
+
+### Dios de avivamiento — Bethel Music (*God of Revival*) — C — `confirmado`
+- **Chart:** PDF Cifra Club *Dios De Avivamiento — Bethel Music*, aportado el
+  2026-09-08. **Key C** = asignado, sin transposición, sin BPM. Cinco acordes
+  abiertos (F · C · Am · G · G/B), capo 0.
+- **Orden (7 secciones):** Verso 1 · Pre-coro · Coro · Verso 2 · Puente ·
+  Instrumental · Pre-coro final. **El chart omite los coros repetidos** (Cifra
+  Club suele hacerlo); se cargó tal cual — Darío puede indicar dónde vuelve el
+  coro. Sin letra.
+
+### Vie 18 y Dom 27
 Versiones validadas según la tabla; **sin acordes ni videos todavía**
-(`pending` → "Partitura no disponible"). Con la versión confirmada, la
-búsqueda de charts y videos oficiales es ahora precisa.
+(`pending` → "Partitura no disponible").
