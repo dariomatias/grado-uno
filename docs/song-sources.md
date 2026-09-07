@@ -126,8 +126,20 @@ el que quiere, así que **se cargó como elección deliberada**.
 - **Video fijado:** https://www.youtube.com/watch?v=2BuifDijlFY — *"No Hay Otro
   Nombre"*, Hillsong Worship (link de Darío, verificado).
 
-### El Nombre de Jesús — Elevation Español — D — `pending` (sin chart)
-- Acordes: e-chords bloqueado. Letra/cifra (spec): https://www.e-chords.com/es/acordes/elevation-worship/el-nombre-de-jesus
+### El Nombre de Jesús — Elevation Español — D — `confirmado`
+- **Chart:** PDF de Cifra Club *El Nombre de Jesús — Elevation Worship*
+  descargado y aportado por Darío el 2026-09-07 (no hay scraping ni
+  integración: se transcribieron sólo los acordes). **Key Db**, sin capo, sin
+  BPM. El Db coincide con la grabación de Elevation Español.
+- **Normalizado a D (+1)** con el motor: Db→D, Ab/C→A/C#, Gb→G, Bbm→Bm, Ab→A,
+  Ebm→Em. Test dorado en `tests/content.test.mjs`.
+- **Orden de ejecución (12 secciones):** Intro · Verso 1 · Coro 1 · Verso 2 ·
+  Coro 2 ×2 · Instrumental 1 · Puente (20 líneas) · Coro 3 ×2 · Instrumental 1 ·
+  Coro 3 · Instrumental 2 · Coro final ×2. Los instrumentales vienen con barras
+  explícitas. El "[Refrão 3]" del PDF (artefacto en portugués) es Coro 3.
+- **Capo:** D abierta con una sola cejilla (Bm) → capo 0.
+- **Sin letra**: sólo acordes, compases y repeticiones.
+- Letra/cifra del spec (e-chords, bloqueado al fetch): https://www.e-chords.com/es/acordes/elevation-worship/el-nombre-de-jesus
 - **Video fijado:** https://www.youtube.com/watch?v=Su2LSzHgb9s — *"El Nombre De
   Jesús | Video Oficial Con Letras"*, Elevation Español (link de Darío). Confirma
   la versión. Referencia de tempo (multitrack, Db, 64 BPM):

@@ -78,7 +78,7 @@ test("every youtubeVideoId, when present, is a valid 11-char id matching its url
 
 test("confirmed songs have a real artist and sections; links, if any, are http(s)", () => {
   const confirmed = setlists.flatMap((sl) => sl.songs).filter((s) => s.sourceStatus === "confirmed");
-  assert.ok(confirmed.length >= 8, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré, Creeré, Jehová and Lavado");
+  assert.ok(confirmed.length >= 9, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré, Creeré, Jehová, Lavado and El Nombre de Jesús");
   for (const s of confirmed) {
     assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: needs real artist`);
     assert.ok(s.sections.length > 0, `${s.id}: needs sections`);
@@ -267,6 +267,43 @@ test("Lavado: official Elevation Español number chart converted to B via degree
   // Sólo los seis acordes del chart.
   const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
   assert.deepEqual([...chords].sort(), ["B", "B/D#", "C#m", "E", "F#", "G#m"]);
+});
+
+test("El Nombre de Jesús: chart in Db normalized to D via the transposer", () => {
+  const song = setlists[1].songs[6];
+  assert.equal(song.title, "El Nombre de Jesús");
+  assert.equal(song.sourceKey, "Db");
+  assert.equal(song.assignedKey, "D");
+  assert.equal(song.tempoBpm, null);
+  assert.equal(song.sourceStatus, "confirmed");
+
+  // Transcripción del chart en su tono original (sólo acordes).
+  const instr1 = [["Ebm"], ["Gb"], ["Ebm"], ["Gb"], ["Bbm"], ["Ab"], ["Bbm"], ["Ab"]];
+  const coro3 = [["Ebm", "Gb"], ["Db", "Bbm", "Ab"], ["Ebm", "Gb"], ["Db", "Bbm", "Ab"]];
+  const sourceDb = [
+    { label: "Intro", measures: [["Db", "Ab/C"], ["Gb"], ["Db", "Ab/C"], ["Gb"]] },
+    { label: "Verso 1", measures: [["Db", "Ab/C", "Gb"], ["Db", "Ab/C", "Gb"], ["Bbm", "Ab", "Gb"], ["Bbm", "Ab", "Gb"]] },
+    { label: "Coro 1", measures: [["Ebm"], ["Gb"], ["Db"], ["Bbm", "Ab"], ["Ebm", "Gb"], ["Db", "Bbm", "Ab"]] },
+    { label: "Verso 2", measures: [["Db", "Ab/C", "Ebm", "Gb"], ["Db", "Ab/C", "Ebm", "Gb"], ["Bbm", "Ab", "Gb"], ["Bbm", "Ab", "Gb"]] },
+    { label: "Coro 2", measures: [["Ebm"], ["Gb"], ["Db"], ["Ab"], ["Ebm", "Gb"], ["Db", "Ab"]] },
+    { label: "Instrumental 1", measures: instr1 },
+    { label: "Puente", measures: [["Ebm"], ["Gb"], ["Bbm", "Ab"], ["Ebm"], ["Gb"], ["Bbm", "Ab"], ["Ebm"], ["Gb"], ["Bbm", "Ab"], ["Ebm"], ["Gb"], ["Db"], ["Ebm"], ["Gb"], ["Bbm", "Ab"], ["Ab"], ["Ebm"], ["Gb"], ["Db"], ["Ab"]] },
+    { label: "Coro 3", measures: coro3 },
+    { label: "Instrumental 1", measures: instr1 },
+    { label: "Coro 3", measures: coro3 },
+    { label: "Instrumental 2", measures: [["Ebm"], ["Gb"], ["Ebm"], ["Gb"], ["Db", "Bbm"], ["Db", "Bbm"], ["Ab"], ["Ab"]] },
+    { label: "Coro final", measures: [["Ebm"], ["Gb"], ["Db"], ["Ab"], ["Ebm"], ["Gb"], ["Db"], ["Ab", "Gb"]] }
+  ];
+
+  const shift = semitoneDistance("Db", "D");
+  assert.equal(shift, 1);
+  const normalized = transposeSections(sourceDb, shift, "sharp");
+  assert.deepEqual(song.sections.map((s) => s.label), sourceDb.map((s) => s.label));
+  assert.deepEqual(song.sections.map((s) => s.measures), normalized.map((s) => s.measures));
+  assert.deepEqual(song.sections.map((s) => s.repeats), [1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2]);
+  // Seis acordes, todos en D; la única cejilla es Bm.
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.deepEqual([...chords].sort(), ["A", "A/C#", "Bm", "D", "Em", "G"]);
 });
 
 test("appearanceKey composes setlist and song ids", () => {

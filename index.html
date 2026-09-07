@@ -227,6 +227,10 @@ const LAVADO_VERSO = [["B/D#", "E"], ["F#", "G#m", "B/D#", "E"], ["F#", "G#m", "
 const LAVADO_CORO = [["B"], ["E"], ["G#m"], ["F#"], ["B"], ["E"], ["G#m"], ["F#"]];
 const LAVADO_PUENTE = [["B"], ["E"], ["G#m"], ["E"]];
 
+// "El Nombre de Jesús" (chart en Db → D, +1). Bloques repetidos.
+const NOMBRE_JESUS_INSTR1 = [["Em"], ["G"], ["Em"], ["G"], ["Bm"], ["A"], ["Bm"], ["A"]];
+const NOMBRE_JESUS_CORO3 = [["Em", "G"], ["D", "Bm", "A"], ["Em", "G"], ["D", "Bm", "A"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -421,8 +425,26 @@ export const setlists = [
       }),
       song("el-nombre-de-jesus", "El Nombre de Jesús", "D", {
         artist: "Elevation Español",
+        sourceKey: "Db",
+        beatsPerMeasure: 4,
         youtubeUrl: "https://www.youtube.com/watch?v=Su2LSzHgb9s",
-        youtubeVideoId: "Su2LSzHgb9s"
+        youtubeVideoId: "Su2LSzHgb9s",
+        // Chart (Cifra Club, Elevation Worship) aportado por Darío el 2026-09-07,
+        // en Db; normalizado a D (+1). Sin BPM en la fuente. Sólo acordes.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["D", "A/C#"], ["G"], ["D", "A/C#"], ["G"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D", "A/C#", "G"], ["D", "A/C#", "G"], ["Bm", "A", "G"], ["Bm", "A", "G"]] },
+          { type: "chorus", label: "Coro 1", repeats: 1, measures: [["Em"], ["G"], ["D"], ["Bm", "A"], ["Em", "G"], ["D", "Bm", "A"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["D", "A/C#", "Em", "G"], ["D", "A/C#", "Em", "G"], ["Bm", "A", "G"], ["Bm", "A", "G"]] },
+          { type: "chorus", label: "Coro 2", repeats: 2, measures: [["Em"], ["G"], ["D"], ["A"], ["Em", "G"], ["D", "A"]] },
+          { type: "instrumental", label: "Instrumental 1", repeats: 1, measures: NOMBRE_JESUS_INSTR1 },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["D"], ["Em"], ["G"], ["Bm", "A"], ["A"], ["Em"], ["G"], ["D"], ["A"]] },
+          { type: "chorus", label: "Coro 3", repeats: 2, measures: NOMBRE_JESUS_CORO3 },
+          { type: "instrumental", label: "Instrumental 1", repeats: 1, measures: NOMBRE_JESUS_INSTR1 },
+          { type: "chorus", label: "Coro 3", repeats: 1, measures: NOMBRE_JESUS_CORO3 },
+          { type: "instrumental", label: "Instrumental 2", repeats: 1, measures: [["Em"], ["G"], ["Em"], ["G"], ["D", "Bm"], ["D", "Bm"], ["A"], ["A"]] },
+          { type: "chorus", label: "Coro final", repeats: 2, measures: [["Em"], ["G"], ["D"], ["A"], ["Em"], ["G"], ["D"], ["A", "G"]] }
+        ]
       })
     ]
   },
