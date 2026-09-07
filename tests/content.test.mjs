@@ -78,7 +78,7 @@ test("every youtubeVideoId, when present, is a valid 11-char id matching its url
 
 test("confirmed songs have a real artist and sections; links, if any, are http(s)", () => {
   const confirmed = setlists.flatMap((sl) => sl.songs).filter((s) => s.sourceStatus === "confirmed");
-  assert.ok(confirmed.length >= 4, "expected the Dom 13 drafts plus Todo es posible");
+  assert.ok(confirmed.length >= 5, "expected the Dom 13 drafts plus Todo es posible and A Jesús seguiré");
   for (const s of confirmed) {
     assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: needs real artist`);
     assert.ok(s.sections.length > 0, `${s.id}: needs sections`);
@@ -125,6 +125,27 @@ test("Todo es posible: official Bethel chart (Bb, 122 BPM) normalized to D via t
   // Repeticiones según el chart: Canal ×2 y Puente alterno ×2.
   assert.equal(song.sections.find((s) => s.label === "Canal").repeats, 2);
   assert.equal(song.sections.find((s) => s.label === "Puente (acordes alternos)").repeats, 2);
+});
+
+test("A Jesús seguiré: TWICE chart already in G, stored without transposition, G/D/A only", () => {
+  const song = setlists[0].songs[1];
+  assert.equal(song.title, "A Jesús seguiré");
+  assert.equal(song.sourceKey, "G");
+  assert.equal(song.assignedKey, "G");
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.equal(song.tempoBpm, null); // la fuente no indica BPM
+
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.deepEqual([...chords].sort(), ["A", "D", "G"]);
+
+  // Orden de ejecución del chart, con el final construido por pre-coros y tags.
+  assert.equal(song.sections.length, 15);
+  assert.equal(song.sections[0].label, "Coro");
+  assert.equal(song.sections.at(-2).label, "Coro (final)");
+  assert.equal(song.sections.at(-1).label, "Tag");
+  assert.equal(song.sections.filter((s) => s.label === "Tag" && s.repeats === 2).length, 2);
+  assert.equal(song.sections.filter((s) => s.label === "Pre-coro").length, 4);
+  for (const s of song.sections) assert.ok(s.measures.every((m) => m.length > 0));
 });
 
 test("appearanceKey composes setlist and song ids", () => {

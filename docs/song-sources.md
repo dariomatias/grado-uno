@@ -99,6 +99,18 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 - **Video:** pendiente de elección de Darío (la versión es *Anything Is Possible
   (Live)*, Bethel Music / Dante Bowe).
 
+### A Jesús seguiré — TWICE, Job González — G — `confirmado`
+- **Chart:** PDF "A jesus seguiré - Twice - G" aportado por Darío el
+  2026-09-07, ya en **G** → almacenado **sin transposición** (`sourceKey` = G).
+- **Armonía:** tres acordes, **G · D · A**, todas formas abiertas (capo 0).
+- **Orden de ejecución (15 secciones):** Coro + Tag · Verso 1 · Pre-coro · Coro ·
+  Verso 2 · Pre-coro · Coro + Tag · Pre-coro · Tag ×2 · Pre-coro · Tag ×2 ·
+  Coro (final) + Tag. El "Tag" es la frase final del coro sobre G D A.
+- **BPM:** no figura en la fuente → `tempoBpm` null ("Tempo sin configurar").
+- **Sin letra**: el PDF la incluye; sólo se cargaron acordes y compases.
+  `lyricsUrl` null (no hay URL pública del PDF).
+- **Video:** pendiente de elección de Darío.
+
 ### Resto de Vie 4, Vie 18 y Dom 27
 Versiones validadas según la tabla; **sin acordes ni videos todavía**
 (`pending` → "Partitura no disponible"). Con la versión confirmada, la

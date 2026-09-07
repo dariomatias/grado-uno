@@ -203,6 +203,12 @@
 const TODO_ES_POSIBLE_CORO = [["G"], ["D", "A"], ["G"], ["D", "A"], ["G"], ["Bm", "D"], ["G"], ["D", "A", "D"]];
 const TODO_ES_POSIBLE_VERSO = [["D"], ["D/F#", "G"], ["D"], ["D/F#", "G"], ["Bm", "A"], ["D/F#", "G"], ["D"]];
 
+// "A Jesús seguiré" (TWICE, chart en G): bloques que se repiten en el orden
+// de ejecución. Sólo acordes.
+const A_JESUS_CORO = [["G"], ["D", "A"], ["G"], ["D", "A"], ["G", "D", "A"]];
+const A_JESUS_PRECORO = [["G"], ["D", "A"], ["G", "D", "A"]];
+const A_JESUS_TAG = [["G", "D", "A"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -230,7 +236,30 @@ export const setlists = [
           { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["G"], ["G"], ["D"], ["A"], ["G"], ["G"], ["D"], ["A"], ["G"], ["G"], ["Bm"], ["D"], ["G"], ["G"], ["D"], ["A"]] }
         ]
       }),
-      song("a-jesus-seguire", "A Jesús seguiré", "G", { artist: "TWICE, Job González" }),
+      song("a-jesus-seguire", "A Jesús seguiré", "G", {
+        artist: "TWICE, Job González",
+        sourceKey: "G",
+        beatsPerMeasure: 4,
+        // Chart en G aportado por Darío (PDF, 2026-09-07); sin transposición.
+        // Tres acordes (G, D, A). Sin BPM en la fuente. Sólo acordes.
+        sections: [
+          { type: "chorus", label: "Coro", repeats: 1, measures: A_JESUS_CORO },
+          { type: "tag", label: "Tag", repeats: 1, measures: A_JESUS_TAG },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["G", "D", "A"], ["G", "D"], ["A"], ["G", "D", "A"], ["G", "D"], ["A"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: A_JESUS_CORO },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["G", "D", "A"], ["G", "D"], ["G", "D", "A"], ["G"], ["D", "A"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: A_JESUS_CORO },
+          { type: "tag", label: "Tag", repeats: 1, measures: A_JESUS_TAG },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "tag", label: "Tag", repeats: 2, measures: A_JESUS_TAG },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "tag", label: "Tag", repeats: 2, measures: A_JESUS_TAG },
+          { type: "chorus", label: "Coro (final)", repeats: 1, measures: A_JESUS_CORO },
+          { type: "tag", label: "Tag", repeats: 1, measures: A_JESUS_TAG }
+        ]
+      }),
       song("creere", "Creeré", "A", { artist: "Bethel Music, Jonathan David Helser, Melissa Helser" }),
       song("santo-una-cosa", "Santo una cosa", "A", { artist: "Toma Tu Lugar, Lucas Conslie" }),
       song("al-que-esta-sentado", "Al que está sentado", "A", { artist: "Marco Barrientos, Marcos Brunet" }),

@@ -22,8 +22,9 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    alabar* (Vie 4) ya tiene el suyo fijado.
 5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*) de todo lo que sigue `pending`: las 4 del Dom 13 sin chart
-   (Jehová, Lavado, El Nombre de Jesús, Canta al Señor) y las 20 restantes de
-   Vie 4 / Vie 18 / Dom 27. Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
+   (Jehová, Lavado, El Nombre de Jesús, Canta al Señor) y las 19 restantes de
+   Vie 4 / Vie 18 / Dom 27 (ya tienen chart: Todo es posible, A Jesús seguiré).
+   Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 
 ## Backlog técnico (mío, no bloquea publicar)
