@@ -49,9 +49,9 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 
 Videos del Dom 13 fijados el 2026-09-07 desde la tabla de Darío, verificando
 título y canal de cada uno: Jehová, Lavado, Nadie, No Hay Otro Nombre y El
-Nombre de Jesús. El link dado para **Quién Más** (`F-40DlTc_JY`) resultó ser
-*"Who Else + Shout to the Lord"* del canal **Rachel Atkinson** (cover), no el de
-Gateway Worship Español: **no se cargó**; sigue "Video no disponible".
+Nombre de Jesús. El de **Quién Más** (`F-40DlTc_JY`) es un cover/medley de
+Rachel Atkinson, no el oficial de Gateway; se le avisó a Darío y confirmó que es
+el que quiere, así que **se cargó como elección deliberada**.
 
 ## 2. Acordes y videos — Domingo 13 (detalle)
 
@@ -96,11 +96,13 @@ Gateway Worship Español: **no se cargó**; sigue "Video no disponible".
 ### Quién Más — G — `BORRADOR confirmado` ✅
 - Chart: worshiptogether (fuente **Ab**, 68 BPM) → normalizado a **G** (−1).
 - Fuente: https://www.worshiptogether.com/es/canciones/quien-mas-gateway-worship-espanol/
-- **Video: pendiente.** El link de la tabla de Darío (`F-40DlTc_JY`) es *"Who Else
-  + Shout to the Lord"* de **Rachel Atkinson** (cover) — no se cargó. Candidatos
-  verificados: lyric oficial https://www.youtube.com/watch?v=ii5bt588N6U ·
-  oficial https://www.youtube.com/watch?v=niavhjpZJqA · acústica
-  https://www.youtube.com/watch?v=oAkfKF9kFJM
+- **Video fijado (elección deliberada de Darío):**
+  https://www.youtube.com/watch?v=F-40DlTc_JY — *"Who Else + Shout to the
+  Lord"*, canal Rachel Atkinson. Es un **cover/medley**, no el oficial de
+  Gateway Worship Español; se le avisó y confirmó que es el que quiere
+  (2026-09-07). **No reemplazar.** Alternativas oficiales, por si cambia de idea:
+  lyric oficial https://www.youtube.com/watch?v=ii5bt588N6U · oficial
+  https://www.youtube.com/watch?v=niavhjpZJqA
 
 ### Canta al Señor — versión sin validar — G — `pending`
 - Letra/cifra (spec): https://acordesweb.com/cancion/ingrid-rosario/canta-al-senor

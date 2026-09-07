@@ -21,11 +21,9 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    vivo: Nadie, Quién Más, No Hay Otro Nombre. Capturados de worshiptogether y
    normalizados a G con el motor de transposición (la versión de Nadie ya quedó
    validada por su video oficial).
-4. **Videos que faltan:** *Quién Más* (el link que pasaste, `F-40DlTc_JY`, es un
-   cover de Rachel Atkinson — no se cargó; candidatos verificados en
-   `docs/song-sources.md`), *Canta al Señor*, y las 21 canciones de Vie 4 /
-   Vie 18 / Dom 27 salvo *Digno de alabar*. Los 5 del Dom 13 restantes ya están
-   fijados y verificados.
+4. **Videos que faltan:** *Canta al Señor* y las 21 canciones de Vie 4 /
+   Vie 18 / Dom 27 salvo *Digno de alabar*. Los 6 del Dom 13 con link ya están
+   fijados (el de *Quién Más* es un cover elegido a sabiendas por Darío).
 5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*) de todo lo que sigue `pending`: las 3 del Dom 13 sin chart
    (Lavado, El Nombre de Jesús, Canta al Señor) y las 18 restantes de
