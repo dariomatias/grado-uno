@@ -38,6 +38,13 @@ test("chord voicing popover is wired", () => {
   assert.match(html, /voicings-module:start/);
 });
 
+test("fullscreen stage scrolls on its own and has a pseudo-fullscreen fallback", () => {
+  assert.match(html, /#stageView:fullscreen[\s\S]*?overflow-y:\s*auto/);
+  assert.match(html, /#stageView\.pseudo-fullscreen/);
+  assert.match(html, /webkitRequestFullscreen/);
+  assert.match(html, /setPseudoFullscreen\(true\)/);
+});
+
 test("degree subscripts and manual capo are wired", () => {
   assert.match(html, /chordToDegree/);
   assert.match(html, /sub\.deg/);

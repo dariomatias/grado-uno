@@ -69,6 +69,13 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   grabaciones en inglés de Bethel, *En el nombre de Jesús* es *En Tu Nombre*
   de Ingrid Rosario, y *Digno de alabar* es *Worthy of It All* de CeCe Winans
   (2026-09-06).
+- **Pantalla completa con scroll** (2026-09-08): Darío reportó que en fullscreen
+  no se podía scrollear. `#stageView` ahora scrollea por sí mismo en ese modo,
+  el popover de digitación se mueve adentro (fuera del elemento fullscreen no
+  se ve), y si el navegador no tiene Fullscreen API (Safari en iPhone) se usa
+  un modo pseudo equivalente (overlay fijo; Escape o el botón para salir).
+  Detalle menor pendiente: el aviso `aria-live` del pie queda tapado
+  visualmente en fullscreen (los lectores de pantalla sí lo leen).
 - **Grado como subíndice** (2026-09-08): cada acorde del escenario lleva su
   grado en la escala del tono **real** en números estilo Nashville (`G₁ D₅ Em₆
   C₄`), con alteración en los prestados (`b7`, `#4`) y `1/3` en los acordes con

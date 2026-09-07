@@ -158,6 +158,19 @@
       .err { color: var(--error); }
       select { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; min-height: 44px; }
       #youtubeContainer iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; }
+      /* Pantalla completa (Fullscreen API o modo pseudo para navegadores sin
+         API, como Safari en iPhone): #stageView ocupa la pantalla y SCROLLEA
+         por sí mismo. Sin overflow propio el contenido quedaba recortado. */
+      #stageView:fullscreen,
+      #stageView:-webkit-full-screen,
+      #stageView.pseudo-fullscreen {
+        position: fixed; inset: 0; width: 100%; height: 100%; z-index: 45;
+        overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+        background: var(--bg); color: var(--text); box-sizing: border-box;
+        padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+                 max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+      }
+      body.pseudo-fullscreen-open { overflow: hidden; }
       @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
     </style>
   </head>
@@ -1209,6 +1222,7 @@ function backToSetlist() {
   stopMetronome();
   destroyVideo();
   hideChordPopover();
+  void exitStageFullscreen(); // el listado vive fuera de #stageView
   state = { ...state, view: "setlist" };
   el.stageView.hidden = true;
   el.setlistView.hidden = false;
@@ -1809,20 +1823,60 @@ function stopMetronome() {
   }
 }
 
-/* ---- Fullscreen ---- */
+/* ---- Pantalla completa ----
+   Fullscreen API sobre #stageView; si el navegador no la ofrece o la rechaza
+   (p. ej. Safari en iPhone), modo "pseudo" equivalente: overlay fijo con scroll
+   propio y Escape para salir. En ambos casos #stageView es el contenedor con
+   scroll y el popover se mueve adentro (fuera del elemento no se vería). */
+const PSEUDO_FS = "pseudo-fullscreen";
+
+function isStageFullscreen() {
+  return document.fullscreenElement === el.stageView
+    || document.webkitFullscreenElement === el.stageView
+    || el.stageView.classList.contains(PSEUDO_FS);
+}
+
+function updateFullscreenButton() {
+  const btn = document.getElementById("fullscreenBtn");
+  if (btn) btn.textContent = isStageFullscreen() ? "Salir de pantalla completa" : "Pantalla completa";
+}
+
+function setPseudoFullscreen(on) {
+  el.stageView.classList.toggle(PSEUDO_FS, on);
+  document.body.classList.toggle("pseudo-fullscreen-open", on);
+  hideChordPopover();
+  updateFullscreenButton();
+  if (on) announce("Pantalla completa. Escape o el botón para salir.");
+}
+
 async function toggleFullscreen() {
+  if (isStageFullscreen()) {
+    await exitStageFullscreen();
+    return;
+  }
   try {
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else if (el.stageView.requestFullscreen) await el.stageView.requestFullscreen();
-    else throw new Error("Fullscreen API unavailable");
+    if (el.stageView.requestFullscreen) await el.stageView.requestFullscreen();
+    else if (el.stageView.webkitRequestFullscreen) el.stageView.webkitRequestFullscreen();
+    else setPseudoFullscreen(true);
   } catch {
-    announce("No se pudo activar pantalla completa");
+    setPseudoFullscreen(true); // sin API o solicitud rechazada: modo pseudo
   }
 }
-document.addEventListener("fullscreenchange", () => {
-  const btn = document.getElementById("fullscreenBtn");
-  if (btn) btn.textContent = document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa";
-});
+
+async function exitStageFullscreen() {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else if (document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+  } catch { /* nada que salir */ }
+  if (el.stageView.classList.contains(PSEUDO_FS)) setPseudoFullscreen(false);
+}
+
+for (const ev of ["fullscreenchange", "webkitfullscreenchange"]) {
+  document.addEventListener(ev, () => {
+    hideChordPopover(); // las coordenadas cambian con el modo
+    updateFullscreenButton();
+  });
+}
 
 /* ---- Popover de digitación: sólo por tap/clic (sin hover ni foco) ----
    Decisión de Darío: en escenario el popover no debe aparecer al mover el
@@ -1851,24 +1905,42 @@ function hideChordPopover() {
 }
 
 function positionPopover(btn) {
-  const r = btn.getBoundingClientRect();
   const pop = el.popover;
+  const r = btn.getBoundingClientRect();
   const width = pop.offsetWidth || 240;
-  const viewport = document.documentElement.clientWidth;
-  let left = r.left + window.scrollX + r.width / 2 - width / 2;
-  left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + viewport - width - 8));
-  pop.style.left = `${left}px`;
-  pop.style.top = `${r.bottom + window.scrollY + 8}px`;
+  const inStage = isStageFullscreen();
+  // En pantalla completa el popover debe vivir DENTRO de #stageView (lo que
+  // queda fuera del elemento fullscreen no se ve) y posicionarse relativo a
+  // él, que es fijo y tiene su propio scroll.
+  const container = inStage ? el.stageView : document.body;
+  if (pop.parentElement !== container) container.appendChild(pop);
+  if (inStage) {
+    const s = el.stageView.getBoundingClientRect();
+    const maxLeft = el.stageView.clientWidth - width - 8;
+    let left = r.left - s.left + el.stageView.scrollLeft + r.width / 2 - width / 2;
+    left = Math.max(8, Math.min(left, maxLeft));
+    pop.style.left = `${left}px`;
+    pop.style.top = `${r.bottom - s.top + el.stageView.scrollTop + 8}px`;
+  } else {
+    const viewport = document.documentElement.clientWidth;
+    let left = r.left + window.scrollX + r.width / 2 - width / 2;
+    left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + viewport - width - 8));
+    pop.style.left = `${left}px`;
+    pop.style.top = `${r.bottom + window.scrollY + 8}px`;
+  }
 }
 
 document.addEventListener("click", (e) => {
   if (!el.popover.hidden && !el.popover.contains(e.target)) hideChordPopover();
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !el.popover.hidden) {
+  if (e.key !== "Escape") return;
+  if (!el.popover.hidden) {
     const trigger = popoverTrigger;
     hideChordPopover();
     trigger?.focus();
+  } else if (el.stageView.classList.contains("pseudo-fullscreen")) {
+    setPseudoFullscreen(false); // Escape sale del modo pseudo (la API real ya lo hace sola)
   }
 });
 
