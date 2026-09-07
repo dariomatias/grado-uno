@@ -111,6 +111,23 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
   `lyricsUrl` null (no hay URL pública del PDF).
 - **Video:** pendiente de elección de Darío.
 
+### Creeré — Bethel Music, J. D. Helser, M. Helser — A — `confirmado (chart oficial)`
+- **Chart:** PDF oficial de Bethel Music *Creeré* (CCLI 7176941, adaptación al
+  español por Edward Rivera et al.), aportado por Darío el 2026-09-07. Tono
+  original **Bb**, **72 BPM**, 4/4.
+- **Corroboración del tono:** el zip *"Creere (I Believe) - Bethel Music"* en
+  Downloads contiene las multipistas oficiales en **"Tonalidad de A"** — la
+  banda la toca en A, el tono asignado.
+- **Normalizado a A (−1)** con el motor de transposición (Bb→A, Bbsus→Asus,
+  Eb→D, Gm→F#m, F→E, F/A→E/G#, Bb/F→A/E); test dorado en
+  `tests/content.test.mjs`.
+- **Orden de ejecución (13 secciones):** Intro · Verso 1 · Coro 1 ·
+  Transición 1 · Verso 2 · Coro · Transición 2 · Puente · Coro 2 · Coro 1 ·
+  Tag ×3 · Puente · Coro. Intro y Transiciones vienen con barras explícitas
+  en la fuente (compases reales).
+- **Sin letra**: sólo acordes, compases y repeticiones. `lyricsUrl` null.
+- **Video:** pendiente de elección de Darío.
+
 ### Resto de Vie 4, Vie 18 y Dom 27
 Versiones validadas según la tabla; **sin acordes ni videos todavía**
 (`pending` → "Partitura no disponible"). Con la versión confirmada, la

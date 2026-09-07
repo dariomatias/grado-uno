@@ -209,6 +209,11 @@ const A_JESUS_CORO = [["G"], ["D", "A"], ["G"], ["D", "A"], ["G", "D", "A"]];
 const A_JESUS_PRECORO = [["G"], ["D", "A"], ["G", "D", "A"]];
 const A_JESUS_TAG = [["G", "D", "A"]];
 
+// "Creeré" (chart oficial Bethel, Bb → A): coro y puente se repiten en el
+// orden de ejecución. Sólo acordes.
+const CREERE_CORO = [["A", "Asus", "A"], ["F#m", "E", "D", "E"], ["A", "Asus", "A"], ["F#m", "E", "D", "A"]];
+const CREERE_PUENTE = [["A", "E/G#"], ["F#m", "E", "D"], ["A", "E/G#"], ["F#m", "E", "D"], ["A"], ["F#m", "D"], ["A/E", "F#m", "E"], ["D"], ["D"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -260,7 +265,30 @@ export const setlists = [
           { type: "tag", label: "Tag", repeats: 1, measures: A_JESUS_TAG }
         ]
       }),
-      song("creere", "Creeré", "A", { artist: "Bethel Music, Jonathan David Helser, Melissa Helser" }),
+      song("creere", "Creeré", "A", {
+        artist: "Bethel Music, Jonathan David Helser, Melissa Helser",
+        sourceKey: "Bb",
+        tempoBpm: 72,
+        beatsPerMeasure: 4,
+        // Chart oficial de Bethel Music (CCLI 7176941, adaptación al español;
+        // tono original Bb, 72 BPM) aportado por Darío; normalizado a A (−1).
+        // Las multipistas oficiales del zip están en "Tonalidad de A". Sólo acordes.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["D"], ["A", "D"], ["A", "D"], ["A", "D"], ["A", "D"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A", "Asus", "A"], ["Asus", "A"], ["F#m"], ["D", "A", "F#m", "E", "D"]] },
+          { type: "chorus", label: "Coro 1", repeats: 1, measures: CREERE_CORO },
+          { type: "instrumental", label: "Transición 1", repeats: 1, measures: [["A", "D"], ["A", "D"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A"], ["Asus", "A"], ["A", "Asus", "A"], ["F#m"], ["D", "A", "F#m", "E", "D"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: CREERE_CORO },
+          { type: "instrumental", label: "Transición 2", repeats: 1, measures: [["A", "E/G#"], ["F#m", "E"], ["D"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: CREERE_PUENTE },
+          { type: "chorus", label: "Coro 2", repeats: 1, measures: [["A"], ["Asus", "A"], ["F#m", "E"], ["D", "E"], ["A"], ["Asus", "A"], ["F#m", "E"], ["D", "E"]] },
+          { type: "chorus", label: "Coro 1", repeats: 1, measures: CREERE_CORO },
+          { type: "tag", label: "Tag", repeats: 3, measures: [["A"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: CREERE_PUENTE },
+          { type: "chorus", label: "Coro", repeats: 1, measures: CREERE_CORO }
+        ]
+      }),
       song("santo-una-cosa", "Santo una cosa", "A", { artist: "Toma Tu Lugar, Lucas Conslie" }),
       song("al-que-esta-sentado", "Al que está sentado", "A", { artist: "Marco Barrientos, Marcos Brunet" }),
       song("digno-de-alabar", "Digno de alabar", "D", {

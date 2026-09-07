@@ -78,7 +78,7 @@ test("every youtubeVideoId, when present, is a valid 11-char id matching its url
 
 test("confirmed songs have a real artist and sections; links, if any, are http(s)", () => {
   const confirmed = setlists.flatMap((sl) => sl.songs).filter((s) => s.sourceStatus === "confirmed");
-  assert.ok(confirmed.length >= 5, "expected the Dom 13 drafts plus Todo es posible and A Jesús seguiré");
+  assert.ok(confirmed.length >= 6, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré and Creeré");
   for (const s of confirmed) {
     assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: needs real artist`);
     assert.ok(s.sections.length > 0, `${s.id}: needs sections`);
@@ -146,6 +146,44 @@ test("A Jesús seguiré: TWICE chart already in G, stored without transposition,
   assert.equal(song.sections.filter((s) => s.label === "Tag" && s.repeats === 2).length, 2);
   assert.equal(song.sections.filter((s) => s.label === "Pre-coro").length, 4);
   for (const s of song.sections) assert.ok(s.measures.every((m) => m.length > 0));
+});
+
+test("Creeré: official Bethel chart (Bb, 72 BPM) normalized to A via the transposer", () => {
+  const song = setlists[0].songs[2];
+  assert.equal(song.title, "Creeré");
+  assert.equal(song.sourceKey, "Bb");
+  assert.equal(song.assignedKey, "A");
+  assert.equal(song.tempoBpm, 72);
+  assert.equal(song.sourceStatus, "confirmed");
+
+  // Transcripción del chart oficial en su tono original (sólo acordes).
+  const coroBb = [["Bb", "Bbsus", "Bb"], ["Gm", "F", "Eb", "F"], ["Bb", "Bbsus", "Bb"], ["Gm", "F", "Eb", "Bb"]];
+  const puenteBb = [["Bb", "F/A"], ["Gm", "F", "Eb"], ["Bb", "F/A"], ["Gm", "F", "Eb"], ["Bb"], ["Gm", "Eb"], ["Bb/F", "Gm", "F"], ["Eb"], ["Eb"]];
+  const sourceBb = [
+    { label: "Intro", measures: [["Eb"], ["Bb", "Eb"], ["Bb", "Eb"], ["Bb", "Eb"], ["Bb", "Eb"]] },
+    { label: "Verso 1", measures: [["Bb", "Bbsus", "Bb"], ["Bbsus", "Bb"], ["Gm"], ["Eb", "Bb", "Gm", "F", "Eb"]] },
+    { label: "Coro 1", measures: coroBb },
+    { label: "Transición 1", measures: [["Bb", "Eb"], ["Bb", "Eb"]] },
+    { label: "Verso 2", measures: [["Bb"], ["Bbsus", "Bb"], ["Bb", "Bbsus", "Bb"], ["Gm"], ["Eb", "Bb", "Gm", "F", "Eb"]] },
+    { label: "Coro", measures: coroBb },
+    { label: "Transición 2", measures: [["Bb", "F/A"], ["Gm", "F"], ["Eb"]] },
+    { label: "Puente", measures: puenteBb },
+    { label: "Coro 2", measures: [["Bb"], ["Bbsus", "Bb"], ["Gm", "F"], ["Eb", "F"], ["Bb"], ["Bbsus", "Bb"], ["Gm", "F"], ["Eb", "F"]] },
+    { label: "Coro 1", measures: coroBb },
+    { label: "Tag", measures: [["Bb"]] },
+    { label: "Puente", measures: puenteBb },
+    { label: "Coro", measures: coroBb }
+  ];
+
+  const shift = semitoneDistance("Bb", "A");
+  assert.equal(shift, -1);
+  const normalized = transposeSections(sourceBb, shift, "sharp");
+  assert.deepEqual(song.sections.map((s) => s.label), sourceBb.map((s) => s.label));
+  assert.deepEqual(song.sections.map((s) => s.measures), normalized.map((s) => s.measures));
+  assert.equal(song.sections.find((s) => s.label === "Tag").repeats, 3);
+  // Los acordes con bajo del chart llegan como formas abiertas en A.
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.ok(chords.has("E/G#") && chords.has("A/E") && chords.has("Asus"));
 });
 
 test("appearanceKey composes setlist and song ids", () => {
