@@ -34,8 +34,8 @@ versiones ni copiar letras.
 
 ## Digitaciones (worship)
 
-En el Modo Escenario, pasar el mouse, tocar o enfocar un acorde muestra cómo
-tocarlo en guitarra con **formas de worship** (G 320033, Cadd9, Em7 022033,
+En el Modo Escenario, **tocar o hacer clic** sobre un acorde (no al pasar el
+mouse) muestra cómo tocarlo en guitarra con **formas de worship** (G 320033, Cadd9, Em7 022033,
 Bm7 sin cejilla, D/F#, F compacta…), no digitaciones clásicas. Para tonalidades
 no abiertas se sugiere **capo** automáticamente y el diagrama muestra la forma
 que se digita con ese capo. Lo que no tiene digitación dice "no disponible".

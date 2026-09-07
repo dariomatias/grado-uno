@@ -62,9 +62,10 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 - **`pending` gobierna sólo los acordes.** Artista, video y enlaces se
   confirman por separado y pueden existir sin chart; lo que falta dice
   "no disponible". Lo único prohibido es inventar secciones.
-- **Digitaciones orientadas a worship** (2026-09-07): hover, tap o foco sobre
-  un acorde del escenario muestra cómo tocarlo, con formas abiertas y voicings
-  del género, no clásicas. Para tonalidades no abiertas el escenario **sugiere
+- **Digitaciones orientadas a worship** (2026-09-07): **sólo tap/clic** sobre
+  un acorde del escenario muestra cómo tocarlo (Darío: sin hover, para que no
+  salte al mover el puntero en escenario), con formas abiertas y voicings del
+  género, no clásicas. Para tonalidades no abiertas el escenario **sugiere
   capo automáticamente** (la menor cejilla que lleva a C/D/E/G/A) y el popover
   muestra la forma que se digita con ese capo y qué acorde suena. Si se
   transpone el tema, la sugerencia se recalcula.

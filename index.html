@@ -176,7 +176,7 @@
 
     <p id="statusMessage" aria-live="polite" role="status"></p>
 
-    <!-- Popover de digitación: se llena al hacer hover/tap/foco sobre un acorde -->
+    <!-- Popover de digitación: se llena al tocar/clic sobre un acorde (sin hover) -->
     <div id="chordPopover" role="dialog" aria-labelledby="chordPopoverTitle" hidden></div>
 
     <dialog id="lyricsDialog" aria-labelledby="lyricsDialogTitle">
@@ -742,9 +742,7 @@ let dialogTargetKey = null;
 let metronome = null;
 /** Capo sugerido para la tonalidad actual del escenario; los popovers lo usan. */
 let stageCapo = 0;
-let popoverPinned = false;
 let popoverTrigger = null;
-let popoverHideTimer = null;
 
 /* ---- Almacenamiento de letras (defensivo) ---- */
 const lyricsStore = (() => {
@@ -1048,7 +1046,7 @@ function renderSection(section) {
     const m = document.createElement("div");
     m.className = "measure";
     measure.forEach((chord) => {
-      // Cada acorde es un botón: hover, tap o foco muestran cómo digitarlo.
+      // Cada acorde es un botón: tap/clic muestra cómo digitarlo (sin hover).
       const c = document.createElement("button");
       c.type = "button";
       c.className = "chord";
@@ -1499,30 +1497,18 @@ document.addEventListener("fullscreenchange", () => {
   if (btn) btn.textContent = document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa";
 });
 
-/* ---- Popover de digitación (hover / tap / foco sobre un acorde) ---- */
+/* ---- Popover de digitación: sólo por tap/clic (sin hover ni foco) ----
+   Decisión de Darío: en escenario el popover no debe aparecer al mover el
+   puntero. Con teclado, Enter/Espacio sobre el acorde disparan el clic. */
 function attachChordPopover(btn, chord) {
-  btn.addEventListener("mouseenter", () => { if (!popoverPinned) showChordPopover(btn, chord); });
-  btn.addEventListener("mouseleave", () => { if (!popoverPinned) scheduleHidePopover(); });
-  btn.addEventListener("focus", () => showChordPopover(btn, chord));
-  btn.addEventListener("blur", () => { if (!popoverPinned) scheduleHidePopover(); });
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    if (popoverPinned && popoverTrigger === btn) {
-      hideChordPopover();
-    } else {
-      popoverPinned = true; // el tap lo deja fijo hasta tocar afuera o Escape
-      showChordPopover(btn, chord);
-    }
+    if (popoverTrigger === btn) hideChordPopover(); // segundo tap: cierra
+    else showChordPopover(btn, chord);
   });
 }
 
-function scheduleHidePopover() {
-  clearTimeout(popoverHideTimer);
-  popoverHideTimer = setTimeout(hideChordPopover, 150);
-}
-
 function showChordPopover(btn, chord) {
-  clearTimeout(popoverHideTimer);
   if (popoverTrigger && popoverTrigger !== btn) popoverTrigger.setAttribute("aria-expanded", "false");
   popoverTrigger = btn;
   btn.setAttribute("aria-expanded", "true");
@@ -1532,9 +1518,7 @@ function showChordPopover(btn, chord) {
 }
 
 function hideChordPopover() {
-  clearTimeout(popoverHideTimer);
   el.popover.hidden = true;
-  popoverPinned = false;
   if (popoverTrigger) popoverTrigger.setAttribute("aria-expanded", "false");
   popoverTrigger = null;
 }
