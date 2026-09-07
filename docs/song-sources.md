@@ -25,7 +25,7 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 2 | Lavado | B | Elevation Español — confirmada por su video oficial con letras (link de Darío) | ✅ |
 | 3 | Nadie | G | Elevation Worship — *Nadie (No One), Letras Oficiales*; confirmada por el video oficial (link de Darío), coincide con el chart | ✅ |
 | 4 | Quién Más | G | *Quién Más (Live)* — Gateway Worship Español, Miel San Marcos, Waleska Morales | ✅ |
-| 5 | Canta al Señor | G | — | ❌ |
+| 5 | Canta al Señor | G | Ingrid Rosario (*Cante al Señor*) — confirmada por Darío al indicar su chart; resuelve la duda "Cante al señor toda la": es esta | ✅ |
 | 6 | No Hay Otro Nombre | G | Hillsong en Español | ✅ |
 | 7 | El Nombre de Jesús | D | Elevation Español — confirmada por su video oficial con letras (link de Darío) | ✅ |
 | **Vie 18** | | | | |
@@ -45,7 +45,7 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 6 | Vida nueva | A | Bethel Music, Zahriya Zachary | ✅ |
 | 7 | De gracia en gracia | Eb | Hillsong en Español | ✅ |
 
-**Totales:** 21 ✅ · 1 ⏳ · 6 ❌
+**Totales:** 22 ✅ · 1 ⏳ · 5 ❌
 
 Videos del Dom 13 fijados el 2026-09-07 desde la tabla de Darío, verificando
 título y canal de cada uno: Jehová, Lavado, Nadie, No Hay Otro Nombre y El
@@ -116,7 +116,19 @@ el que quiere, así que **se cargó como elección deliberada**.
   lyric oficial https://www.youtube.com/watch?v=ii5bt588N6U · oficial
   https://www.youtube.com/watch?v=niavhjpZJqA
 
-### Canta al Señor — versión sin validar — G — `pending`
+### Canta al Señor — Ingrid Rosario — G — `BORRADOR confirmado`
+- **Identidad resuelta:** es *Cante al Señor* de Ingrid Rosario (título de
+  Cifra Club; el setlist la lista como *Canta al Señor*). Darío indicó el chart
+  el 2026-09-07: https://www.cifraclub.com/ingrid-rosario/cante-al-seor/
+- **Chart:** leído vía web (extracción con modelo chico, por eso `BORRADOR`):
+  **Key A**, sin capo, sin BPM. Acordes A · E · F#m · D · G. Verso ×2 y Coro
+  de 8 líneas.
+- **Normalizado a G (−2)** con el motor: A→G, E→D, F#m→Em, D→C, G→F (el G del
+  chart es el bVII prestado). Todo formas abiertas, capo 0. Test dorado en
+  `tests/content.test.mjs`.
+- `lyricsUrl` = null: el proyecto no enlaza Cifra Club como fuente.
+- **Sin letra**: sólo acordes, compases y repeticiones.
+- **Video:** pendiente de elección de Darío (candidatos abajo).
 - Letra/cifra (spec): https://acordesweb.com/cancion/ingrid-rosario/canta-al-senor
 - Videos candidatos (Ingrid Rosario): lyric https://www.youtube.com/watch?v=FL1dbBVvhzU · en vivo medley https://www.youtube.com/watch?v=0c690UCX0oU · acústica https://www.youtube.com/watch?v=I5UND-9HlKo
 

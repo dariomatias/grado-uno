@@ -78,7 +78,9 @@ test("every youtubeVideoId, when present, is a valid 11-char id matching its url
 
 test("confirmed songs have a real artist and sections; links, if any, are http(s)", () => {
   const confirmed = setlists.flatMap((sl) => sl.songs).filter((s) => s.sourceStatus === "confirmed");
-  assert.ok(confirmed.length >= 9, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré, Creeré, Jehová, Lavado and El Nombre de Jesús");
+  assert.ok(confirmed.length >= 10, "expected all seven Dom 13 songs plus Todo es posible, A Jesús seguiré and Creeré");
+  // El Dom 13 completo tiene chart.
+  for (const s of setlists[1].songs) assert.equal(s.sourceStatus, "confirmed", `${s.id} should have a chart`);
   for (const s of confirmed) {
     assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: needs real artist`);
     assert.ok(s.sections.length > 0, `${s.id}: needs sections`);
@@ -304,6 +306,36 @@ test("El Nombre de Jesús: chart in Db normalized to D via the transposer", () =
   // Seis acordes, todos en D; la única cejilla es Bm.
   const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
   assert.deepEqual([...chords].sort(), ["A", "A/C#", "Bm", "D", "Em", "G"]);
+});
+
+test("Canta al Señor: Ingrid Rosario chart in A normalized to G via the transposer", () => {
+  const song = setlists[1].songs[4];
+  assert.equal(song.title, "Canta al Señor");
+  assert.equal(song.artist, "Ingrid Rosario");
+  assert.equal(song.sourceKey, "A");
+  assert.equal(song.assignedKey, "G");
+  assert.equal(song.tempoBpm, null);
+  assert.equal(song.sourceStatus, "confirmed");
+
+  // Transcripción del chart en su tono original (sólo acordes).
+  const versoA = [["A", "E"], ["F#m", "E", "D"], ["A", "D", "A"], ["G", "D", "E"]];
+  const sourceA = [
+    { label: "Verso 1", measures: versoA },
+    { label: "Verso 2", measures: versoA },
+    { label: "Coro", measures: [
+      ["A", "F#m", "D", "E"], ["A", "F#m", "D", "E"], ["F#m", "D", "A", "E"], ["E", "D", "E"],
+      ["A", "F#m", "D", "E"], ["A", "F#m", "D", "E"], ["F#m", "D", "A", "E"], ["F#m", "D", "A", "E", "A"]
+    ] }
+  ];
+
+  const shift = semitoneDistance("A", "G");
+  assert.equal(shift, -2);
+  const normalized = transposeSections(sourceA, shift, "sharp");
+  assert.deepEqual(song.sections.map((s) => s.label), sourceA.map((s) => s.label));
+  assert.deepEqual(song.sections.map((s) => s.measures), normalized.map((s) => s.measures));
+  // El G del chart original (bVII prestado) es F en G; todo abierto, sin cejillas.
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.deepEqual([...chords].sort(), ["C", "D", "Em", "F", "G"]);
 });
 
 test("appearanceKey composes setlist and song ids", () => {

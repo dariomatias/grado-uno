@@ -5,30 +5,28 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 **Última actualización:** 2026-09-06
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
-**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" — 21 de 28 validadas (17 por la playlist + 4 por videos oficiales que pasó Darío: Digno de alabar, Lavado, Nadie, El Nombre de Jesús).
+**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" — 22 de 28 validadas (17 por la playlist + 4 por videos oficiales que pasó Darío: Digno de alabar, Lavado, Nadie, El Nombre de Jesús; + Canta al Señor por el chart de Ingrid Rosario que indicó). **Dom 13: las 7 con chart.**
 
 ## Lo que Darío me debe (bloquea contenido)
 
 1. **Confirmar la versión de 1 canción** que no cerró con la playlist:
    - *Señor eres fiel* → ¿es *Eres Fiel* de Israel Houghton?
-2. **Versión de las 6 que siguen sin confirmar** (link de YouTube, otra playlist
-   o `canción — artista`): Canta al Señor · Para siempre Cristo · Agnus Dei ·
-   Eres libre · Adiós al ayer · Clamo a Dios.
-   **Ojo con Canta al Señor:** en tu tabla figura como *"Cante al señor toda
-   la"*. El spec decía *Canta al Señor* (Ingrid Rosario), pero *Cante al Señor
-   toda la tierra* es otra canción. ¿Cuál es?
-3. **Revisar musicalmente los 3 charts borrador** del Dom 13 antes de usarlos en
-   vivo: Nadie, Quién Más, No Hay Otro Nombre. Capturados de worshiptogether y
-   normalizados a G con el motor de transposición (la versión de Nadie ya quedó
-   validada por su video oficial).
+2. **Versión de las 5 que siguen sin confirmar** (link de YouTube, otra playlist
+   o `canción — artista`): Para siempre Cristo · Agnus Dei · Eres libre ·
+   Adiós al ayer · Clamo a Dios.
+3. **Revisar musicalmente los 4 charts borrador** del Dom 13 antes de usarlos en
+   vivo: Nadie, Quién Más, No Hay Otro Nombre (worshiptogether) y Canta al
+   Señor (Cifra Club vía web, A→G). Vinieron por extracción web, no por PDF
+   renderizado, así que conviene un vistazo; están normalizados a G con el
+   motor de transposición.
 4. **Videos que faltan:** *Canta al Señor* y las 21 canciones de Vie 4 /
    Vie 18 / Dom 27 salvo *Digno de alabar*. Los 6 del Dom 13 con link ya están
    fijados (el de *Quién Más* es un cover elegido a sabiendas por Darío).
 5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
-   `pending`: la única del Dom 13 sin chart (Canta al Señor) y las 18 restantes
-   de Vie 4 / Vie 18 / Dom 27 (ya tienen chart: Todo es posible, A Jesús
-   seguiré, Creeré, Jehová, Lavado, El Nombre de Jesús).
+   `pending`: las 18 de Vie 4 / Vie 18 / Dom 27 sin chart. El Dom 13 ya está
+   completo; de las otras fechas tienen chart Todo es posible, A Jesús seguiré
+   y Creeré.
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 

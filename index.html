@@ -231,6 +231,10 @@ const LAVADO_PUENTE = [["B"], ["E"], ["G#m"], ["E"]];
 const NOMBRE_JESUS_INSTR1 = [["Em"], ["G"], ["Em"], ["G"], ["Bm"], ["A"], ["Bm"], ["A"]];
 const NOMBRE_JESUS_CORO3 = [["Em", "G"], ["D", "Bm", "A"], ["Em", "G"], ["D", "Bm", "A"]];
 
+// "Canta al Señor" (Ingrid Rosario; chart en A → G, −2). El F es el bVII
+// prestado (G en el chart original).
+const CANTA_VERSO = [["G", "D"], ["Em", "D", "C"], ["G", "C", "G"], ["F", "C", "D"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -406,7 +410,22 @@ export const setlists = [
           { type: "tag", label: "Tag", repeats: 2, measures: [["Em7"], ["C2"]] }
         ]
       }),
-      song("canta-al-senor", "Canta al Señor", "G"),
+      song("canta-al-senor", "Canta al Señor", "G", {
+        artist: "Ingrid Rosario",
+        sourceKey: "A",
+        beatsPerMeasure: 4,
+        // BORRADOR: chart de Cifra Club ("Cante Al Señor", Ingrid Rosario) leído
+        // vía web a pedido de Darío el 2026-09-07; en A, normalizado a G (−2).
+        // Sin BPM en la fuente. Revisar con Darío. Sólo acordes.
+        sections: [
+          { type: "verse", label: "Verso 1", repeats: 1, measures: CANTA_VERSO },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: CANTA_VERSO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [
+            ["G", "Em", "C", "D"], ["G", "Em", "C", "D"], ["Em", "C", "G", "D"], ["D", "C", "D"],
+            ["G", "Em", "C", "D"], ["G", "Em", "C", "D"], ["Em", "C", "G", "D"], ["Em", "C", "G", "D", "G"]
+          ] }
+        ]
+      }),
       song("no-hay-otro-nombre", "No Hay Otro Nombre", "G", {
         artist: "Hillsong en Español",
         sourceKey: "G",
