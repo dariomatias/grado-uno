@@ -38,6 +38,14 @@ test("chord voicing popover is wired", () => {
   assert.match(html, /voicings-module:start/);
 });
 
+test("degree subscripts and manual capo are wired", () => {
+  assert.match(html, /chordToDegree/);
+  assert.match(html, /sub\.deg/);
+  assert.match(html, /setAttribute\("aria-label", "Capo"\)/);
+  assert.match(html, /Capo automático/);
+  assert.match(html, /capoOverrides/);
+});
+
 test("no button is left without an accessible name", () => {
   // Rough source-level check: every <button ...> has text or aria-label.
   const buttons = html.match(/<button\b[^>]*>[\s\S]*?<\/button>/g) ?? [];

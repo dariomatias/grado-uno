@@ -2,8 +2,22 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { initialState, selectSetlist, selectSong, moveSong, setTranspose } =
+const { initialState, selectSetlist, selectSong, moveSong, setTranspose, setCapo } =
   await extractInlineModule(indexHtmlUrl, "navigation-module");
+
+test("setCapo is per-appearance, clamped 0..11, and null restores automatic", () => {
+  let s = initialState();
+  assert.deepEqual(s.capoOverrides, {});
+  s = setCapo(s, "2026-09-13", "lavado", 4);
+  s = setCapo(s, "2026-09-13", "jehova", 99);
+  assert.equal(s.capoOverrides["2026-09-13:lavado"], 4);
+  assert.equal(s.capoOverrides["2026-09-13:jehova"], 11);
+  assert.equal(setCapo(s, "x", "y", -3).capoOverrides["x:y"], 0);
+  const back = setCapo(s, "2026-09-13", "lavado", null);
+  assert.ok(!("2026-09-13:lavado" in back.capoOverrides));
+  assert.equal(back.capoOverrides["2026-09-13:jehova"], 11); // no toca otras apariciones
+  assert.notEqual(back, s); // inmutable
+});
 
 test("initialState shape", () => {
   assert.deepEqual(initialState(), {
@@ -13,6 +27,7 @@ test("initialState shape", () => {
     transpositions: {},
     tempoOverrides: {},
     meterOverrides: {},
+    capoOverrides: {},
     accidentalMode: "sharp",
     metronomeRunning: false
   });

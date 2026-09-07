@@ -50,10 +50,10 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
     UI, acordes y transposición funcionen sin conexión; hoy sólo hay caché del
     navegador. Cuando se haga, reemplaza a `hosting/sw.js` (el SW "kamikaze"
     que purga el SW viejo de Grado Uno que quedó registrado en `/`).
-15. **Capo manual:** el capo del escenario es una sugerencia automática: el más
-    bajo que cae en C/D/E/G/A, salvo que otro capo elimine cejillas (una sola
-    cejilla no lo mueve; dos o más sí — p. ej. Jehová en E sugiere capo 4).
-    Si querés forzar otro capo, agrego un selector.
+15. ~~Capo manual~~ **Hecho (2026-09-08):** selector de capo por canción
+    (Automático / Sin capo / Capo 1–11); con capo la partitura muestra las
+    formas que se digitan. Queda por decidir si además querés un toggle para
+    ver los acordes reales con el capo puesto (hoy están en el popover).
 
 ## Decisiones tomadas (no son pendientes)
 
@@ -69,6 +69,14 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   grabaciones en inglés de Bethel, *En el nombre de Jesús* es *En Tu Nombre*
   de Ingrid Rosario, y *Digno de alabar* es *Worthy of It All* de CeCe Winans
   (2026-09-06).
+- **Grado como subíndice** (2026-09-08): cada acorde del escenario lleva su
+  grado en la escala del tono **real** en números estilo Nashville (`G₁ D₅ Em₆
+  C₄`), con alteración en los prestados (`b7`, `#4`) y `1/3` en los acordes con
+  bajo. Es invariante al capo y a la transposición.
+- **Capo manual y lectura por formas** (2026-09-08): el capo se elige por
+  aparición (o se deja en automático). Con capo, la partitura muestra las
+  **formas que se digitan** (en B con capo 4 se lee G, C, D, Em); el popover
+  dice "digitás X, suena Y, grado N".
 - **`pending` gobierna sólo los acordes.** Artista, video y enlaces se
   confirman por separado y pueden existir sin chart; lo que falta dice
   "no disponible". Lo único prohibido es inventar secciones.

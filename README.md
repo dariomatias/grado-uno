@@ -62,6 +62,11 @@ Bm7 sin cejilla, D/F#, F compacta…), no digitaciones clásicas. Para tonalidad
 no abiertas se sugiere **capo** automáticamente y el diagrama muestra la forma
 que se digita con ese capo. Lo que no tiene digitación dice "no disponible".
 
+Cada acorde lleva como **subíndice su grado** en la escala del tono real
+(`G₁ D₅ Em₆ C₄`; prestados con alteración, `b7`; acordes con bajo, `1/3`). El
+**capo se puede fijar a mano** por canción; con capo puesto la partitura muestra
+las **formas que se digitan** y el grado no cambia.
+
 ## Letras locales
 
 - Se agregan por pegado o archivo `.txt` (UTF-8, máx. 200 KiB) y se renderizan

@@ -2,8 +2,48 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { transposeChord, semitoneDistance, parseChord, transposeSections, degreeToChord, degreesToSections } =
+const { transposeChord, semitoneDistance, parseChord, transposeSections, degreeToChord, degreesToSections, chordToDegree } =
   await extractInlineModule(indexHtmlUrl, "transposer-module");
+
+test("chordToDegree gives the Nashville degree of a chord in a key (quality excluded)", () => {
+  assert.equal(chordToDegree("G", "G"), "1");
+  assert.equal(chordToDegree("D", "G"), "5");
+  assert.equal(chordToDegree("Em", "G"), "6");
+  assert.equal(chordToDegree("C", "G"), "4");
+  assert.equal(chordToDegree("Am7", "G"), "2");
+  assert.equal(chordToDegree("Bm", "D"), "6");
+  assert.equal(chordToDegree("C#m", "E"), "6");
+  // Prestados / no diatónicos con alteración.
+  assert.equal(chordToDegree("F", "G"), "b7");
+  assert.equal(chordToDegree("Eb", "C"), "b3");
+  assert.equal(chordToDegree("F#", "C"), "#4");
+  assert.equal(chordToDegree("Ab", "C"), "b6");
+  // Acordes con bajo: grado del acorde / grado del bajo.
+  assert.equal(chordToDegree("D/F#", "D"), "1/3");
+  assert.equal(chordToDegree("A/C#", "D"), "5/7");
+  assert.equal(chordToDegree("B/D#", "B"), "1/3");
+  // Enarmónicos y transposición: el grado no cambia con la escritura.
+  assert.equal(chordToDegree("Db", "Db"), "1");
+  assert.equal(chordToDegree("C#", "Db"), "1");
+  // No acorde → vacío.
+  assert.equal(chordToDegree("N.C.", "G"), "");
+});
+
+test("chordToDegree is the inverse of degreeToChord for diatonic degrees", () => {
+  for (const key of ["C", "G", "D", "A", "E", "B", "F", "Bb", "Eb"]) {
+    for (const d of ["1", "2m", "3m", "4", "5", "6m", "1/3", "4/5"]) {
+      const chord = degreeToChord(d, key);
+      assert.equal(chordToDegree(chord, key), d.replace(/m/g, ""), `${d} in ${key} → ${chord}`);
+    }
+  }
+});
+
+test("degree is invariant under capo (shape vs sounding) and transposition", () => {
+  // En B con capo 4 se digita G, pero el grado del acorde real sigue siendo 1.
+  assert.equal(chordToDegree("B", "B"), chordToDegree(transposeChord("B", 5), transposeChord("B", 5)));
+  assert.equal(chordToDegree("G#m", "B"), "6");
+  assert.equal(chordToDegree(transposeChord("G#m", -4), transposeChord("B", -4)), "6");
+});
 
 test("degreeToChord converts Nashville numbers into the key's natural spelling", () => {
   assert.equal(degreeToChord("1", "B"), "B");

@@ -123,6 +123,11 @@
         border-color: var(--gold); background: var(--panel-2);
       }
       .capo-hint { color: var(--gold-strong); }
+      /* Grado de la escala como subíndice de cada acorde */
+      .chord sub.deg {
+        font-size: .55em; line-height: 1; margin-left: 2px;
+        color: var(--muted); font-weight: 600; vertical-align: sub;
+      }
       #chordPopover {
         position: absolute; z-index: 60; width: 240px;
         background: var(--panel); border: 1px solid var(--gold); border-radius: 12px;
@@ -636,6 +641,19 @@ export function degreesToSections(sections, keyRoot) {
     measures: section.measures.map((measure) => measure.map((t) => degreeToChord(t, keyRoot)))
   }));
 }
+
+// Inversa: acorde → grado en la tonalidad (números, estilo Nashville). Los no
+// diatónicos llevan alteración (b3, #4, b7); los acordes con bajo van "1/3".
+// La calidad (m, 7…) no se incluye: ya está en el símbolo del acorde.
+const DEGREE_NAMES = ["1", "b2", "2", "b3", "3", "4", "#4", "5", "b6", "6", "b7", "7"];
+
+export function chordToDegree(chord, keyRoot) {
+  const parsed = parseChord(chord);
+  const keyPc = keyToPitchClass(keyRoot);
+  if (!parsed || keyPc === null) return "";
+  const deg = (note) => DEGREE_NAMES[mod12(keyToPitchClass(note) - keyPc)];
+  return deg(parsed.root) + (parsed.bass ? `/${deg(parsed.bass)}` : "");
+}
 /* transposer-module:end */
 
 /* navigation-module:start */
@@ -647,6 +665,7 @@ export function initialState() {
     transpositions: {},
     tempoOverrides: {},
     meterOverrides: {},
+    capoOverrides: {},
     accidentalMode: "sharp",
     metronomeRunning: false
   };
@@ -688,6 +707,15 @@ export function setTranspose(state, setlistId, songId, semitones) {
       [key]: clamp(Math.trunc(semitones), -11, 11)
     }
   };
+}
+
+/** Capo manual por aparición (0..11). `null` vuelve al capo automático. */
+export function setCapo(state, setlistId, songId, capo) {
+  const key = `${setlistId}:${songId}`;
+  const capoOverrides = { ...(state.capoOverrides ?? {}) };
+  if (capo === null || capo === undefined) delete capoOverrides[key];
+  else capoOverrides[key] = clamp(Math.trunc(capo), 0, 11);
+  return { ...state, capoOverrides };
 }
 /* navigation-module:end */
 
@@ -981,8 +1009,10 @@ let scrollBySetlist = {};
 let lastOpenerButton = null;
 let dialogTargetKey = null;
 let metronome = null;
-/** Capo sugerido para la tonalidad actual del escenario; los popovers lo usan. */
+/** Capo vigente en el escenario (manual o sugerido) y tono real que suena;
+ *  la partitura muestra las formas para ese capo y los popovers lo usan. */
 let stageCapo = 0;
+let stageKeyRoot = "C";
 let popoverTrigger = null;
 
 /* ---- Almacenamiento de letras (defensivo) ---- */
@@ -1232,19 +1262,53 @@ function renderStage() {
   );
   keyline.appendChild(controls);
 
-  // Sugerencia de capo (práctica de worship: capo en vez de cejillas), calculada
-  // sobre los acordes que realmente suenan con la transposición actual.
+  // Capo: sugerencia automática (práctica de worship: capo en vez de cejillas)
+  // sobre los acordes que suenan con la transposición actual, o el capo fijado
+  // a mano para esta aparición. Con capo, la partitura muestra las FORMAS que se
+  // digitan; el grado (subíndice) es siempre el del tono real, invariante al capo.
   const transposed = song.sections.length
     ? transposeSections(song.sections, semis, state.accidentalMode)
     : [];
   const soundingChords = [...new Set(transposed.flatMap((s) => s.measures.flat()))];
-  const capoInfo = suggestCapo(currentKey(song), transposeChord, soundingChords);
-  stageCapo = capoInfo.capo;
+  stageKeyRoot = currentKey(song);
+  const suggestion = suggestCapo(stageKeyRoot, transposeChord, soundingChords);
+  const override = state.capoOverrides?.[keyFor(song)];
+  const manualCapo = override !== undefined && override !== null;
+  stageCapo = manualCapo ? override : suggestion.capo;
+  const shapeRoot = shapeForCapo(stageKeyRoot, stageCapo, transposeChord);
+
+  const capoSelect = document.createElement("select");
+  capoSelect.setAttribute("aria-label", "Capo");
+  const autoOpt = document.createElement("option");
+  autoOpt.value = "auto";
+  autoOpt.textContent = suggestion.capo
+    ? `Capo automático (${suggestion.capo}, en ${suggestion.shapeRoot})`
+    : "Capo automático (sin capo)";
+  capoSelect.appendChild(autoOpt);
+  for (let c = 0; c <= 11; c++) {
+    const opt = document.createElement("option");
+    opt.value = String(c);
+    opt.textContent = c === 0 ? "Sin capo" : `Capo ${c} · digitás en ${shapeForCapo(stageKeyRoot, c, transposeChord)}`;
+    capoSelect.appendChild(opt);
+  }
+  capoSelect.value = manualCapo ? String(override) : "auto";
+  capoSelect.addEventListener("change", () => {
+    const v = capoSelect.value;
+    state = setCapo(state, activeSetlist().id, song.id, v === "auto" ? null : Number(v));
+    renderStage();
+    announce(v === "auto" ? "Capo automático" : Number(v) ? `Capo ${v}: la partitura muestra las formas` : "Sin capo");
+  });
+  keyline.appendChild(capoSelect);
+
   const capoHint = document.createElement("span");
   capoHint.className = "badge capo-hint";
-  capoHint.textContent = capoInfo.capo
-    ? `Capo sugerido: ${capoInfo.capo} · tocás en ${capoInfo.shapeRoot}${capoInfo.barres === 0 ? " · sin cejillas" : ""}`
-    : "Tonalidad abierta · sin capo";
+  if (manualCapo) {
+    capoHint.textContent = stageCapo ? `Capo ${stageCapo} · digitás en ${shapeRoot} · suena en ${stageKeyRoot}` : "Sin capo";
+  } else {
+    capoHint.textContent = suggestion.capo
+      ? `Capo sugerido: ${suggestion.capo} · digitás en ${suggestion.shapeRoot}${suggestion.barres === 0 ? " · sin cejillas" : ""}`
+      : "Tonalidad abierta · sin capo";
+  }
   keyline.appendChild(capoHint);
   el.stageView.appendChild(keyline);
 
@@ -1257,7 +1321,10 @@ function renderStage() {
   } else {
     const ol = document.createElement("ol");
     ol.className = "sections";
-    transposed.forEach((section) => ol.appendChild(renderSection(section)));
+    // Con capo se leen las formas; sin capo, los acordes reales. El popover y
+    // el grado siempre parten del acorde real (sounding).
+    const displayed = stageCapo ? transposeSections(transposed, -stageCapo, "sharp") : transposed;
+    displayed.forEach((section, i) => ol.appendChild(renderSection(section, transposed[i], stageKeyRoot)));
     el.stageView.appendChild(ol);
   }
 
@@ -1276,7 +1343,12 @@ function renderStage() {
   el.stageView.appendChild(nav);
 }
 
-function renderSection(section) {
+/**
+ * @param section  sección a MOSTRAR (formas, si hay capo)
+ * @param sounding misma sección con los acordes reales (para grado y popover)
+ * @param keyRoot  tono real vigente, para el grado
+ */
+function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
   const li = document.createElement("li");
   li.className = "section";
   const label = document.createElement("div");
@@ -1287,19 +1359,29 @@ function renderSection(section) {
 
   const measures = document.createElement("div");
   measures.className = "measures";
-  section.measures.forEach((measure) => {
+  section.measures.forEach((measure, mi) => {
     const m = document.createElement("div");
     m.className = "measure";
-    measure.forEach((chord) => {
+    measure.forEach((shape, ci) => {
+      const real = sounding.measures[mi]?.[ci] ?? shape;
+      const degree = chordToDegree(real, keyRoot);
       // Cada acorde es un botón: tap/clic muestra cómo digitarlo (sin hover).
+      // Texto = forma a digitar; subíndice = grado del acorde real en el tono.
       const c = document.createElement("button");
       c.type = "button";
       c.className = "chord";
-      c.textContent = chord;
-      c.setAttribute("aria-label", `Acorde ${chord}: ver cómo tocarlo`);
+      c.textContent = shape;
+      if (degree) {
+        const sub = document.createElement("sub");
+        sub.className = "deg";
+        sub.textContent = degree;
+        c.appendChild(sub);
+      }
+      const suena = shape !== real ? `, suena ${real}` : "";
+      c.setAttribute("aria-label", `Acorde ${shape}${degree ? `, grado ${degree}` : ""}${suena}: ver cómo tocarlo`);
       c.setAttribute("aria-haspopup", "dialog");
       c.setAttribute("aria-expanded", "false");
-      attachChordPopover(c, chord);
+      attachChordPopover(c, real);
       m.appendChild(c);
     });
     measures.appendChild(m);
@@ -1804,10 +1886,12 @@ function buildChordPopoverContent(sounding) {
   }
 
   const shape = shapeForCapo(sounding, stageCapo, transposeChord);
+  const degree = chordToDegree(sounding, stageKeyRoot);
+  const grado = degree ? ` · grado ${degree}` : "";
   title.textContent = shape;
   cap.textContent = stageCapo
-    ? `Con capo ${stageCapo}: digitás ${shape}, suena ${sounding}.`
-    : "Sin capo.";
+    ? `Con capo ${stageCapo}: digitás ${shape}, suena ${sounding}${grado}.`
+    : `Sin capo${grado}.`;
 
   const v = findVoicing(shape);
   if (!v) {
