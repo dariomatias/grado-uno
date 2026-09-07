@@ -31,6 +31,13 @@ test("stage controls are present", () => {
   assert.match(html, /Metrónomo/);
 });
 
+test("chord voicing popover is wired", () => {
+  assert.match(html, /id="chordPopover"[^>]*role="dialog"/);
+  assert.match(html, /Capo sugerido/);
+  assert.match(html, /Digitación no disponible/);
+  assert.match(html, /voicings-module:start/);
+});
+
 test("no button is left without an accessible name", () => {
   // Rough source-level check: every <button ...> has text or aria-label.
   const buttons = html.match(/<button\b[^>]*>[\s\S]*?<\/button>/g) ?? [];

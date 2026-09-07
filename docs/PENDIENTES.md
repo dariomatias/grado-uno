@@ -36,6 +36,14 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 10. **Toggle notación americana/latina** en Grado Uno (estado existe, sin UI).
 11. **Tap-target en 320 px** de Grado Uno (~40 px de ancho por tarjeta).
 12. **`npm run check:links`** cobra sentido cuando haya URLs confirmadas.
+13. **Digitaciones:** la tabla trae ~55 voicings de worship (formas abiertas,
+    sus/add9, slash habituales, cejillas de B/Bm/Bb/F#m/C#m/G#m). Lo que no
+    esté dice "Digitación no disponible": pasame los acordes que veas así y
+    los agrego; también si preferís otra digitación para alguno (p. ej. G
+    320003 en vez de 320033).
+14. **Capo manual:** hoy el capo del escenario es sólo una sugerencia automática
+    por tonalidad (la menor que cae en C/D/E/G/A). Si querés elegir otro capo
+    (p. ej. F con capo 3 en D en vez de capo 1 en E), agrego un selector.
 
 ## Decisiones tomadas (no son pendientes)
 
@@ -54,3 +62,9 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 - **`pending` gobierna sólo los acordes.** Artista, video y enlaces se
   confirman por separado y pueden existir sin chart; lo que falta dice
   "no disponible". Lo único prohibido es inventar secciones.
+- **Digitaciones orientadas a worship** (2026-09-07): hover, tap o foco sobre
+  un acorde del escenario muestra cómo tocarlo, con formas abiertas y voicings
+  del género, no clásicas. Para tonalidades no abiertas el escenario **sugiere
+  capo automáticamente** (la menor cejilla que lleva a C/D/E/G/A) y el popover
+  muestra la forma que se digita con ese capo y qué acorde suena. Si se
+  transpone el tema, la sugerencia se recalcula.

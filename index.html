@@ -113,7 +113,25 @@
         border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
         font-size: clamp(1.1rem, 3.5vw, 1.6rem); font-weight: 700;
       }
-      .chord { color: var(--gold-strong); }
+      /* Acordes como botones: hover o tap muestran la digitación */
+      .chord {
+        background: none; border: 1px solid transparent; border-radius: 8px;
+        padding: 6px 10px; min-height: 44px; min-width: 44px;
+        color: var(--gold-strong); font: inherit; font-weight: 700; cursor: pointer;
+      }
+      .chord:hover, .chord:focus-visible, .chord[aria-expanded="true"] {
+        border-color: var(--gold); background: var(--panel-2);
+      }
+      .capo-hint { color: var(--gold-strong); }
+      #chordPopover {
+        position: absolute; z-index: 60; width: 240px;
+        background: var(--panel); border: 1px solid var(--gold); border-radius: 12px;
+        padding: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, .55);
+      }
+      #chordPopover h4 { margin: 0 0 2px; font-size: 1.2rem; color: var(--gold-strong); }
+      #chordPopover .cap { color: var(--muted); font-size: .85rem; margin: 0 0 8px; }
+      #chordPopover svg { display: block; width: 100%; height: auto; }
+      #chordPopover .frets { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .85rem; margin: 6px 0 0; }
       .panel {
         background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
         padding: 12px; margin: 12px 0;
@@ -157,6 +175,9 @@
     </main>
 
     <p id="statusMessage" aria-live="polite" role="status"></p>
+
+    <!-- Popover de digitación: se llena al hacer hover/tap/foco sobre un acorde -->
+    <div id="chordPopover" role="dialog" aria-labelledby="chordPopoverTitle" hidden></div>
 
     <dialog id="lyricsDialog" aria-labelledby="lyricsDialogTitle">
       <h3 id="lyricsDialogTitle">Letra de la canción</h3>
@@ -543,6 +564,155 @@ export function advanceBeat(currentBeat, beatsPerMeasure) {
 }
 /* metronome-module:end */
 
+/* voicings-module:start */
+// Digitaciones de guitarra orientadas a worship (formas abiertas y voicings
+// habituales del género), no clásicas. Las formas viven en tonalidades
+// "abiertas"; para las demás se sugiere capo, que es lo que se hace en worship.
+// `transpose` se inyecta (es transposeChord) para mantener el bloque puro y
+// probable de forma aislada.
+export const OPEN_KEYS = ["C", "D", "E", "G", "A"];
+export const MAX_SUGGESTED_CAPO = 7;
+
+const SUFFIX_ALIASES = {
+  "2": "add9", "sus": "sus4", "M7": "maj7", "Maj7": "maj7", "maj": "",
+  "min": "m", "-": "m", "-7": "m7"
+};
+const CHORD_RE = /^([A-G](?:#|b)?)([^/]*)(?:\/([A-G](?:#|b)?))?$/;
+const X = "x";
+const V = (frets, fingers, extra = {}) => ({ frets, fingers, ...extra });
+
+// frets/fingers: 6 valores, cuerda grave (E) → aguda (e). "x" = muteada, 0 = al aire.
+export const WORSHIP_VOICINGS = {
+  // C
+  "C":     V([X, 3, 2, 0, 1, 0], [0, 3, 2, 0, 1, 0]),
+  "Cadd9": V([X, 3, 2, 0, 3, 3], [0, 2, 1, 0, 3, 4], { note: "Cadd9 (C2): la forma habitual en worship" }),
+  "Csus2": V([X, 3, 0, 0, 1, 3], [0, 2, 0, 0, 1, 3]),
+  "Cmaj7": V([X, 3, 2, 0, 0, 0], [0, 3, 2, 0, 0, 0]),
+  "C/E":   V([0, 3, 2, 0, 1, 0], [0, 3, 2, 0, 1, 0]),
+  "C/G":   V([3, X, 2, 0, 1, 0], [3, 0, 2, 0, 1, 0]),
+  // D
+  "D":     V([X, X, 0, 2, 3, 2], [0, 0, 0, 1, 3, 2]),
+  "Dsus2": V([X, X, 0, 2, 3, 0], [0, 0, 0, 1, 3, 0]),
+  "Dadd9": V([X, X, 0, 2, 3, 0], [0, 0, 0, 1, 3, 0], { note: "D2 (sin 3ª): la forma habitual en worship" }),
+  "Dsus4": V([X, X, 0, 2, 3, 3], [0, 0, 0, 1, 3, 4]),
+  "Dmaj7": V([X, X, 0, 2, 2, 2], [0, 0, 0, 1, 1, 1]),
+  "D7":    V([X, X, 0, 2, 1, 2], [0, 0, 0, 2, 1, 3]),
+  "Dm":    V([X, X, 0, 2, 3, 1], [0, 0, 0, 2, 3, 1]),
+  "Dm7":   V([X, X, 0, 2, 1, 1], [0, 0, 0, 2, 1, 1]),
+  "D/F#":  V([2, 0, 0, 2, 3, 2], [1, 0, 0, 2, 4, 3]),
+  "D/A":   V([X, 0, 0, 2, 3, 2], [0, 0, 0, 1, 3, 2]),
+  "D/G":   V([3, X, 0, 2, 3, 2], [2, 0, 0, 1, 4, 3]),
+  "D/C":   V([X, 3, 0, 2, 3, 2], [0, 2, 0, 1, 4, 3]),
+  // E
+  "E":     V([0, 2, 2, 1, 0, 0], [0, 2, 3, 1, 0, 0]),
+  "Esus4": V([0, 2, 2, 2, 0, 0], [0, 2, 3, 4, 0, 0]),
+  "Eadd9": V([0, 2, 2, 1, 0, 2], [0, 2, 3, 1, 0, 4]),
+  "Emaj7": V([0, 2, 1, 1, 0, 0], [0, 3, 1, 2, 0, 0]),
+  "E7":    V([0, 2, 0, 1, 0, 0], [0, 2, 0, 1, 0, 0]),
+  "Em":    V([0, 2, 2, 0, 0, 0], [0, 2, 3, 0, 0, 0]),
+  "Em7":   V([0, 2, 2, 0, 3, 3], [0, 1, 2, 0, 3, 4], { note: "Em7 de worship, con las agudas en el 3er traste" }),
+  "E/G#":  V([4, X, 2, 1, 0, 0], [4, 0, 2, 1, 0, 0]),
+  // F
+  "F":     V([X, X, 3, 2, 1, 1], [0, 0, 3, 2, 1, 1], { note: "F compacta, la más usada en worship (sin cejilla)" }),
+  "Fmaj7": V([X, X, 3, 2, 1, 0], [0, 0, 3, 2, 1, 0]),
+  "F/C":   V([X, 3, 3, 2, 1, 1], [0, 3, 4, 2, 1, 1]),
+  "Fm":    V([1, 3, 3, 1, 1, 1], [1, 3, 4, 1, 1, 1], { barre: { fret: 1, from: 0, to: 5 } }),
+  // G
+  "G":     V([3, 2, 0, 0, 3, 3], [2, 1, 0, 0, 3, 4], { note: "\"G de worship\", con la 3ª cuerda al aire" }),
+  "Gsus4": V([3, 3, 0, 0, 1, 3], [2, 3, 0, 0, 1, 4]),
+  "Gadd9": V([3, X, 0, 2, 0, 3], [2, 0, 0, 1, 0, 3]),
+  "Gmaj7": V([3, 2, 0, 0, 0, 2], [3, 2, 0, 0, 0, 1]),
+  "G7":    V([3, 2, 0, 0, 0, 1], [3, 2, 0, 0, 0, 1]),
+  "Gm":    V([3, 5, 5, 3, 3, 3], [1, 3, 4, 1, 1, 1], { barre: { fret: 3, from: 0, to: 5 } }),
+  "G/B":   V([X, 2, 0, 0, 3, 3], [0, 1, 0, 0, 3, 4]),
+  "G/D":   V([X, X, 0, 0, 0, 3], [0, 0, 0, 0, 0, 3]),
+  // A
+  "A":     V([X, 0, 2, 2, 2, 0], [0, 0, 1, 2, 3, 0]),
+  "Asus2": V([X, 0, 2, 2, 0, 0], [0, 0, 1, 2, 0, 0]),
+  "Aadd9": V([X, 0, 2, 2, 0, 0], [0, 0, 1, 2, 0, 0], { note: "A2: la forma habitual en worship" }),
+  "Asus4": V([X, 0, 2, 2, 3, 0], [0, 0, 1, 2, 4, 0]),
+  "Amaj7": V([X, 0, 2, 1, 2, 0], [0, 0, 2, 1, 3, 0]),
+  "A7":    V([X, 0, 2, 0, 2, 0], [0, 0, 2, 0, 3, 0]),
+  "Am":    V([X, 0, 2, 2, 1, 0], [0, 0, 2, 3, 1, 0]),
+  "Am7":   V([X, 0, 2, 0, 1, 0], [0, 0, 2, 0, 1, 0]),
+  "A/C#":  V([X, 4, 2, 2, 2, 0], [0, 3, 1, 1, 1, 0]),
+  "A/E":   V([0, 0, 2, 2, 2, 0], [0, 0, 1, 2, 3, 0]),
+  // B
+  "B":     V([X, 2, 4, 4, 4, 2], [0, 1, 2, 3, 4, 1], { barre: { fret: 2, from: 1, to: 5 } }),
+  "Bm":    V([X, 2, 4, 4, 3, 2], [0, 1, 3, 4, 2, 1], { barre: { fret: 2, from: 1, to: 5 } }),
+  "Bm7":   V([X, 2, 0, 2, 0, 2], [0, 1, 0, 2, 0, 3], { note: "Bm7 abierta: evita la cejilla" }),
+  "B7":    V([X, 2, 1, 2, 0, 2], [0, 2, 1, 3, 0, 4]),
+  "Bb":    V([X, 1, 3, 3, 3, 1], [0, 1, 2, 3, 4, 1], { barre: { fret: 1, from: 1, to: 5 } }),
+  "Bbm":   V([X, 1, 3, 3, 2, 1], [0, 1, 3, 4, 2, 1], { barre: { fret: 1, from: 1, to: 5 } }),
+  // Sostenidos frecuentes dentro de tonalidades abiertas
+  "C#m":   V([X, 4, 6, 6, 5, 4], [0, 1, 3, 4, 2, 1], { barre: { fret: 4, from: 1, to: 5 } }),
+  "C#m7":  V([X, 4, 2, 1, 0, 0], [0, 4, 2, 1, 0, 0], { note: "C#m7 abierta, muy usada en E" }),
+  "F#m":   V([2, 4, 4, 2, 2, 2], [1, 3, 4, 1, 1, 1], { barre: { fret: 2, from: 0, to: 5 } }),
+  "F#m7":  V([2, 4, 2, 2, 2, 2], [1, 3, 1, 1, 1, 1], { barre: { fret: 2, from: 0, to: 5 } }),
+  "G#m":   V([4, 6, 6, 4, 4, 4], [1, 3, 4, 1, 1, 1], { barre: { fret: 4, from: 0, to: 5 } }),
+  "G#m7":  V([4, 6, 4, 4, 4, 4], [1, 3, 1, 1, 1, 1], { barre: { fret: 4, from: 0, to: 5 } })
+};
+
+export function normalizeChordSymbol(symbol) {
+  const m = CHORD_RE.exec(String(symbol ?? "").trim());
+  if (!m) return null;
+  const [, root, rawSuffix = "", bass] = m;
+  const suffix = rawSuffix in SUFFIX_ALIASES ? SUFFIX_ALIASES[rawSuffix] : rawSuffix;
+  return { root, suffix, bass: bass ?? null, symbol: root + suffix + (bass ? `/${bass}` : "") };
+}
+
+/** Voicing para un símbolo (con alias); si es acorde con bajo y no hay forma
+ *  específica, cae a la forma base y lo aclara. null si no hay digitación. */
+export function findVoicing(symbol) {
+  const n = normalizeChordSymbol(symbol);
+  if (!n) return null;
+  if (WORSHIP_VOICINGS[n.symbol]) return { symbol: n.symbol, exact: true, ...WORSHIP_VOICINGS[n.symbol] };
+  if (n.bass) {
+    const base = n.root + n.suffix;
+    if (WORSHIP_VOICINGS[base]) {
+      return { symbol: base, exact: false, ...WORSHIP_VOICINGS[base], note: `Forma de ${base}; el bajo ${n.bass} queda a criterio del bajista/segunda guitarra` };
+    }
+  }
+  return null;
+}
+
+/** Menor capo (0..7) que lleva la tonalidad a una abierta; si ninguna, 0. */
+export function suggestCapo(keyRoot, transpose) {
+  for (let capo = 0; capo <= MAX_SUGGESTED_CAPO; capo++) {
+    const shapeRoot = transpose(keyRoot, -capo, "sharp");
+    if (OPEN_KEYS.includes(shapeRoot)) return { capo, shapeRoot };
+  }
+  return { capo: 0, shapeRoot: keyRoot };
+}
+
+/** Forma que se digita para un acorde sonante con un capo dado. */
+export function shapeForCapo(symbol, capo, transpose) {
+  return capo ? transpose(symbol, -capo, "sharp") : symbol;
+}
+
+/** Errores de integridad de la tabla (para pruebas). */
+export function voicingsIntegrity(table = WORSHIP_VOICINGS) {
+  const errors = [];
+  for (const [sym, v] of Object.entries(table)) {
+    if (!Array.isArray(v.frets) || v.frets.length !== 6) errors.push(`${sym}: frets must have 6 entries`);
+    if (!Array.isArray(v.fingers) || v.fingers.length !== 6) errors.push(`${sym}: fingers must have 6 entries`);
+    v.frets?.forEach((f, i) => {
+      if (!(f === "x" || (Number.isInteger(f) && f >= 0 && f <= 15))) errors.push(`${sym}: bad fret at ${i}`);
+      const fg = v.fingers?.[i];
+      if (!(Number.isInteger(fg) && fg >= 0 && fg <= 4)) errors.push(`${sym}: bad finger at ${i}`);
+      if ((f === "x" || f === 0) && fg !== 0) errors.push(`${sym}: finger on open/muted string ${i}`);
+    });
+    if (v.barre) {
+      const { fret, from, to } = v.barre;
+      if (!(from >= 0 && to <= 5 && from < to)) errors.push(`${sym}: bad barre range`);
+      if (!v.frets.slice(from, to + 1).some((f) => f === fret)) errors.push(`${sym}: barre fret not in frets`);
+    }
+    if (!normalizeChordSymbol(sym) || normalizeChordSymbol(sym).symbol !== sym) errors.push(`${sym}: key is not canonical`);
+  }
+  return errors;
+}
+/* voicings-module:end */
+
 /* ============================================================
    Capa DOM (impura): consume los módulos puros de arriba.
    ============================================================ */
@@ -561,7 +731,8 @@ const el = {
   dialogError: document.getElementById("lyricsDialogError"),
   lyricsFile: document.getElementById("lyricsFile"),
   lyricsSave: document.getElementById("lyricsSave"),
-  lyricsCancel: document.getElementById("lyricsCancel")
+  lyricsCancel: document.getElementById("lyricsCancel"),
+  popover: document.getElementById("chordPopover")
 };
 
 let state = initialState();
@@ -569,6 +740,11 @@ let scrollBySetlist = {};
 let lastOpenerButton = null;
 let dialogTargetKey = null;
 let metronome = null;
+/** Capo sugerido para la tonalidad actual del escenario; los popovers lo usan. */
+let stageCapo = 0;
+let popoverPinned = false;
+let popoverTrigger = null;
+let popoverHideTimer = null;
 
 /* ---- Almacenamiento de letras (defensivo) ---- */
 const lyricsStore = (() => {
@@ -763,6 +939,7 @@ function openStage(index, opener) {
 function backToSetlist() {
   stopMetronome();
   destroyVideo();
+  hideChordPopover();
   state = { ...state, view: "setlist" };
   el.stageView.hidden = true;
   el.setlistView.hidden = false;
@@ -776,6 +953,7 @@ function renderStage() {
   const song = selectedSong();
   const sl = activeSetlist();
   const semis = transposeFor(song);
+  hideChordPopover();
   el.stageView.innerHTML = "";
 
   const toolbar = document.createElement("div");
@@ -814,6 +992,16 @@ function renderStage() {
     button("Restablecer tono", () => applyTranspose(song, 0))
   );
   keyline.appendChild(controls);
+
+  // Sugerencia de capo (práctica de worship: capo en vez de cejillas).
+  const capoInfo = suggestCapo(currentKey(song), transposeChord);
+  stageCapo = capoInfo.capo;
+  const capoHint = document.createElement("span");
+  capoHint.className = "badge capo-hint";
+  capoHint.textContent = capoInfo.capo
+    ? `Capo sugerido: ${capoInfo.capo} · tocás en ${capoInfo.shapeRoot}`
+    : "Tonalidad abierta · sin capo";
+  keyline.appendChild(capoHint);
   el.stageView.appendChild(keyline);
 
   // Sections
@@ -860,9 +1048,15 @@ function renderSection(section) {
     const m = document.createElement("div");
     m.className = "measure";
     measure.forEach((chord) => {
-      const c = document.createElement("span");
+      // Cada acorde es un botón: hover, tap o foco muestran cómo digitarlo.
+      const c = document.createElement("button");
+      c.type = "button";
       c.className = "chord";
       c.textContent = chord;
+      c.setAttribute("aria-label", `Acorde ${chord}: ver cómo tocarlo`);
+      c.setAttribute("aria-haspopup", "dialog");
+      c.setAttribute("aria-expanded", "false");
+      attachChordPopover(c, chord);
       m.appendChild(c);
     });
     measures.appendChild(m);
@@ -1304,6 +1498,162 @@ document.addEventListener("fullscreenchange", () => {
   const btn = document.getElementById("fullscreenBtn");
   if (btn) btn.textContent = document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa";
 });
+
+/* ---- Popover de digitación (hover / tap / foco sobre un acorde) ---- */
+function attachChordPopover(btn, chord) {
+  btn.addEventListener("mouseenter", () => { if (!popoverPinned) showChordPopover(btn, chord); });
+  btn.addEventListener("mouseleave", () => { if (!popoverPinned) scheduleHidePopover(); });
+  btn.addEventListener("focus", () => showChordPopover(btn, chord));
+  btn.addEventListener("blur", () => { if (!popoverPinned) scheduleHidePopover(); });
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (popoverPinned && popoverTrigger === btn) {
+      hideChordPopover();
+    } else {
+      popoverPinned = true; // el tap lo deja fijo hasta tocar afuera o Escape
+      showChordPopover(btn, chord);
+    }
+  });
+}
+
+function scheduleHidePopover() {
+  clearTimeout(popoverHideTimer);
+  popoverHideTimer = setTimeout(hideChordPopover, 150);
+}
+
+function showChordPopover(btn, chord) {
+  clearTimeout(popoverHideTimer);
+  if (popoverTrigger && popoverTrigger !== btn) popoverTrigger.setAttribute("aria-expanded", "false");
+  popoverTrigger = btn;
+  btn.setAttribute("aria-expanded", "true");
+  el.popover.replaceChildren(...buildChordPopoverContent(chord));
+  el.popover.hidden = false;
+  positionPopover(btn);
+}
+
+function hideChordPopover() {
+  clearTimeout(popoverHideTimer);
+  el.popover.hidden = true;
+  popoverPinned = false;
+  if (popoverTrigger) popoverTrigger.setAttribute("aria-expanded", "false");
+  popoverTrigger = null;
+}
+
+function positionPopover(btn) {
+  const r = btn.getBoundingClientRect();
+  const pop = el.popover;
+  const width = pop.offsetWidth || 240;
+  const viewport = document.documentElement.clientWidth;
+  let left = r.left + window.scrollX + r.width / 2 - width / 2;
+  left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + viewport - width - 8));
+  pop.style.left = `${left}px`;
+  pop.style.top = `${r.bottom + window.scrollY + 8}px`;
+}
+
+document.addEventListener("click", (e) => {
+  if (!el.popover.hidden && !el.popover.contains(e.target)) hideChordPopover();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !el.popover.hidden) {
+    const trigger = popoverTrigger;
+    hideChordPopover();
+    trigger?.focus();
+  }
+});
+
+function buildChordPopoverContent(sounding) {
+  const title = document.createElement("h4");
+  title.id = "chordPopoverTitle";
+  const cap = document.createElement("p");
+  cap.className = "cap";
+  const nodes = [title, cap];
+
+  if (sounding === "N.C.") {
+    title.textContent = "N.C.";
+    cap.textContent = "Sin acorde.";
+    return nodes;
+  }
+
+  const shape = shapeForCapo(sounding, stageCapo, transposeChord);
+  title.textContent = shape;
+  cap.textContent = stageCapo
+    ? `Con capo ${stageCapo}: digitás ${shape}, suena ${sounding}.`
+    : "Sin capo.";
+
+  const v = findVoicing(shape);
+  if (!v) {
+    const p = document.createElement("p");
+    p.className = "pending";
+    p.textContent = "Digitación no disponible.";
+    nodes.push(p);
+    return nodes;
+  }
+  nodes.push(renderChordDiagram(v));
+  const frets = document.createElement("p");
+  frets.className = "frets";
+  frets.textContent = `Trastes (grave → agudo): ${v.frets.join(" ")}`;
+  nodes.push(frets);
+  if (v.note) {
+    const n = document.createElement("p");
+    n.className = "cap";
+    n.textContent = v.note;
+    nodes.push(n);
+  }
+  return nodes;
+}
+
+/** Diagrama de acorde en SVG: 6 cuerdas (grave a la izquierda), 5 trastes. */
+function renderChordDiagram(v) {
+  const NS = "http://www.w3.org/2000/svg";
+  const fretted = v.frets.filter((f) => f !== "x" && f > 0);
+  const maxFret = fretted.length ? Math.max(...fretted) : 0;
+  const baseFret = maxFret > 4 ? Math.min(...fretted) : 1;
+  const W = 200, H = 220, left = 34, top = 40, sx = 27, sy = 30;
+
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", `Diagrama de ${v.symbol}. Trastes grave a agudo: ${v.frets.join(", ")}.`);
+  const mk = (tag, attrs, text) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, val] of Object.entries(attrs)) node.setAttribute(k, val);
+    if (text != null) node.textContent = text;
+    svg.appendChild(node);
+    return node;
+  };
+
+  for (let s = 0; s < 6; s++) {
+    mk("line", { x1: left + s * sx, y1: top, x2: left + s * sx, y2: top + 5 * sy, stroke: "#9aa3b2", "stroke-width": 1 });
+  }
+  for (let f = 0; f <= 5; f++) {
+    const nut = f === 0 && baseFret === 1;
+    mk("line", { x1: left, y1: top + f * sy, x2: left + 5 * sx, y2: top + f * sy, stroke: nut ? "#f3f4f6" : "#9aa3b2", "stroke-width": nut ? 5 : 1 });
+  }
+  if (baseFret > 1) {
+    mk("text", { x: left - 20, y: top + sy * 0.65, fill: "#9aa3b2", "font-size": 12, "text-anchor": "middle" }, `${baseFret}`);
+  }
+  if (v.barre) {
+    const row = v.barre.fret - baseFret + 1;
+    mk("rect", {
+      x: left + v.barre.from * sx - 9, y: top + (row - 0.5) * sy - 9,
+      width: (v.barre.to - v.barre.from) * sx + 18, height: 18, rx: 9, fill: "#e7b45a"
+    });
+  }
+  v.frets.forEach((f, s) => {
+    const x = left + s * sx;
+    if (f === "x") {
+      mk("text", { x, y: top - 12, fill: "#f2777a", "font-size": 15, "text-anchor": "middle", "font-weight": 700 }, "×");
+    } else if (f === 0) {
+      mk("circle", { cx: x, cy: top - 16, r: 5, fill: "none", stroke: "#f3f4f6", "stroke-width": 1.5 });
+    } else {
+      const y = top + (f - baseFret + 0.5) * sy;
+      mk("circle", { cx: x, cy: y, r: 10, fill: "#e7b45a" });
+      const finger = v.fingers[s];
+      if (finger) mk("text", { x, y: y + 4, fill: "#14161b", "font-size": 12, "text-anchor": "middle", "font-weight": 700 }, String(finger));
+    }
+  });
+  return svg;
+}
 
 /* ---- Helpers ---- */
 function button(label, onClick, ariaLabel) {

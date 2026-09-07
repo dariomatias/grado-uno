@@ -32,6 +32,14 @@ enlaces todavía. La identificación de versiones y la captura de acordes/fuente
 (Task 3 del plan) es una fase separada, con revisión manual, para no inventar
 versiones ni copiar letras.
 
+## Digitaciones (worship)
+
+En el Modo Escenario, pasar el mouse, tocar o enfocar un acorde muestra cómo
+tocarlo en guitarra con **formas de worship** (G 320033, Cadd9, Em7 022033,
+Bm7 sin cejilla, D/F#, F compacta…), no digitaciones clásicas. Para tonalidades
+no abiertas se sugiere **capo** automáticamente y el diagrama muestra la forma
+que se digita con ese capo. Lo que no tiene digitación dice "no disponible".
+
 ## Letras locales
 
 - Se agregan por pegado o archivo `.txt` (UTF-8, máx. 200 KiB) y se renderizan
