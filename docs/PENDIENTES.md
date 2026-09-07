@@ -25,10 +25,10 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    Vie 18 / Dom 27 salvo *Digno de alabar*. Los 6 del Dom 13 con link ya están
    fijados (el de *Quién Más* es un cover elegido a sabiendas por Darío).
 5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
-   posible*) de todo lo que sigue `pending`: las 3 del Dom 13 sin chart
-   (Lavado, El Nombre de Jesús, Canta al Señor) y las 18 restantes de
-   Vie 4 / Vie 18 / Dom 27 (ya tienen chart: Todo es posible, A Jesús seguiré,
-   Creeré, Jehová).
+   posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
+   `pending`: las 2 del Dom 13 sin chart (El Nombre de Jesús, Canta al Señor) y
+   las 18 restantes de Vie 4 / Vie 18 / Dom 27 (ya tienen chart: Todo es
+   posible, A Jesús seguiré, Creeré, Jehová, Lavado).
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 

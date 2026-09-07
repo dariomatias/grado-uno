@@ -220,6 +220,13 @@ const JEHOVA_CORO_A = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C
 const JEHOVA_CORO_B = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A", "E", "Esus"]];
 const JEHOVA_PUENTE_BAJO = [["E/G#", "A"], ["E/B", "A"]];
 
+// "Lavado" (chart oficial de Elevation Español en números, convertido a B):
+// 1=B · 1/3=B/D# · 4=E · 5=F# · 6m=G#m · 2m=C#m.
+const LAVADO_PROG = [["B/D#", "E"], ["F#", "G#m"]];
+const LAVADO_VERSO = [["B/D#", "E"], ["F#", "G#m", "B/D#", "E"], ["F#", "G#m", "B/D#", "E"], ["F#", "G#m", "C#m"], ["E"]];
+const LAVADO_CORO = [["B"], ["E"], ["G#m"], ["F#"], ["B"], ["E"], ["G#m"], ["F#"]];
+const LAVADO_PUENTE = [["B"], ["E"], ["G#m"], ["E"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -341,8 +348,24 @@ export const setlists = [
       }),
       song("lavado", "Lavado", "B", {
         artist: "Elevation Español",
+        sourceKey: null, // chart oficial en números (Nashville), sin tono: se convierte directo a B
+        beatsPerMeasure: 4,
         youtubeUrl: "https://www.youtube.com/watch?v=C75PF1pOM40",
-        youtubeVideoId: "C75PF1pOM40"
+        youtubeVideoId: "C75PF1pOM40",
+        // Chart oficial "NÚMEROS" de Elevation Español (Spanish CCLI 7275652)
+        // aportado por Darío el 2026-09-07. Sin BPM en la fuente. Sólo acordes.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 2, measures: LAVADO_PROG },
+          { type: "verse", label: "Verso 1", repeats: 2, measures: LAVADO_VERSO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: LAVADO_CORO },
+          { type: "verse", label: "Verso 2", repeats: 2, measures: LAVADO_VERSO },
+          { type: "chorus", label: "Coro", repeats: 2, measures: LAVADO_CORO },
+          { type: "vamp", label: "Vamp", repeats: 1, measures: [["B"], ["B"]] },
+          { type: "bridge", label: "Puente", repeats: 4, measures: LAVADO_PUENTE },
+          { type: "tag", label: "Tag", repeats: 1, measures: LAVADO_PUENTE },
+          { type: "instrumental", label: "Instrumental", repeats: 2, measures: [...LAVADO_PROG, ...LAVADO_PROG, ...LAVADO_PROG, ["C#m"], ["E"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: LAVADO_CORO }
+        ]
       }),
       song("nadie", "Nadie", "G", {
         artist: "Elevation Worship",
@@ -546,6 +569,30 @@ export function transposeSections(sections, semitones, accidentalMode = "sharp")
     measures: section.measures.map((measure) =>
       measure.map((chord) => transposeChord(chord, semitones, accidentalMode))
     )
+  }));
+}
+
+// Charts en números (Nashville), como los oficiales de Elevation Español:
+// "1", "4", "6m", "2m", "1/3" → acordes en la tonalidad dada, con la escritura
+// natural de esa tonalidad (bemoles en F/Bb/Eb/Ab/Db/Gb, sostenidos en el resto).
+const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
+const FLAT_KEYS = new Set(["F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"]);
+const DEGREE_RE = /^([1-7])([^/]*)(?:\/([1-7]))?$/;
+
+export function degreeToChord(token, keyRoot) {
+  const m = DEGREE_RE.exec(String(token ?? "").trim());
+  const rootPc = keyToPitchClass(keyRoot);
+  if (!m || rootPc === null) return token; // no es un grado (p. ej. "N.C."): intacto
+  const table = FLAT_KEYS.has(keyRoot) ? FLAT_NOTES : SHARP_NOTES;
+  const note = (deg) => table[mod12(rootPc + MAJOR_SCALE[Number(deg) - 1])];
+  const suffix = m[2] === "°" ? "dim" : m[2];
+  return note(m[1]) + suffix + (m[3] ? `/${note(m[3])}` : "");
+}
+
+export function degreesToSections(sections, keyRoot) {
+  return sections.map((section) => ({
+    ...section,
+    measures: section.measures.map((measure) => measure.map((t) => degreeToChord(t, keyRoot)))
   }));
 }
 /* transposer-module:end */

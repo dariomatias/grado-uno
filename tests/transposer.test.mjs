@@ -2,8 +2,31 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { transposeChord, semitoneDistance, parseChord, transposeSections } =
+const { transposeChord, semitoneDistance, parseChord, transposeSections, degreeToChord, degreesToSections } =
   await extractInlineModule(indexHtmlUrl, "transposer-module");
+
+test("degreeToChord converts Nashville numbers into the key's natural spelling", () => {
+  assert.equal(degreeToChord("1", "B"), "B");
+  assert.equal(degreeToChord("1/3", "B"), "B/D#");
+  assert.equal(degreeToChord("4", "B"), "E");
+  assert.equal(degreeToChord("5", "B"), "F#");
+  assert.equal(degreeToChord("6m", "B"), "G#m");
+  assert.equal(degreeToChord("2m", "B"), "C#m");
+  // Tonalidades con bemoles se escriben con bemoles.
+  assert.equal(degreeToChord("4", "F"), "Bb");
+  assert.equal(degreeToChord("5", "Eb"), "Bb");
+  assert.equal(degreeToChord("6m", "Eb"), "Cm");
+  // Sufijos se conservan; ° se normaliza a dim; lo que no es grado queda intacto.
+  assert.equal(degreeToChord("4sus2", "G"), "Csus2");
+  assert.equal(degreeToChord("7°", "C"), "Bdim");
+  assert.equal(degreeToChord("N.C.", "B"), "N.C.");
+});
+
+test("degreesToSections maps every token and keeps metadata", () => {
+  const out = degreesToSections([{ label: "Coro", repeats: 2, measures: [["1"], ["4", "6m"]] }], "B");
+  assert.deepEqual(out[0].measures, [["B"], ["E", "G#m"]]);
+  assert.equal(out[0].repeats, 2);
+});
 
 test("mandatory examples from the spec", () => {
   assert.equal(transposeChord("G", 2, "sharp"), "A");

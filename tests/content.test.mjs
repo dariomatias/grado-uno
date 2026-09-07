@@ -4,7 +4,7 @@ import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-modu
 
 const { setlists, appearanceKey, validateSetlists, allAppearanceKeys } =
   await extractInlineModule(indexHtmlUrl, "content-module");
-const { transposeSections, semitoneDistance } =
+const { transposeSections, semitoneDistance, degreesToSections } =
   await extractInlineModule(indexHtmlUrl, "transposer-module");
 
 const expected = [
@@ -78,7 +78,7 @@ test("every youtubeVideoId, when present, is a valid 11-char id matching its url
 
 test("confirmed songs have a real artist and sections; links, if any, are http(s)", () => {
   const confirmed = setlists.flatMap((sl) => sl.songs).filter((s) => s.sourceStatus === "confirmed");
-  assert.ok(confirmed.length >= 7, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré, Creeré and Jehová");
+  assert.ok(confirmed.length >= 8, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré, Creeré, Jehová and Lavado");
   for (const s of confirmed) {
     assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: needs real artist`);
     assert.ok(s.sections.length > 0, `${s.id}: needs sections`);
@@ -230,6 +230,43 @@ test("Jehová: Elevation chart written in C shapes with capo 1 (Db), normalized 
   assert.equal(reps["9:Puente (bajo)"], 3);
   assert.equal(reps["13:Puente (bajo)"], 4);
   assert.equal(reps["14:Outro"], 2);
+});
+
+test("Lavado: official Elevation Español number chart converted to B via degreeToChord", () => {
+  const song = setlists[1].songs[1];
+  assert.equal(song.title, "Lavado");
+  assert.equal(song.assignedKey, "B");
+  assert.equal(song.sourceKey, null); // chart en números: no tiene tono de fuente
+  assert.equal(song.tempoBpm, null);
+  assert.equal(song.sourceStatus, "confirmed");
+
+  // Transcripción del chart oficial en números (sólo grados).
+  const prog = [["1/3", "4"], ["5", "6m"]];
+  const verso = [["1/3", "4"], ["5", "6m", "1/3", "4"], ["5", "6m", "1/3", "4"], ["5", "6m", "2m"], ["4"]];
+  const coro = [["1"], ["4"], ["6m"], ["5"], ["1"], ["4"], ["6m"], ["5"]];
+  const puente = [["1"], ["4"], ["6m"], ["4"]];
+  const numbers = [
+    { label: "Intro", measures: prog },
+    { label: "Verso 1", measures: verso },
+    { label: "Coro", measures: coro },
+    { label: "Verso 2", measures: verso },
+    { label: "Coro", measures: coro },
+    { label: "Vamp", measures: [["1"], ["1"]] },
+    { label: "Puente", measures: puente },
+    { label: "Tag", measures: puente },
+    { label: "Instrumental", measures: [...prog, ...prog, ...prog, ["2m"], ["4"]] },
+    { label: "Coro", measures: coro }
+  ];
+
+  const converted = degreesToSections(numbers, "B");
+  assert.deepEqual(song.sections.map((s) => s.label), numbers.map((s) => s.label));
+  assert.deepEqual(song.sections.map((s) => s.measures), converted.map((s) => s.measures));
+  // Repeticiones según el chart: Intro 2x, versos 2x, segundo Coro 2x, Puente 4x, Instrumental 2x.
+  const reps = song.sections.map((s) => s.repeats);
+  assert.deepEqual(reps, [2, 2, 1, 2, 2, 1, 4, 1, 2, 1]);
+  // Sólo los seis acordes del chart.
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.deepEqual([...chords].sort(), ["B", "B/D#", "C#m", "E", "F#", "G#m"]);
 });
 
 test("appearanceKey composes setlist and song ids", () => {

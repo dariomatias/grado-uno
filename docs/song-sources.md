@@ -81,8 +81,20 @@ el que quiere, así que **se cargó como elección deliberada**.
   Video Oficial Con Letras"*, canal Elevation Español (verificado). Era el ID del
   spec; la búsqueda web no lo había mostrado y se marcó como dudoso por error.
 
-### Lavado — Elevation Español — B — `pending` (sin chart)
-- Acordes: e-chords bloqueado. Letra/cifra (spec): https://www.e-chords.com/es/acordes/elevation-espanol/lavado
+### Lavado — Elevation Español — B — `confirmado (chart oficial)`
+- **Chart:** PDF oficial **"NÚMEROS"** de Elevation Español *Lavado (Washed)*
+  (Spanish CCLI 7275652), aportado por Darío el 2026-09-07. Está en **grados
+  Nashville** (1, 1/3, 4, 5, 6m, 2m), sin tono ni BPM.
+- **Convertido a B** con `degreeToChord` (motor): 1=B · 1/3=B/D# · 4=E · 5=F# ·
+  6m=G#m · 2m=C#m. Test dorado en `tests/content.test.mjs`. `sourceKey` = null
+  (un chart en números no tiene tono de fuente).
+- **Orden de ejecución (10 secciones):** Intro ×2 · Verso 1 ×2 · Coro · Verso 2 ×2 ·
+  Coro ×2 · Vamp · Puente ×4 · Tag · Instrumental ×2 · Coro. Intro, Vamp e
+  Instrumental vienen con barras explícitas (compases reales).
+- **Capo:** B no es abierta; capo 2 (A) deja 2 cejillas, **capo 4 (formas de G:
+  G, G/B, C, D, Em, Am) deja cero** → el escenario sugiere capo 4.
+- **Sin letra**: sólo acordes, compases y repeticiones.
+- Letra/cifra del spec (e-chords, bloqueado al fetch): https://www.e-chords.com/es/acordes/elevation-espanol/lavado
 - **Video fijado:** https://www.youtube.com/watch?v=C75PF1pOM40 — *"Lavado | Video
   Oficial Con Letras"*, Elevation Español (link de Darío). Confirma la versión.
 
