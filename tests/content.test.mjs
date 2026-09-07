@@ -78,7 +78,7 @@ test("every youtubeVideoId, when present, is a valid 11-char id matching its url
 
 test("confirmed songs have a real artist and sections; links, if any, are http(s)", () => {
   const confirmed = setlists.flatMap((sl) => sl.songs).filter((s) => s.sourceStatus === "confirmed");
-  assert.ok(confirmed.length >= 6, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré and Creeré");
+  assert.ok(confirmed.length >= 7, "expected the Dom 13 drafts plus Todo es posible, A Jesús seguiré, Creeré and Jehová");
   for (const s of confirmed) {
     assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: needs real artist`);
     assert.ok(s.sections.length > 0, `${s.id}: needs sections`);
@@ -184,6 +184,52 @@ test("Creeré: official Bethel chart (Bb, 72 BPM) normalized to A via the transp
   // Los acordes con bajo del chart llegan como formas abiertas en A.
   const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
   assert.ok(chords.has("E/G#") && chords.has("A/E") && chords.has("Asus"));
+});
+
+test("Jehová: Elevation chart written in C shapes with capo 1 (Db), normalized to E via the transposer", () => {
+  const song = setlists[1].songs[0];
+  assert.equal(song.title, "Jehová");
+  assert.equal(song.sourceKey, "Db"); // tono que suena en la fuente (capo 1 sobre formas de C)
+  assert.equal(song.assignedKey, "E");
+  assert.equal(song.tempoBpm, null); // la fuente no indica BPM
+  assert.equal(song.sourceStatus, "confirmed");
+  // Formas escritas +4 (C→E) equivale al tono sonante +3 (Db→E).
+  assert.equal(semitoneDistance("Db", "E"), 3);
+  assert.equal(semitoneDistance("C", "E"), 4);
+
+  // Transcripción de las formas escritas en el chart (sólo acordes).
+  const coroA = [["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F", "C"]];
+  const coroB = [["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F", "C", "Csus"]];
+  const puenteBajo = [["C/E", "F"], ["C/G", "F"]];
+  const writtenC = [
+    { label: "Intro", measures: [["C", "Csus"]] },
+    { label: "Verso 1", measures: [["C", "Csus"], ["C", "Csus"], ["Am", "F", "C"], ["G"], ["C", "F"], ["C", "F"], ["Am", "F", "C"], ["G"]] },
+    { label: "Coro", measures: coroB },
+    { label: "Interludio", measures: [["C", "Csus"]] },
+    { label: "Verso 2", measures: [["C", "Csus"], ["C", "F"], ["Am", "F", "C"], ["G"], ["C", "F"], ["C", "F"], ["Am", "F", "Dm", "C"], ["F", "G"]] },
+    { label: "Coro", measures: coroA },
+    { label: "Coro", measures: coroB },
+    { label: "Interludio", measures: [["C", "Csus"]] },
+    { label: "Puente", measures: [["C", "Fsus2"], ["C", "Fsus2", "F"]] },
+    { label: "Puente (bajo)", measures: puenteBajo },
+    { label: "Puente (cierre)", measures: [["C/E", "F"], ["C/G", "G"]] },
+    { label: "Coro (variación)", measures: [["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C/E"], ["Am"], ["F", "C"]] },
+    { label: "Coro (variación 2)", measures: [["F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F"]] },
+    { label: "Puente (bajo)", measures: puenteBajo },
+    { label: "Outro", measures: [["C", "Csus"]] }
+  ];
+
+  const normalized = transposeSections(writtenC, semitoneDistance("C", "E"), "sharp");
+  assert.deepEqual(song.sections.map((s) => s.label), writtenC.map((s) => s.label));
+  assert.deepEqual(song.sections.map((s) => s.measures), normalized.map((s) => s.measures));
+  // Repeticiones según el chart.
+  const reps = Object.fromEntries(song.sections.map((s, i) => [`${i}:${s.label}`, s.repeats]));
+  assert.equal(reps["0:Intro"], 4);
+  assert.equal(reps["7:Interludio"], 2);
+  assert.equal(reps["8:Puente"], 4);
+  assert.equal(reps["9:Puente (bajo)"], 3);
+  assert.equal(reps["13:Puente (bajo)"], 4);
+  assert.equal(reps["14:Outro"], 2);
 });
 
 test("appearanceKey composes setlist and song ids", () => {

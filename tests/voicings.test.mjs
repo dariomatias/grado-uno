@@ -48,9 +48,41 @@ test("suggestCapo picks the lowest capo that lands on an open key", () => {
     B: [2, "A"], "F#": [2, "E"]
   };
   for (const [key, [capo, shapeRoot]] of Object.entries(cases)) {
-    assert.deepEqual(suggestCapo(key, transposeChord), { capo, shapeRoot }, `key ${key}`);
+    const got = suggestCapo(key, transposeChord);
+    assert.equal(got.capo, capo, `key ${key}`);
+    assert.equal(got.shapeRoot, shapeRoot, `key ${key}`);
   }
   for (const k of OPEN_KEYS) assert.equal(suggestCapo(k, transposeChord).capo, 0);
+});
+
+test("suggestCapo moves the capo only when it removes two or more barre chords", () => {
+  // Jehová en E: C#m, B y F#m son cejillas en capo 0; con capo 4 son las
+  // formas de C del chart original (C, Am, F, G…): cero cejillas.
+  const jehova = ["E", "Esus", "C#m", "A", "B", "F#m", "Asus2", "E/G#", "E/B"];
+  const j = suggestCapo("E", transposeChord, jehova);
+  assert.equal(j.capo, 4);
+  assert.equal(j.shapeRoot, "C");
+  assert.equal(j.barres, 0);
+
+  // Una sola cejilla no justifica mover el capo: Todo es posible (D, con Bm)
+  // y Creeré (A, con F#m) se quedan abiertos.
+  assert.equal(suggestCapo("D", transposeChord, ["D", "Bm", "G", "A", "D/F#"]).capo, 0);
+  assert.equal(suggestCapo("A", transposeChord, ["A", "Asus", "F#m", "D", "E", "E/G#", "A/E"]).capo, 0);
+
+  // Sin cejillas, capo 0 se mantiene (las tres del Dom 13 en G).
+  assert.equal(suggestCapo("G", transposeChord, ["G", "D", "C", "Em", "G/B", "D/G", "D/C"]).capo, 0);
+
+  // N.C. no cuenta.
+  assert.equal(suggestCapo("G", transposeChord, ["G", "N.C."]).barres, 0);
+});
+
+test("shapes the Jehová chart needs at capo 4 all have a voicing", () => {
+  for (const chord of ["E", "Esus", "C#m", "A", "B", "F#m", "Asus2", "E/G#", "E/B"]) {
+    const shape = shapeForCapo(chord, 4, transposeChord);
+    const v = findVoicing(shape);
+    assert.ok(v, `${chord} → ${shape} needs a voicing`);
+    assert.ok(!v.barre, `${shape} should be an open shape`);
+  }
 });
 
 test("shapeForCapo transposes the sounding chord down by the capo", () => {

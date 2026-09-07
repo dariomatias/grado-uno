@@ -214,6 +214,12 @@ const A_JESUS_TAG = [["G", "D", "A"]];
 const CREERE_CORO = [["A", "Asus", "A"], ["F#m", "E", "D", "E"], ["A", "Asus", "A"], ["F#m", "E", "D", "A"]];
 const CREERE_PUENTE = [["A", "E/G#"], ["F#m", "E", "D"], ["A", "E/G#"], ["F#m", "E", "D"], ["A"], ["F#m", "D"], ["A/E", "F#m", "E"], ["D"], ["D"]];
 
+// "Jehová" (chart Elevation escrito en formas de C con capo 1 = Db; normalizado
+// a E, +4 sobre las formas). Coro A termina en A E; Coro B remata con Esus.
+const JEHOVA_CORO_A = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A", "E"]];
+const JEHOVA_CORO_B = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A", "E", "Esus"]];
+const JEHOVA_PUENTE_BAJO = [["E/G#", "A"], ["E/B", "A"]];
+
 export const setlists = [
   {
     id: "2026-09-04",
@@ -305,11 +311,44 @@ export const setlists = [
     shortLabel: "Dom 13",
     date: "2026-09-13",
     songs: [
-      song("jehova", "Jehová", "E", { artist: "Elevation Español" }),
-      song("lavado", "Lavado", "B"),
+      song("jehova", "Jehová", "E", {
+        artist: "Elevation Español",
+        sourceKey: "Db",
+        youtubeUrl: "https://www.youtube.com/watch?v=CBbSkDUrZds",
+        youtubeVideoId: "CBbSkDUrZds",
+        beatsPerMeasure: 4,
+        // Chart de Elevation Worship aportado por Darío (PDF, 2026-09-07):
+        // escrito en formas de C con capo 1 (suena Db). Normalizado a E
+        // transponiendo las formas +4 (≡ Db→E, +3). Sin BPM en la fuente.
+        // Misma armonía que la versión de Elevation Español. Sólo acordes.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 4, measures: [["E", "Esus"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "Esus"], ["E", "Esus"], ["C#m", "A", "E"], ["B"], ["E", "A"], ["E", "A"], ["C#m", "A", "E"], ["B"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO_B },
+          { type: "instrumental", label: "Interludio", repeats: 1, measures: [["E", "Esus"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["E", "Esus"], ["E", "A"], ["C#m", "A", "E"], ["B"], ["E", "A"], ["E", "A"], ["C#m", "A", "F#m", "E"], ["A", "B"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO_A },
+          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO_B },
+          { type: "instrumental", label: "Interludio", repeats: 2, measures: [["E", "Esus"]] },
+          { type: "bridge", label: "Puente", repeats: 4, measures: [["E", "Asus2"], ["E", "Asus2", "A"]] },
+          { type: "bridge", label: "Puente (bajo)", repeats: 3, measures: JEHOVA_PUENTE_BAJO },
+          { type: "bridge", label: "Puente (cierre)", repeats: 1, measures: [["E/G#", "A"], ["E/B", "B"]] },
+          { type: "chorus", label: "Coro (variación)", repeats: 1, measures: [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E/G#"], ["C#m"], ["A", "E"]] },
+          { type: "chorus", label: "Coro (variación 2)", repeats: 1, measures: [["A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A"]] },
+          { type: "bridge", label: "Puente (bajo)", repeats: 4, measures: JEHOVA_PUENTE_BAJO },
+          { type: "outro", label: "Outro", repeats: 2, measures: [["E", "Esus"]] }
+        ]
+      }),
+      song("lavado", "Lavado", "B", {
+        artist: "Elevation Español",
+        youtubeUrl: "https://www.youtube.com/watch?v=C75PF1pOM40",
+        youtubeVideoId: "C75PF1pOM40"
+      }),
       song("nadie", "Nadie", "G", {
         artist: "Elevation Worship",
         sourceKey: "D",
+        youtubeUrl: "https://www.youtube.com/watch?v=H7wWxol50zY",
+        youtubeVideoId: "H7wWxol50zY",
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/nadie-elevation-worship/",
         tempoBpm: 136,
         beatsPerMeasure: 4,
@@ -340,6 +379,8 @@ export const setlists = [
       song("no-hay-otro-nombre", "No Hay Otro Nombre", "G", {
         artist: "Hillsong en Español",
         sourceKey: "G",
+        youtubeUrl: "https://www.youtube.com/watch?v=2BuifDijlFY",
+        youtubeVideoId: "2BuifDijlFY",
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/no-hay-otro-nombre-hillsong-worship/",
         tempoBpm: 74,
         beatsPerMeasure: 4,
@@ -351,7 +392,11 @@ export const setlists = [
           { type: "bridge", label: "Puente", repeats: 2, measures: [["G", "Em"], ["C", "Em"]] }
         ]
       }),
-      song("el-nombre-de-jesus", "El Nombre de Jesús", "D")
+      song("el-nombre-de-jesus", "El Nombre de Jesús", "D", {
+        artist: "Elevation Español",
+        youtubeUrl: "https://www.youtube.com/watch?v=Su2LSzHgb9s",
+        youtubeVideoId: "Su2LSzHgb9s"
+      })
     ]
   },
   {
@@ -668,6 +713,7 @@ export const WORSHIP_VOICINGS = {
   "C":     V([X, 3, 2, 0, 1, 0], [0, 3, 2, 0, 1, 0]),
   "Cadd9": V([X, 3, 2, 0, 3, 3], [0, 2, 1, 0, 3, 4], { note: "Cadd9 (C2): la forma habitual en worship" }),
   "Csus2": V([X, 3, 0, 0, 1, 3], [0, 2, 0, 0, 1, 3]),
+  "Csus4": V([X, 3, 3, 0, 1, 1], [0, 3, 4, 0, 1, 1]),
   "Cmaj7": V([X, 3, 2, 0, 0, 0], [0, 3, 2, 0, 0, 0]),
   "C/E":   V([0, 3, 2, 0, 1, 0], [0, 3, 2, 0, 1, 0]),
   "C/G":   V([3, X, 2, 0, 1, 0], [3, 0, 2, 0, 1, 0]),
@@ -693,9 +739,11 @@ export const WORSHIP_VOICINGS = {
   "Em":    V([0, 2, 2, 0, 0, 0], [0, 2, 3, 0, 0, 0]),
   "Em7":   V([0, 2, 2, 0, 3, 3], [0, 1, 2, 0, 3, 4], { note: "Em7 de worship, con las agudas en el 3er traste" }),
   "E/G#":  V([4, X, 2, 1, 0, 0], [4, 0, 2, 1, 0, 0]),
+  "E/B":   V([X, 2, 2, 1, 0, 0], [0, 2, 3, 1, 0, 0]),
   // F
   "F":     V([X, X, 3, 2, 1, 1], [0, 0, 3, 2, 1, 1], { note: "F compacta, la más usada en worship (sin cejilla)" }),
   "Fmaj7": V([X, X, 3, 2, 1, 0], [0, 0, 3, 2, 1, 0]),
+  "Fsus2": V([X, X, 3, 0, 1, 1], [0, 0, 3, 0, 1, 1]),
   "F/C":   V([X, 3, 3, 2, 1, 1], [0, 3, 4, 2, 1, 1]),
   "Fm":    V([1, 3, 3, 1, 1, 1], [1, 3, 4, 1, 1, 1], { barre: { fret: 1, from: 0, to: 5 } }),
   // G
@@ -757,13 +805,33 @@ export function findVoicing(symbol) {
   return null;
 }
 
-/** Menor capo (0..7) que lleva la tonalidad a una abierta; si ninguna, 0. */
-export function suggestCapo(keyRoot, transpose) {
+/**
+ * Capo sugerido (0..7) para una tonalidad, considerando los acordes del tema.
+ * Práctica de worship: se prefiere el capo más bajo que cae en una tonalidad
+ * abierta, salvo que otro capo elimine cejillas. Una sola cejilla no mueve el
+ * capo (Bm en D o F#m en A son habituales); dos o más sí. Los acordes sin
+ * digitación en la tabla cuentan como cejilla. Sin acordes, se comporta como
+ * "el capo más bajo a tonalidad abierta".
+ */
+export function suggestCapo(keyRoot, transpose, chords = []) {
+  const playable = chords.filter((c) => c !== "N.C.");
+  const candidates = [];
   for (let capo = 0; capo <= MAX_SUGGESTED_CAPO; capo++) {
     const shapeRoot = transpose(keyRoot, -capo, "sharp");
-    if (OPEN_KEYS.includes(shapeRoot)) return { capo, shapeRoot };
+    if (!OPEN_KEYS.includes(shapeRoot)) continue;
+    const barres = playable.reduce((n, chord) => {
+      const v = findVoicing(transpose(chord, -capo, "sharp"));
+      return n + (!v || v.barre ? 1 : 0);
+    }, 0);
+    candidates.push({ capo, shapeRoot, barres });
   }
-  return { capo: 0, shapeRoot: keyRoot };
+  if (candidates.length === 0) return { capo: 0, shapeRoot: keyRoot, barres: 0 };
+  const lowest = candidates[0];
+  if (lowest.barres <= 1) return lowest;
+  return candidates.reduce(
+    (best, c) => (c.barres < best.barres || (c.barres === best.barres && c.capo < best.capo) ? c : best),
+    lowest
+  );
 }
 
 /** Forma que se digita para un acorde sonante con un capo dado. */
@@ -1072,13 +1140,18 @@ function renderStage() {
   );
   keyline.appendChild(controls);
 
-  // Sugerencia de capo (práctica de worship: capo en vez de cejillas).
-  const capoInfo = suggestCapo(currentKey(song), transposeChord);
+  // Sugerencia de capo (práctica de worship: capo en vez de cejillas), calculada
+  // sobre los acordes que realmente suenan con la transposición actual.
+  const transposed = song.sections.length
+    ? transposeSections(song.sections, semis, state.accidentalMode)
+    : [];
+  const soundingChords = [...new Set(transposed.flatMap((s) => s.measures.flat()))];
+  const capoInfo = suggestCapo(currentKey(song), transposeChord, soundingChords);
   stageCapo = capoInfo.capo;
   const capoHint = document.createElement("span");
   capoHint.className = "badge capo-hint";
   capoHint.textContent = capoInfo.capo
-    ? `Capo sugerido: ${capoInfo.capo} · tocás en ${capoInfo.shapeRoot}`
+    ? `Capo sugerido: ${capoInfo.capo} · tocás en ${capoInfo.shapeRoot}${capoInfo.barres === 0 ? " · sin cejillas" : ""}`
     : "Tonalidad abierta · sin capo";
   keyline.appendChild(capoHint);
   el.stageView.appendChild(keyline);
@@ -1090,7 +1163,6 @@ function renderStage() {
     p.textContent = "Partitura no disponible.";
     el.stageView.appendChild(p);
   } else {
-    const transposed = transposeSections(song.sections, semis, state.accidentalMode);
     const ol = document.createElement("ol");
     ol.className = "sections";
     transposed.forEach((section) => ol.appendChild(renderSection(section)));

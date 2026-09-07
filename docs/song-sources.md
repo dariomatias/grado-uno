@@ -22,12 +22,12 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 7 | Dios de avivamiento | C | *God of Revival (Live)* — Bethel Music, Brian & Jenn Johnson (inglés; OK Darío) | ✅ |
 | **Dom 13** | | | | |
 | 1 | Jehová | E | Elevation Español | ✅ |
-| 2 | Lavado | B | — | ❌ |
-| 3 | Nadie | G | — (chart cargado desde worshiptogether "Elevation Worship", **sin validar**) | ❌ |
+| 2 | Lavado | B | Elevation Español — confirmada por su video oficial con letras (link de Darío) | ✅ |
+| 3 | Nadie | G | Elevation Worship — *Nadie (No One), Letras Oficiales*; confirmada por el video oficial (link de Darío), coincide con el chart | ✅ |
 | 4 | Quién Más | G | *Quién Más (Live)* — Gateway Worship Español, Miel San Marcos, Waleska Morales | ✅ |
 | 5 | Canta al Señor | G | — | ❌ |
 | 6 | No Hay Otro Nombre | G | Hillsong en Español | ✅ |
-| 7 | El Nombre de Jesús | D | — | ❌ |
+| 7 | El Nombre de Jesús | D | Elevation Español — confirmada por su video oficial con letras (link de Darío) | ✅ |
 | **Vie 18** | | | | |
 | 1 | Señor eres fiel | C | ¿*Eres Fiel* — Israel Houghton? Darío confirma. | ⏳ |
 | 2 | En el nombre de Jesús | C | *En Tu Nombre (In Jesus' Name)* — Ingrid Rosario (OK Darío) | ✅ |
@@ -45,7 +45,13 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 6 | Vida nueva | A | Bethel Music, Zahriya Zachary | ✅ |
 | 7 | De gracia en gracia | Eb | Hillsong en Español | ✅ |
 
-**Totales:** 18 ✅ · 1 ⏳ · 9 ❌
+**Totales:** 21 ✅ · 1 ⏳ · 6 ❌
+
+Videos del Dom 13 fijados el 2026-09-07 desde la tabla de Darío, verificando
+título y canal de cada uno: Jehová, Lavado, Nadie, No Hay Otro Nombre y El
+Nombre de Jesús. El link dado para **Quién Más** (`F-40DlTc_JY`) resultó ser
+*"Who Else + Shout to the Lord"* del canal **Rachel Atkinson** (cover), no el de
+Gateway Worship Español: **no se cargó**; sigue "Video no disponible".
 
 ## 2. Acordes y videos — Domingo 13 (detalle)
 
@@ -53,24 +59,48 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 > normalizados al tono asignado con el motor de transposición; **requieren la
 > revisión musical de Darío**. Los videos son **candidatos** hasta su elección.
 
-### Jehová — Elevation Español — E — `pending`
-- Acordes: e-chords bloqueado (403). Letra/cifra (spec): https://www.e-chords.com/es/acordes/elevation-worship/jehovah-feat-chris-brown
-- El `youtubeVideoId` del spec (`CBbSkDUrZds`) no aparece en búsqueda.
-- Videos candidatos: español letra oficial https://www.youtube.com/watch?v=rklIxEuCZRM · español https://www.youtube.com/watch?v=cr9AHaFbvvA · lyric inglés https://www.youtube.com/watch?v=qGPJySPajLo · en vivo inglés https://www.youtube.com/watch?v=xhyi3H7beEA
+### Jehová — Elevation Español — E — `confirmado`
+- **Chart:** PDF "jehovah acordes" (Elevation Worship, versión en inglés)
+  aportado por Darío el 2026-09-07. Escrito en **formas de C con cejilla en el
+  1er traste** (suena **Db**). Misma armonía que la adaptación de Elevation
+  Español. Sin BPM en la fuente.
+- **Normalizado a E** transponiendo las formas escritas **+4** (C→E), que
+  equivale al tono sonante **+3** (Db→E): C→E, Csus→Esus, Am→C#m, F→A, G→B,
+  Dm→F#m, Fsus2→Asus2, C/E→E/G#, C/G→E/B. Test dorado en
+  `tests/content.test.mjs`.
+- **Capo sugerido: 4 (tocás en C, sin cejillas)** — en E abierto habría 3
+  cejillas (C#m, B, F#m); con capo 4 son exactamente las formas del chart.
+  Esto motivó que la sugerencia de capo considere las cejillas del tema.
+- **Orden de ejecución (15 secciones):** Intro ×4 · Verso 1 · Coro · Interludio ·
+  Verso 2 · Coro · Coro · Interludio ×2 · Puente ×4 · Puente (bajo) ×3 ·
+  Puente (cierre) · Coro (variación) · Coro (variación 2) · Puente (bajo) ×4 ·
+  Outro ×2.
+- **Sin letra**: sólo acordes, compases y repeticiones. `lyricsUrl` null.
+- Letra/cifra del spec (e-chords, bloqueado al fetch): https://www.e-chords.com/es/acordes/elevation-worship/jehovah-feat-chris-brown
+- **Video fijado:** https://www.youtube.com/watch?v=CBbSkDUrZds — *"Jehová |
+  Video Oficial Con Letras"*, canal Elevation Español (verificado). Era el ID del
+  spec; la búsqueda web no lo había mostrado y se marcó como dudoso por error.
 
-### Lavado — versión sin validar — B — `pending`
+### Lavado — Elevation Español — B — `pending` (sin chart)
 - Acordes: e-chords bloqueado. Letra/cifra (spec): https://www.e-chords.com/es/acordes/elevation-espanol/lavado
-- Videos candidatos: Elevation Español oficial con letras https://www.youtube.com/watch?v=C75PF1pOM40 · Elevation Rhythm https://www.youtube.com/watch?v=G6rNdzKPRUs
+- **Video fijado:** https://www.youtube.com/watch?v=C75PF1pOM40 — *"Lavado | Video
+  Oficial Con Letras"*, Elevation Español (link de Darío). Confirma la versión.
 
-### Nadie — G — `BORRADOR confirmado` (versión ❌ sin validar)
+### Nadie — Elevation Worship — G — `BORRADOR confirmado` ✅
 - Chart: worshiptogether (fuente **D**, 136 BPM) → normalizado a **G** (+5).
 - Fuente: https://www.worshiptogether.com/es/canciones/nadie-elevation-worship/
-- ⚠️ No está en "Secuencia A": confirmar que la versión sea la de Elevation antes de fiarse del chart.
+- **Video fijado:** https://www.youtube.com/watch?v=H7wWxol50zY — *"Nadie (No One)
+  | Letras Oficiales"*, Elevation Worship (link de Darío). Valida la versión,
+  que coincide con la del chart. Sigue pendiente la revisión musical del chart.
 
 ### Quién Más — G — `BORRADOR confirmado` ✅
 - Chart: worshiptogether (fuente **Ab**, 68 BPM) → normalizado a **G** (−1).
 - Fuente: https://www.worshiptogether.com/es/canciones/quien-mas-gateway-worship-espanol/
-- Videos candidatos: lyric oficial https://www.youtube.com/watch?v=ii5bt588N6U · oficial https://www.youtube.com/watch?v=niavhjpZJqA · acústica https://www.youtube.com/watch?v=oAkfKF9kFJM
+- **Video: pendiente.** El link de la tabla de Darío (`F-40DlTc_JY`) es *"Who Else
+  + Shout to the Lord"* de **Rachel Atkinson** (cover) — no se cargó. Candidatos
+  verificados: lyric oficial https://www.youtube.com/watch?v=ii5bt588N6U ·
+  oficial https://www.youtube.com/watch?v=niavhjpZJqA · acústica
+  https://www.youtube.com/watch?v=oAkfKF9kFJM
 
 ### Canta al Señor — versión sin validar — G — `pending`
 - Letra/cifra (spec): https://acordesweb.com/cancion/ingrid-rosario/canta-al-senor
@@ -79,10 +109,15 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 ### No Hay Otro Nombre — Hillsong en Español — G — `BORRADOR confirmado` ✅
 - Chart: worshiptogether (fuente **G**, 74 BPM), sin transposición; secciones simplificadas.
 - Fuente: https://www.worshiptogether.com/es/canciones/no-hay-otro-nombre-hillsong-worship/
+- **Video fijado:** https://www.youtube.com/watch?v=2BuifDijlFY — *"No Hay Otro
+  Nombre"*, Hillsong Worship (link de Darío, verificado).
 
-### El Nombre de Jesús — versión sin validar — D — `pending`
+### El Nombre de Jesús — Elevation Español — D — `pending` (sin chart)
 - Acordes: e-chords bloqueado. Letra/cifra (spec): https://www.e-chords.com/es/acordes/elevation-worship/el-nombre-de-jesus
-- Videos candidatos: Elevation Español oficial con letras https://www.youtube.com/watch?v=Su2LSzHgb9s · en vivo Charlotte https://www.youtube.com/watch?v=D3tmEakS1dQ · multitrack (Db, 64 BPM) https://www.youtube.com/watch?v=QDsXV78Pb9s
+- **Video fijado:** https://www.youtube.com/watch?v=Su2LSzHgb9s — *"El Nombre De
+  Jesús | Video Oficial Con Letras"*, Elevation Español (link de Darío). Confirma
+  la versión. Referencia de tempo (multitrack, Db, 64 BPM):
+  https://www.youtube.com/watch?v=QDsXV78Pb9s
 
 ## 3. Acordes — Viernes 4 (detalle)
 

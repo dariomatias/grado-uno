@@ -5,26 +5,32 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 **Última actualización:** 2026-09-06
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
-**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" — 18 de 28 validadas (17 por la playlist + *Digno de alabar* por video de Darío).
+**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" — 21 de 28 validadas (17 por la playlist + 4 por videos oficiales que pasó Darío: Digno de alabar, Lavado, Nadie, El Nombre de Jesús).
 
 ## Lo que Darío me debe (bloquea contenido)
 
 1. **Confirmar la versión de 1 canción** que no cerró con la playlist:
    - *Señor eres fiel* → ¿es *Eres Fiel* de Israel Houghton?
-2. **Versión de las 9 que no están en "Secuencia A"** (otra playlist o
-   `canción — artista`): Lavado · Nadie · Canta al Señor · El Nombre de Jesús ·
-   Para siempre Cristo · Agnus Dei · Eres libre · Adiós al ayer · Clamo a Dios.
+2. **Versión de las 6 que siguen sin confirmar** (link de YouTube, otra playlist
+   o `canción — artista`): Canta al Señor · Para siempre Cristo · Agnus Dei ·
+   Eres libre · Adiós al ayer · Clamo a Dios.
+   **Ojo con Canta al Señor:** en tu tabla figura como *"Cante al señor toda
+   la"*. El spec decía *Canta al Señor* (Ingrid Rosario), pero *Cante al Señor
+   toda la tierra* es otra canción. ¿Cuál es?
 3. **Revisar musicalmente los 3 charts borrador** del Dom 13 antes de usarlos en
-   vivo: Nadie (además, versión sin validar), Quién Más, No Hay Otro Nombre.
-   Capturados de worshiptogether y normalizados a G con el motor de transposición.
-4. **Elegir un video por canción** del Dom 13 entre los candidatos de
-   `docs/song-sources.md` (hoy muestran "Video no disponible"). *Digno de
-   alabar* (Vie 4) ya tiene el suyo fijado.
+   vivo: Nadie, Quién Más, No Hay Otro Nombre. Capturados de worshiptogether y
+   normalizados a G con el motor de transposición (la versión de Nadie ya quedó
+   validada por su video oficial).
+4. **Videos que faltan:** *Quién Más* (el link que pasaste, `F-40DlTc_JY`, es un
+   cover de Rachel Atkinson — no se cargó; candidatos verificados en
+   `docs/song-sources.md`), *Canta al Señor*, y las 21 canciones de Vie 4 /
+   Vie 18 / Dom 27 salvo *Digno de alabar*. Los 5 del Dom 13 restantes ya están
+   fijados y verificados.
 5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
-   posible*) de todo lo que sigue `pending`: las 4 del Dom 13 sin chart
-   (Jehová, Lavado, El Nombre de Jesús, Canta al Señor) y las 18 restantes de
+   posible*) de todo lo que sigue `pending`: las 3 del Dom 13 sin chart
+   (Lavado, El Nombre de Jesús, Canta al Señor) y las 18 restantes de
    Vie 4 / Vie 18 / Dom 27 (ya tienen chart: Todo es posible, A Jesús seguiré,
-   Creeré).
+   Creeré, Jehová).
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 
@@ -48,9 +54,10 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
     UI, acordes y transposición funcionen sin conexión; hoy sólo hay caché del
     navegador. Cuando se haga, reemplaza a `hosting/sw.js` (el SW "kamikaze"
     que purga el SW viejo de Grado Uno que quedó registrado en `/`).
-15. **Capo manual:** hoy el capo del escenario es sólo una sugerencia automática
-    por tonalidad (la menor que cae en C/D/E/G/A). Si querés elegir otro capo
-    (p. ej. F con capo 3 en D en vez de capo 1 en E), agrego un selector.
+15. **Capo manual:** el capo del escenario es una sugerencia automática: el más
+    bajo que cae en C/D/E/G/A, salvo que otro capo elimine cejillas (una sola
+    cejilla no lo mueve; dos o más sí — p. ej. Jehová en E sugiere capo 4).
+    Si querés forzar otro capo, agrego un selector.
 
 ## Decisiones tomadas (no son pendientes)
 
