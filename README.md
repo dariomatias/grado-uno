@@ -7,11 +7,33 @@ localmente, video oficial de YouTube bajo demanda y metrónomo.
 El producto distribuible es **un único `index.html`** sin backend, sin build y
 sin dependencias de runtime. Node sólo se usa para pruebas y verificación.
 
-## Abrir
+## Correr localmente
 
-- Doble clic en `index.html`, o
-- servidor local opcional: `python3 -m http.server 8080` y abrir
-  `http://localhost:8080/`.
+**Worship setlist (principal, estático, sin build):**
+
+```bash
+python3 -m http.server 8080      # → http://localhost:8080/
+```
+
+También abre con doble clic en `index.html`, pero sobre `http://` YouTube y
+`localStorage` se comportan mejor que sobre `file://`.
+
+**Grado Uno (React + Vite, con recarga en caliente):**
+
+```bash
+cd grado-uno && npm run dev      # → http://localhost:5173/grado-uno/
+```
+
+Ojo con la ruta **`/grado-uno/`**: Vite tiene `base: '/grado-uno/'` porque la
+app se sirve como sub-app, así que el dev server la expone ahí y no en `/`.
+
+**Ambas juntas, igual que producción** (worship en `/`, Grado Uno en
+`/grado-uno/`, con los headers reales de Firebase):
+
+```bash
+npm run build:hosting && npx firebase serve --only hosting
+# → http://localhost:5000/  y  http://localhost:5000/grado-uno/
+```
 
 ## Pruebas
 
