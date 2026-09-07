@@ -50,15 +50,25 @@ test("song ids are unique within each setlist", () => {
   }
 });
 
-test("pending songs have no preloaded lyrics, sections, or external links", () => {
+test("pending songs have no invented chords and no preloaded lyrics", () => {
+  // `pending` gobierna sólo los acordes. Artista/video/enlaces pueden estar
+  // confirmados por separado, pero jamás se inventan secciones.
   for (const sl of setlists) {
     for (const s of sl.songs) {
       if (s.sourceStatus === "pending") {
-        assert.equal(s.sections.length, 0);
-        assert.equal(s.lyricsUrl, null);
-        assert.equal(s.youtubeUrl, null);
-        assert.equal(s.youtubeVideoId, null);
-        assert.ok(!("lyricsText" in s), "must not carry lyricsText");
+        assert.equal(s.sections.length, 0, `${s.id}: pending song must not carry chords`);
+      }
+      assert.ok(!("lyricsText" in s), `${s.id}: must not carry lyricsText`);
+    }
+  }
+});
+
+test("every youtubeVideoId, when present, is a valid 11-char id matching its url", () => {
+  for (const sl of setlists) {
+    for (const s of sl.songs) {
+      if (s.youtubeVideoId !== null) {
+        assert.match(s.youtubeVideoId, /^[A-Za-z0-9_-]{11}$/, `${s.id}: bad video id`);
+        assert.ok(s.youtubeUrl?.includes(s.youtubeVideoId), `${s.id}: url must contain the id`);
       }
     }
   }

@@ -184,13 +184,17 @@ export const setlists = [
     shortLabel: "Vie 4",
     date: "2026-09-04",
     songs: [
-      song("todo-es-posible", "Todo es posible", "D"),
-      song("a-jesus-seguire", "A Jesús seguiré", "G"),
-      song("creere", "Creeré", "A"),
-      song("santo-una-cosa", "Santo una cosa", "A"),
-      song("al-que-esta-sentado", "Al que está sentado", "A"),
-      song("digno-de-alabar", "Digno de alabar", "D"),
-      song("dios-de-avivamiento", "Dios de avivamiento", "C")
+      song("todo-es-posible", "Todo es posible", "D", { artist: "Bethel Music, Dante Bowe (Anything Is Possible · Live)" }),
+      song("a-jesus-seguire", "A Jesús seguiré", "G", { artist: "TWICE, Job González" }),
+      song("creere", "Creeré", "A", { artist: "Bethel Music, Jonathan David Helser, Melissa Helser" }),
+      song("santo-una-cosa", "Santo una cosa", "A", { artist: "Toma Tu Lugar, Lucas Conslie" }),
+      song("al-que-esta-sentado", "Al que está sentado", "A", { artist: "Marco Barrientos, Marcos Brunet" }),
+      song("digno-de-alabar", "Digno de alabar", "D", {
+        artist: "CeCe Winans (Worthy of It All · Official Audio)",
+        youtubeUrl: "https://www.youtube.com/watch?v=JzZSrOPeolc",
+        youtubeVideoId: "JzZSrOPeolc"
+      }),
+      song("dios-de-avivamiento", "Dios de avivamiento", "C", { artist: "Bethel Music, Brian Johnson, Jenn Johnson (God of Revival · Live)" })
     ]
   },
   {
@@ -199,7 +203,7 @@ export const setlists = [
     shortLabel: "Dom 13",
     date: "2026-09-13",
     songs: [
-      song("jehova", "Jehová", "E"),
+      song("jehova", "Jehová", "E", { artist: "Elevation Español" }),
       song("lavado", "Lavado", "B"),
       song("nadie", "Nadie", "G", {
         artist: "Elevation Worship",
@@ -216,7 +220,7 @@ export const setlists = [
         ]
       }),
       song("quien-mas", "Quién Más", "G", {
-        artist: "Gateway Worship Español feat. Waleska Morales",
+        artist: "Gateway Worship Español, Miel San Marcos, Waleska Morales",
         sourceKey: "Ab",
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/quien-mas-gateway-worship-espanol/",
         tempoBpm: 68,
@@ -232,7 +236,7 @@ export const setlists = [
       }),
       song("canta-al-senor", "Canta al Señor", "G"),
       song("no-hay-otro-nombre", "No Hay Otro Nombre", "G", {
-        artist: "Hillsong Worship",
+        artist: "Hillsong en Español",
         sourceKey: "G",
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/no-hay-otro-nombre-hillsong-worship/",
         tempoBpm: 74,
@@ -255,12 +259,12 @@ export const setlists = [
     date: "2026-09-18",
     songs: [
       song("senor-eres-fiel", "Señor eres fiel", "C"),
-      song("en-el-nombre-de-jesus", "En el nombre de Jesús", "C"),
-      song("clamo-a-cristo", "Clamo a Cristo", "E"),
-      song("como-no-voy-a-creer", "Cómo no voy a creer", "E"),
+      song("en-el-nombre-de-jesus", "En el nombre de Jesús", "C", { artist: "Ingrid Rosario (En Tu Nombre · In Jesus' Name)" }),
+      song("clamo-a-cristo", "Clamo a Cristo", "E", { artist: "Elevation Español" }),
+      song("como-no-voy-a-creer", "Cómo no voy a creer", "E", { artist: "Bethel Music, Christine D'Clario, Edward Rivera" }),
       song("para-siempre-cristo", "Para siempre Cristo", "E"),
       song("agnus-dei", "Agnus Dei", "E"),
-      song("alabare-al-senor", "Alabaré al Señor", "D")
+      song("alabare-al-senor", "Alabaré al Señor", "D", { artist: "Hillsong en Español" })
     ]
   },
   {
@@ -269,13 +273,13 @@ export const setlists = [
     shortLabel: "Dom 27",
     date: "2026-09-27",
     songs: [
-      song("jubilo", "Júbilo", "C"),
+      song("jubilo", "Júbilo", "C", { artist: "Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr." }),
       song("eres-libre", "Eres libre", "G"),
       song("adios-al-ayer", "Adiós al ayer", "F"),
       song("clamo-a-dios", "Clamo a Dios", "D"),
-      song("es-el", "Es Él", "A"),
-      song("vida-nueva", "Vida nueva", "A"),
-      song("de-gracia-en-gracia", "De gracia en gracia", "Eb")
+      song("es-el", "Es Él", "A", { artist: "Felipe S. Santos, Marcos Brunet" }),
+      song("vida-nueva", "Vida nueva", "A", { artist: "Bethel Music, Zahriya Zachary" }),
+      song("de-gracia-en-gracia", "De gracia en gracia", "Eb", { artist: "Hillsong en Español" })
     ]
   }
 ];
@@ -317,9 +321,12 @@ export function validateSetlists(items) {
       if (ids.has(s.id)) errors.push(`${setlist.id}: duplicate ${s.id}`);
       ids.add(s.id);
       if (!/^[A-G](?:#|b)?$/.test(s.assignedKey)) errors.push(`${setlist.id}:${s.id}: invalid key`);
+      // `pending` gobierna sólo los acordes: nunca se inventan. Artista, video y
+      // enlaces se confirman por separado (fuente de verdad: playlist de Darío)
+      // y pueden existir aunque el chart siga pendiente.
       if (s.sourceStatus === "pending" && s.sections.length) errors.push(`${setlist.id}:${s.id}: pending source has sections`);
-      if (s.sourceStatus === "pending" && (s.lyricsUrl || s.youtubeUrl || s.youtubeVideoId)) {
-        errors.push(`${setlist.id}:${s.id}: pending source has external links`);
+      if (s.youtubeVideoId && !/^[A-Za-z0-9_-]{11}$/.test(s.youtubeVideoId)) {
+        errors.push(`${setlist.id}:${s.id}: invalid youtubeVideoId`);
       }
     }
   }
