@@ -28,6 +28,7 @@ test("initialState shape", () => {
     tempoOverrides: {},
     meterOverrides: {},
     capoOverrides: {},
+    chartLayout: "grid",
     accidentalMode: "sharp",
     metronomeRunning: false
   });

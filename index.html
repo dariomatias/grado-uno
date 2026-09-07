@@ -108,6 +108,23 @@
       .section .slabel { color: var(--gold-strong); font-weight: 700; margin-bottom: 8px; display: flex; gap: 8px; align-items: baseline; }
       .section .repeats { color: var(--muted); font-size: .85rem; }
       .measures { display: flex; flex-wrap: wrap; gap: 8px; }
+      /* Grilla de compases: 4 por fila, ancho fijo, barras como separadores.
+         Cada compás reparte su ancho entre sus acordes (tiempos parejos). */
+      .bars {
+        display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-top: 1px solid var(--border);
+      }
+      .bar {
+        display: grid; align-items: center; gap: 2px; min-height: 56px;
+        padding: 4px 4px 4px 6px;
+        border-left: 2px solid var(--muted); border-bottom: 1px solid var(--border);
+      }
+      .bar:nth-child(4n), .bar:last-child { border-right: 2px solid var(--muted); }
+      .bar .chord {
+        min-width: 0; justify-self: start; padding: 4px 6px;
+        font-size: clamp(1rem, 3.4vw, 1.45rem); line-height: 1.1;
+      }
+      @media (max-width: 360px) { .bar .chord { font-size: .95rem; padding: 4px 3px; } }
       .measure {
         display: flex; gap: 8px; align-items: center;
         border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
@@ -749,6 +766,7 @@ export function initialState() {
     tempoOverrides: {},
     meterOverrides: {},
     capoOverrides: {},
+    chartLayout: "grid", // "grid" = grilla de compases (4 por fila) · "flow" = recuadros
     accidentalMode: "sharp",
     metronomeRunning: false
   };
@@ -1319,7 +1337,15 @@ function renderStage() {
   pos.textContent = `${state.selectedSongIndex + 1} de ${sl.songs.length}`;
   const fs = button("Pantalla completa", toggleFullscreen);
   fs.id = "fullscreenBtn";
-  toolbar.append(back, pos, fs);
+  // Alternar grilla de compases / recuadros sin salir del escenario.
+  const isGrid = (state.chartLayout ?? "grid") === "grid";
+  const layoutBtn = button(
+    isGrid ? "Vista: grilla" : "Vista: lista",
+    () => { state = { ...state, chartLayout: isGrid ? "flow" : "grid" }; renderStage(); },
+    isGrid ? "Cambiar a vista de lista" : "Cambiar a vista de grilla de compases"
+  );
+  layoutBtn.setAttribute("aria-pressed", String(isGrid));
+  toolbar.append(back, pos, layoutBtn, fs);
   el.stageView.appendChild(toolbar);
 
   const h2 = document.createElement("h2");
@@ -1443,11 +1469,15 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
   label.querySelector("span").textContent = section.label;
   li.appendChild(label);
 
+  const grid = (state.chartLayout ?? "grid") === "grid";
   const measures = document.createElement("div");
-  measures.className = "measures";
+  measures.className = grid ? "bars" : "measures";
   section.measures.forEach((measure, mi) => {
     const m = document.createElement("div");
-    m.className = "measure";
+    m.className = grid ? "bar" : "measure";
+    // En la grilla cada compás reparte su ancho entre sus acordes: 1 = todo el
+    // compás, 2 = mitad y mitad, 3–4 = por tiempo.
+    if (grid) m.style.gridTemplateColumns = `repeat(${measure.length}, minmax(0, 1fr))`;
     measure.forEach((shape, ci) => {
       const real = sounding.measures[mi]?.[ci] ?? shape;
       const degree = chordToDegree(real, keyRoot);

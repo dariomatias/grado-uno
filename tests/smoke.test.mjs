@@ -45,6 +45,14 @@ test("fullscreen stage scrolls on its own and has a pseudo-fullscreen fallback",
   assert.match(html, /setPseudoFullscreen\(true\)/);
 });
 
+test("measure grid layout (4 bars per row) with a list fallback is wired", () => {
+  assert.match(html, /\.bars\s*\{[\s\S]*?repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(html, /\.bar:nth-child\(4n\)/);
+  assert.match(html, /chartLayout: "grid"/);
+  assert.match(html, /Vista: grilla/);
+  assert.match(html, /Vista: lista/);
+});
+
 test("degree subscripts and manual capo are wired", () => {
   assert.match(html, /chordToDegree/);
   assert.match(html, /sub\.deg/);

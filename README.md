@@ -62,6 +62,10 @@ Bm7 sin cejilla, D/F#, F compacta…), no digitaciones clásicas. Para tonalidad
 no abiertas se sugiere **capo** automáticamente y el diagrama muestra la forma
 que se digita con ese capo. Lo que no tiene digitación dice "no disponible".
 
+Los compases se muestran en una **grilla de 4 por fila** (ancho fijo, barras
+como separadores; los acordes de un compás se reparten en tiempos parejos), con
+un botón *Vista: grilla / lista* para volver a los recuadros.
+
 Cada acorde lleva como **subíndice su grado** en la escala del tono real
 (`G₁ D₅ Em₆ C₄`; prestados con alteración, `b7`; acordes con bajo, `1/3`). El
 **capo se puede fijar a mano** por canción; con capo puesto la partitura muestra

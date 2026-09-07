@@ -72,6 +72,13 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   grabaciones en inglés de Bethel, *En el nombre de Jesús* es *En Tu Nombre*
   de Ingrid Rosario, y *Digno de alabar* es *Worthy of It All* de CeCe Winans
   (2026-09-06).
+- **Grilla de compases** (2026-09-08): Darío no lograba ver los compases en los
+  recuadros flotantes. Ahora el escenario muestra una **grilla de 4 compases
+  por fila, ancho fijo, con barras** como separadores; dentro de cada compás
+  los acordes se reparten en tiempos parejos. Botón **"Vista: grilla / lista"**
+  en la barra para volver al formato anterior sin redeploy ("probemos, si no
+  va, doy marcha atrás"). Salvedad: en charts de hoja de letra cada celda es un
+  grupo por frase, no un 4/4 estricto.
 - **Pantalla completa con scroll** (2026-09-08): Darío reportó que en fullscreen
   no se podía scrollear. `#stageView` ahora scrollea por sí mismo en ese modo,
   el popover de digitación se mueve adentro (fuera del elemento fullscreen no
