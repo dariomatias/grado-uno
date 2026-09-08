@@ -406,6 +406,19 @@ test("Dios de avivamiento: Bethel chart in C stored as-is, five open chords", ()
   assert.deepEqual([...chords].sort(), ["Am", "C", "F", "G", "G/B"]);
 });
 
+test("section cues (arrangement notes), when present, are short non-empty strings", () => {
+  for (const sl of setlists) {
+    for (const s of sl.songs) {
+      for (const section of s.sections) {
+        if ("cue" in section) {
+          assert.equal(typeof section.cue, "string", `${s.id}/${section.label}: cue must be a string`);
+          assert.ok(section.cue.trim().length > 0 && section.cue.length <= 40, `${s.id}/${section.label}: cue length`);
+        }
+      }
+    }
+  }
+});
+
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
   assert.equal(allAppearanceKeys().length, 28);

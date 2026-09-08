@@ -53,6 +53,11 @@ test("measure grid layout (4 bars per row) with a list fallback is wired", () =>
   assert.match(html, /Vista: lista/);
 });
 
+test("section arrangement cues are wired", () => {
+  assert.match(html, /\.section \.cue/);
+  assert.match(html, /section\.cue/);
+});
+
 test("degree subscripts and manual capo are wired", () => {
   assert.match(html, /chordToDegree/);
   assert.match(html, /sub\.deg/);

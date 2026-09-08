@@ -66,6 +66,10 @@ Los compases se muestran en una **grilla de 4 por fila** (ancho fijo, barras
 como separadores; los acordes de un compás se reparten en tiempos parejos), con
 un botón *Vista: grilla / lista* para volver a los recuadros.
 
+Cada sección puede llevar una **indicación de arreglo** (p. ej. *entra
+acústica*, *piano solo*, *banda*) como etiqueta junto a su nombre; es un dato
+que aporta la banda, no se infiere de las fuentes.
+
 Cada acorde lleva como **subíndice su grado** en la escala del tono real
 (`G₁ D₅ Em₆ C₄`; prestados con alteración, `b7`; acordes con bajo, `1/3`). El
 **capo se puede fijar a mano** por canción; con capo puesto la partitura muestra

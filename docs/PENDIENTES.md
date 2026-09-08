@@ -33,6 +33,13 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 
+6. **Indicaciones de arreglo por sección** (dónde entra/toca la acústica, piano
+   solo, banda, build…): el campo `cue` ya existe y se muestra como etiqueta
+   junto al nombre de la sección. **No se puede deducir de los charts ni de la
+   web** (es dato de escuchar la grabación / del arreglo de la banda), así que
+   sale de Darío. Formato: `Canción: Sección indicación · Sección indicación`.
+   Hoy no hay ninguna cargada.
+
 ## Backlog técnico (mío, no bloquea publicar)
 
 6. **Iconos PWA reales de Grado Uno** — placeholders de 1×1 px.
@@ -72,6 +79,9 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   grabaciones en inglés de Bethel, *En el nombre de Jesús* es *En Tu Nombre*
   de Ingrid Rosario, y *Digno de alabar* es *Worthy of It All* de CeCe Winans
   (2026-09-06).
+- **Indicaciones de arreglo (`cue`)** (2026-09-08): las secciones admiten una
+  indicación corta de instrumentación/dinámica que se muestra como etiqueta.
+  Sólo con dato de Darío; no se infiere de fuentes (sería inventar).
 - **Grilla de compases** (2026-09-08): Darío no lograba ver los compases en los
   recuadros flotantes. Ahora el escenario muestra una **grilla de 4 compases
   por fila, ancho fijo, con barras** como separadores; dentro de cada compás
