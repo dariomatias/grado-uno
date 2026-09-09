@@ -12,6 +12,7 @@ const urls = new Set();
 for (const sl of setlists) {
   for (const s of sl.songs) {
     if (s.lyricsUrl) urls.add(s.lyricsUrl);
+    if (s.chartUrl) urls.add(s.chartUrl);
     if (s.youtubeUrl) urls.add(s.youtubeUrl);
   }
 }

@@ -70,6 +70,9 @@ Cada sección puede llevar una **indicación de arreglo** (p. ej. *entra
 acústica*, *piano solo*, *banda*) como etiqueta junto a su nombre; es un dato
 que aporta la banda, no se infiere de las fuentes.
 
+Cada canción puede tener un enlace externo **"Cifra Club"** a su cifra (nueva
+pestaña; no se extrae contenido). Sin enlace, dice "no disponible".
+
 Cada acorde lleva como **subíndice su grado** en la escala del tono real
 (`G₁ D₅ Em₆ C₄`; prestados con alteración, `b7`; acordes con bajo, `1/3`). El
 **capo se puede fijar a mano** por canción; con capo puesto la partitura muestra

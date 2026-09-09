@@ -40,6 +40,11 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    sale de Darío. Formato: `Canción: Sección indicación · Sección indicación`.
    Hoy no hay ninguna cargada.
 
+7. **Enlaces a Cifra Club que faltan:** 19 de 22 cargados y verificados. Sin
+   cifra en Cifra Club: *A Jesús seguiré*, *Creeré*, *Lavado* (si conocés otra
+   URL, la verifico). Las 6 sin versión confirmada se enlazan cuando confirmes
+   el artista.
+
 ## Backlog técnico (mío, no bloquea publicar)
 
 6. **Iconos PWA reales de Grado Uno** — placeholders de 1×1 px.
@@ -104,6 +109,12 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   aparición (o se deja en automático). Con capo, la partitura muestra las
   **formas que se digitan** (en B con capo 4 se lee G, C, D, Em); el popover
   dice "digitás X, suena Y, grado N".
+- **Enlaces a Cifra Club** (2026-09-09): cada canción puede llevar `chartUrl`
+  con link externo a su cifra ("Cifra Club" en la tarjeta y en el escenario).
+  **Corrección** a lo que dije antes: el spec prohíbe *scrapear/integrar* Cifra
+  Club, no *enlazar*; un link externo es lo mismo que los de e-chords o
+  worshiptogether que el spec ya preveía. Sólo se cargan URLs verificadas
+  (HTTP 200 + título de página de cifra, no de letra).
 - **`pending` gobierna sólo los acordes.** Artista, video y enlaces se
   confirman por separado y pueden existir sin chart; lo que falta dice
   "no disponible". Lo único prohibido es inventar secciones.

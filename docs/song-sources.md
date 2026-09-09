@@ -242,3 +242,40 @@ el que quiere, así que **se cargó como elección deliberada**.
 ### Vie 18 y Dom 27
 Versiones validadas según la tabla; **sin acordes ni videos todavía**
 (`pending` → "Partitura no disponible").
+
+## 4. Enlaces a la cifra en Cifra Club (`chartUrl`)
+
+Enlaces externos a la página pública (nueva pestaña, `rel="noopener"`); **no se
+extrae contenido** — lo que el spec prohíbe es scrapear/integrar, no enlazar.
+Cada URL fue verificada el 2026-09-09 por HTTP 200 y por el `<title>` de la
+página (las páginas de sólo letra dicen "(letra de la canción)" y se
+descartaron). Peculiaridades de slugs: la ñ se cae (`cante-al-seor`,
+`hillsong-en-espaol`) y las cifras con invitados van con `-feat-`/`-part-`.
+
+| Canción | URL | Nota |
+|---|---|---|
+| Todo es posible | https://www.cifraclub.com/bettel-music/anything-is-possible/ | Única cifra; artista mal escrito en Cifra Club ("Bettel"). La página correcta de Bethel es sólo letra. |
+| Santo una cosa | https://www.cifraclub.com/toma-tu-lugar/santo-una-cosa/ | |
+| Al que está sentado | https://www.cifraclub.com/marcos-brunet/al-que-esta-sentado-en-el-trono/ | Fuente del chart cargado |
+| Digno de alabar | https://www.cifraclub.com/cece-winans/worthy-of-it-all/ | Fuente del chart cargado |
+| Dios de avivamiento | https://www.cifraclub.com/bethel-music/dios-de-avivamiento/ | Fuente del chart cargado |
+| Jehová | https://www.cifraclub.com/elevation-worship/jehovah-feat-chris-brown/ | La URL corta `/jehovah/` es sólo letra |
+| Nadie | https://www.cifraclub.com/elevation-worship/nadie/ | |
+| Quién Más | https://www.cifraclub.com/gateway-worship-espanol/quien-mas/ | |
+| Canta al Señor | https://www.cifraclub.com/ingrid-rosario/cante-al-seor/ | Fuente del chart cargado |
+| No Hay Otro Nombre | https://www.cifraclub.com/hillsong-worship/no-hay-otro-nombre/ | La de Hillsong en Español es sólo letra |
+| El Nombre de Jesús | https://www.cifraclub.com/elevation-espanol/el-nombre-de-jesus/ | Fuente del chart cargado (también existe bajo Elevation Worship) |
+| En el nombre de Jesús | https://www.cifraclub.com/ingrid-rosario/en-el-nombre-de-jesus/ | |
+| Clamo a Cristo | https://www.cifraclub.com/elevation-worship/clamo-a-cristo/ | |
+| Cómo no voy a creer | https://www.cifraclub.com/bethel-music/como-no-voy-a-creer/ | |
+| Alabaré al Señor | https://www.cifraclub.com/hillsong-en-espaol/alabare-al-senor-anastasis/ | |
+| Júbilo | https://www.cifraclub.com/miel-san-marcos/jubilo-part-maverick-city-musica/ | La URL corta `/jubilo/` es sólo letra |
+| Es Él | https://www.cifraclub.com/felipe-s-santos/es-el-part-marcos-brunet/ | |
+| Vida nueva | https://www.cifraclub.com/bethel-music/back-to-life-feat-zahriya-zachary/ | Sólo existe cifra del original en inglés; la de *Vida Nueva* es sólo letra |
+| De gracia en gracia | https://www.cifraclub.com/hillsong-united/de-gracia-en-gracia/ | Publicada bajo Hillsong UNITED |
+
+**Sin cifra en Cifra Club** (enlace "no disponible"): *A Jesús seguiré* (probados
+`twice-musica`, `twice`, `job-gonzalez` con y sin `part.`), *Creeré* y *Lavado*
+(sólo letra). **Pendientes de versión** (no se enlazan hasta confirmar artista):
+Señor eres fiel, Para siempre Cristo, Agnus Dei, Eres libre, Adiós al ayer,
+Clamo a Dios.

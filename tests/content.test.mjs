@@ -419,6 +419,18 @@ test("section cues (arrangement notes), when present, are short non-empty string
   }
 });
 
+test("chartUrl, when present, is a Cifra Club song page and unique per song", () => {
+  const seen = new Set();
+  for (const sl of setlists) {
+    for (const s of sl.songs) {
+      if (s.chartUrl === null) continue;
+      assert.match(s.chartUrl, /^https:\/\/www\.cifraclub\.com\/[a-z0-9-]+\/[a-z0-9-]+\/$/, `${s.id}: bad chartUrl`);
+      assert.ok(!seen.has(s.chartUrl), `${s.id}: duplicate chartUrl`);
+      seen.add(s.chartUrl);
+    }
+  }
+});
+
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
   assert.equal(allAppearanceKeys().length, 28);

@@ -53,6 +53,11 @@ test("measure grid layout (4 bars per row) with a list fallback is wired", () =>
   assert.match(html, /Vista: lista/);
 });
 
+test("Cifra Club chart links are wired (card and stage)", () => {
+  assert.ok((html.match(/externalLink\("Cifra Club", song\.chartUrl\)/g) ?? []).length >= 2);
+  assert.match(html, /chartUrl: null/);
+});
+
 test("section arrangement cues are wired", () => {
   assert.match(html, /\.section \.cue/);
   assert.match(html, /section\.cue/);

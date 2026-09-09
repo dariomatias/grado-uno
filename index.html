@@ -292,6 +292,8 @@ export const setlists = [
     songs: [
       song("todo-es-posible", "Todo es posible", "D", {
         artist: "Bethel Music, Dante Bowe (Anything Is Possible · Live)",
+        // Única cifra en Cifra Club: está bajo un artista mal escrito ("Bettel Music").
+        chartUrl: "https://www.cifraclub.com/bettel-music/anything-is-possible/",
         sourceKey: "Bb",
         tempoBpm: 122,
         beatsPerMeasure: 4,
@@ -360,6 +362,7 @@ export const setlists = [
       }),
       song("santo-una-cosa", "Santo una cosa", "A", {
         artist: "Toma Tu Lugar, Lucas Conslie",
+        chartUrl: "https://www.cifraclub.com/toma-tu-lugar/santo-una-cosa/",
         sourceKey: "G",
         beatsPerMeasure: 4,
         // Chart Cifra Club (TOMATULUGAR) aportado por Darío el 2026-09-08, en G;
@@ -374,6 +377,7 @@ export const setlists = [
       }),
       song("al-que-esta-sentado", "Al que está sentado", "A", {
         artist: "Marco Barrientos, Marcos Brunet",
+        chartUrl: "https://www.cifraclub.com/marcos-brunet/al-que-esta-sentado-en-el-trono/",
         sourceKey: "A",
         beatsPerMeasure: 4,
         // Chart Cifra Club (Marcos Brunet) aportado por Darío el 2026-09-08, en A
@@ -394,6 +398,7 @@ export const setlists = [
       }),
       song("digno-de-alabar", "Digno de alabar", "D", {
         artist: "CeCe Winans (Worthy of It All · Official Audio)",
+        chartUrl: "https://www.cifraclub.com/cece-winans/worthy-of-it-all/",
         sourceKey: "D",
         beatsPerMeasure: 4,
         youtubeUrl: "https://www.youtube.com/watch?v=JzZSrOPeolc",
@@ -414,6 +419,7 @@ export const setlists = [
       }),
       song("dios-de-avivamiento", "Dios de avivamiento", "C", {
         artist: "Bethel Music, Brian Johnson, Jenn Johnson (God of Revival · Live)",
+        chartUrl: "https://www.cifraclub.com/bethel-music/dios-de-avivamiento/",
         sourceKey: "C",
         beatsPerMeasure: 4,
         // Chart Cifra Club (Bethel Music) aportado por Darío el 2026-09-08, en C
@@ -440,6 +446,7 @@ export const setlists = [
       song("jehova", "Jehová", "E", {
         artist: "Elevation Español",
         sourceKey: "Db",
+        chartUrl: "https://www.cifraclub.com/elevation-worship/jehovah-feat-chris-brown/",
         youtubeUrl: "https://www.youtube.com/watch?v=CBbSkDUrZds",
         youtubeVideoId: "CBbSkDUrZds",
         beatsPerMeasure: 4,
@@ -489,6 +496,7 @@ export const setlists = [
       song("nadie", "Nadie", "G", {
         artist: "Elevation Worship",
         sourceKey: "D",
+        chartUrl: "https://www.cifraclub.com/elevation-worship/nadie/",
         youtubeUrl: "https://www.youtube.com/watch?v=H7wWxol50zY",
         youtubeVideoId: "H7wWxol50zY",
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/nadie-elevation-worship/",
@@ -507,6 +515,7 @@ export const setlists = [
         sourceKey: "Ab",
         // Video elegido por Darío a sabiendas: es un cover/medley ("Who Else +
         // Shout to the Lord", Rachel Atkinson), no el oficial de Gateway.
+        chartUrl: "https://www.cifraclub.com/gateway-worship-espanol/quien-mas/",
         youtubeUrl: "https://www.youtube.com/watch?v=F-40DlTc_JY",
         youtubeVideoId: "F-40DlTc_JY",
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/quien-mas-gateway-worship-espanol/",
@@ -523,6 +532,7 @@ export const setlists = [
       }),
       song("canta-al-senor", "Canta al Señor", "G", {
         artist: "Ingrid Rosario",
+        chartUrl: "https://www.cifraclub.com/ingrid-rosario/cante-al-seor/",
         sourceKey: "A",
         beatsPerMeasure: 4,
         // BORRADOR: chart de Cifra Club ("Cante Al Señor", Ingrid Rosario) leído
@@ -540,6 +550,7 @@ export const setlists = [
       song("no-hay-otro-nombre", "No Hay Otro Nombre", "G", {
         artist: "Hillsong en Español",
         sourceKey: "G",
+        chartUrl: "https://www.cifraclub.com/hillsong-worship/no-hay-otro-nombre/",
         youtubeUrl: "https://www.youtube.com/watch?v=2BuifDijlFY",
         youtubeVideoId: "2BuifDijlFY",
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/no-hay-otro-nombre-hillsong-worship/",
@@ -557,6 +568,7 @@ export const setlists = [
         artist: "Elevation Español",
         sourceKey: "Db",
         beatsPerMeasure: 4,
+        chartUrl: "https://www.cifraclub.com/elevation-espanol/el-nombre-de-jesus/",
         youtubeUrl: "https://www.youtube.com/watch?v=Su2LSzHgb9s",
         youtubeVideoId: "Su2LSzHgb9s",
         // Chart (Cifra Club, Elevation Worship) aportado por Darío el 2026-09-07,
@@ -585,12 +597,24 @@ export const setlists = [
     date: "2026-09-18",
     songs: [
       song("senor-eres-fiel", "Señor eres fiel", "C"),
-      song("en-el-nombre-de-jesus", "En el nombre de Jesús", "C", { artist: "Ingrid Rosario (En Tu Nombre · In Jesus' Name)" }),
-      song("clamo-a-cristo", "Clamo a Cristo", "E", { artist: "Elevation Español" }),
-      song("como-no-voy-a-creer", "Cómo no voy a creer", "E", { artist: "Bethel Music, Christine D'Clario, Edward Rivera" }),
+      song("en-el-nombre-de-jesus", "En el nombre de Jesús", "C", {
+        artist: "Ingrid Rosario (En Tu Nombre · In Jesus' Name)",
+        chartUrl: "https://www.cifraclub.com/ingrid-rosario/en-el-nombre-de-jesus/"
+      }),
+      song("clamo-a-cristo", "Clamo a Cristo", "E", {
+        artist: "Elevation Español",
+        chartUrl: "https://www.cifraclub.com/elevation-worship/clamo-a-cristo/"
+      }),
+      song("como-no-voy-a-creer", "Cómo no voy a creer", "E", {
+        artist: "Bethel Music, Christine D'Clario, Edward Rivera",
+        chartUrl: "https://www.cifraclub.com/bethel-music/como-no-voy-a-creer/"
+      }),
       song("para-siempre-cristo", "Para siempre Cristo", "E"),
       song("agnus-dei", "Agnus Dei", "E"),
-      song("alabare-al-senor", "Alabaré al Señor", "D", { artist: "Hillsong en Español" })
+      song("alabare-al-senor", "Alabaré al Señor", "D", {
+        artist: "Hillsong en Español",
+        chartUrl: "https://www.cifraclub.com/hillsong-en-espaol/alabare-al-senor-anastasis/"
+      })
     ]
   },
   {
@@ -599,13 +623,27 @@ export const setlists = [
     shortLabel: "Dom 27",
     date: "2026-09-27",
     songs: [
-      song("jubilo", "Júbilo", "C", { artist: "Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr." }),
+      song("jubilo", "Júbilo", "C", {
+        artist: "Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr.",
+        chartUrl: "https://www.cifraclub.com/miel-san-marcos/jubilo-part-maverick-city-musica/"
+      }),
       song("eres-libre", "Eres libre", "G"),
       song("adios-al-ayer", "Adiós al ayer", "F"),
       song("clamo-a-dios", "Clamo a Dios", "D"),
-      song("es-el", "Es Él", "A", { artist: "Felipe S. Santos, Marcos Brunet" }),
-      song("vida-nueva", "Vida nueva", "A", { artist: "Bethel Music, Zahriya Zachary" }),
-      song("de-gracia-en-gracia", "De gracia en gracia", "Eb", { artist: "Hillsong en Español" })
+      song("es-el", "Es Él", "A", {
+        artist: "Felipe S. Santos, Marcos Brunet",
+        chartUrl: "https://www.cifraclub.com/felipe-s-santos/es-el-part-marcos-brunet/"
+      }),
+      song("vida-nueva", "Vida nueva", "A", {
+        artist: "Bethel Music, Zahriya Zachary",
+        // Cifra Club sólo tiene cifra del original en inglés (Back To Life); mismos acordes.
+        chartUrl: "https://www.cifraclub.com/bethel-music/back-to-life-feat-zahriya-zachary/"
+      }),
+      song("de-gracia-en-gracia", "De gracia en gracia", "Eb", {
+        artist: "Hillsong en Español",
+        // La cifra está publicada bajo Hillsong UNITED (la de "en Español" no existe).
+        chartUrl: "https://www.cifraclub.com/hillsong-united/de-gracia-en-gracia/"
+      })
     ]
   }
 ];
@@ -624,6 +662,7 @@ function song(id, title, assignedKey, overrides = {}) {
     sourceKey: null,
     sourceStatus: "pending",
     lyricsUrl: null,
+    chartUrl: null, // enlace externo a la cifra/tablatura (Cifra Club); no se extrae contenido
     youtubeUrl: null,
     youtubeVideoId: null,
     tempoBpm: null,
@@ -653,6 +692,9 @@ export function validateSetlists(items) {
       if (s.sourceStatus === "pending" && s.sections.length) errors.push(`${setlist.id}:${s.id}: pending source has sections`);
       if (s.youtubeVideoId && !/^[A-Za-z0-9_-]{11}$/.test(s.youtubeVideoId)) {
         errors.push(`${setlist.id}:${s.id}: invalid youtubeVideoId`);
+      }
+      if (s.chartUrl && !/^https:\/\/www\.cifraclub\.com\/[a-z0-9-]+\/[a-z0-9-]+\/$/.test(s.chartUrl)) {
+        errors.push(`${setlist.id}:${s.id}: chartUrl must be a Cifra Club song page`);
       }
     }
   }
@@ -1279,6 +1321,7 @@ function renderSetlist() {
     lyricBtn.addEventListener("click", () => openLyricsDialog(keyFor(song), lyricBtn));
     actions.appendChild(lyricBtn);
 
+    actions.appendChild(externalLink("Cifra Club", song.chartUrl));
     actions.appendChild(externalLink("Letra completa", song.lyricsUrl));
     actions.appendChild(externalLink("YouTube", song.youtubeUrl));
 
@@ -1362,6 +1405,14 @@ function renderStage() {
   artist.className = "meta";
   artist.textContent = song.artist;
   el.stageView.appendChild(artist);
+
+  // Enlaces externos de la canción (nueva pestaña; no se extrae contenido).
+  const links = document.createElement("div");
+  links.className = "actions";
+  links.style.margin = "8px 0";
+  links.appendChild(externalLink("Cifra Club", song.chartUrl));
+  links.appendChild(externalLink("YouTube", song.youtubeUrl));
+  el.stageView.appendChild(links);
 
   // Key line + transpose controls
   const keyline = document.createElement("div");
