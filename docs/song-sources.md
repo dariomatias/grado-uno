@@ -75,12 +75,13 @@ el que quiere, así que **se cargó como elección deliberada**.
 - **Estructura de la banda (Darío, 2026-09-09, 13 pasos):** Intro · Verso 1 ·
   Verso 2 · Coro · Interludio · Verso 3 · Verso 4 · Coro ×2 · Interludio ·
   Puente ×4 · Coro ×2 · Puente ×2 · Outro. Reemplaza al orden del chart.
-  Supuestos a confirmar: **V1–V4 = las dos mitades de cada verso del chart**
-  (4 líneas cada una); **Coro unificado** con el remate `G D Dsus` (el chart
-  tenía dos remates y dos "variaciones", descartadas); **un solo Puente**
-  (`D Gsus2 | D Gsus2 G`) para el ×4 y el ×2 — la variante con bajo caminante
-  (`D/F# G | D/A G`) del chart quedó fuera. Intro = 4 compases de `D Dsus`;
-  Interludio y Outro = 2 (mismo bloque).
+  Confirmado por Darío (2026-09-09): **los cuatro versos son iguales** (se usa
+  la progresión de la primera mitad del chart, `D Dsus | D Dsus | Bm G D | A`;
+  si la que usan es `D G | D G | …`, cambiar), **Coro unificado** con el remate
+  `G D Dsus` (las "variaciones" del chart, descartadas), y **dos puentes**:
+  Puente ×4 = `D Gsus2 | D Gsus2 G`; **Puente (final) ×2** = el de bajo caminante
+  `D/F# G | D/A G`. Intro = 4 compases de `D Dsus`; Interludio y Outro = 2
+  (mismo bloque).
 - **Sin letra**: sólo acordes, compases y repeticiones. `lyricsUrl` null.
 - Letra/cifra del spec (e-chords, bloqueado al fetch): https://www.e-chords.com/es/acordes/elevation-worship/jehovah-feat-chris-brown
 - **Video fijado:** https://www.youtube.com/watch?v=CBbSkDUrZds — *"Jehová |

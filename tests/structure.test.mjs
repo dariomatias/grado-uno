@@ -81,16 +81,15 @@ test("A Jesús seguiré: Coro and Coro (final) share chords → one block; Tag o
   assert.equal(s.blocks.length, 5); // Coro(+final), Tag, Verso 1, Pre-coro, Verso 2
 });
 
-test("Jehová: band structure — one Coro (×3), Interludio·Outro share a block, Puente twice", () => {
+test("Jehová: band structure — four identical verses in one block, one Coro (×3), two distinct bridges", () => {
   const s = songStructure(song("Jehová").sections);
   assert.deepEqual(s.blocks.map((b) => b.title), [
-    "Intro", "Verso 1", "Verso 2", "Coro", "Interludio · Outro", "Verso 3", "Verso 4", "Puente"
+    "Intro", "Verso 1 · Verso 2 · Verso 3 · Verso 4", "Coro", "Interludio · Outro", "Puente", "Puente (final)"
   ]);
   assert.equal(s.blocks.find((b) => b.title === "Coro").occurrences.length, 3);
-  assert.equal(s.blocks.find((b) => b.title === "Puente").occurrences.length, 2);
   assert.deepEqual(s.roadmap.map((r) => r.displayLabel + (r.repeats > 1 ? ` ×${r.repeats}` : "")), [
     "Intro", "Verso 1", "Verso 2", "Coro", "Interludio", "Verso 3", "Verso 4", "Coro ×2", "Interludio",
-    "Puente ×4", "Coro ×2", "Puente ×2", "Outro"
+    "Puente ×4", "Coro ×2", "Puente (final) ×2", "Outro"
   ]);
-  assert.equal(structureSummary(s.typeSummary), "Intro · 4 versos · Coro · Interludio · Puente · Outro");
+  assert.equal(structureSummary(s.typeSummary), "Intro · 4 versos · Coro · Interludio · 2 puentes · Outro");
 });

@@ -208,18 +208,20 @@ test("Jehová: Elevation chart (C shapes, capo 1 = Db) normalized to E, on the b
   const c = (measures) => transposeSections([{ measures }], semitoneDistance("C", "E"), "sharp")[0].measures;
   const byLabel = (l) => song.sections.find((s) => s.label === l).measures;
   assert.deepEqual(byLabel("Intro"), c([["C", "Csus"], ["C", "Csus"], ["C", "Csus"], ["C", "Csus"]]));
-  assert.deepEqual(byLabel("Verso 1"), c([["C", "Csus"], ["C", "Csus"], ["Am", "F", "C"], ["G"]]));
-  assert.deepEqual(byLabel("Verso 2"), c([["C", "F"], ["C", "F"], ["Am", "F", "C"], ["G"]]));
-  assert.deepEqual(byLabel("Verso 3"), c([["C", "Csus"], ["C", "F"], ["Am", "F", "C"], ["G"]]));
-  assert.deepEqual(byLabel("Verso 4"), c([["C", "F"], ["C", "F"], ["Am", "F", "Dm", "C"], ["F", "G"]]));
+  // Los cuatro versos son iguales (Darío): la progresión de la primera mitad del chart.
+  for (const v of ["Verso 1", "Verso 2", "Verso 3", "Verso 4"]) {
+    assert.deepEqual(byLabel(v), c([["C", "Csus"], ["C", "Csus"], ["Am", "F", "C"], ["G"]]), v);
+  }
   assert.deepEqual(byLabel("Coro"), c([["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F", "C", "Csus"]]));
   assert.deepEqual(byLabel("Puente"), c([["C", "Fsus2"], ["C", "Fsus2", "F"]]));
+  // El puente del final es el de bajo caminante del chart.
+  assert.deepEqual(byLabel("Puente (final)"), c([["C/E", "F"], ["C/G", "F"]]));
   assert.deepEqual(byLabel("Interludio"), c([["C", "Csus"], ["C", "Csus"]]));
   assert.deepEqual(byLabel("Outro"), byLabel("Interludio"));
   // Estructura dictada por Darío, en orden y con repeticiones.
   assert.deepEqual(song.sections.map((s) => [s.label, s.repeats]), [
     ["Intro", 1], ["Verso 1", 1], ["Verso 2", 1], ["Coro", 1], ["Interludio", 1], ["Verso 3", 1], ["Verso 4", 1],
-    ["Coro", 2], ["Interludio", 1], ["Puente", 4], ["Coro", 2], ["Puente", 2], ["Outro", 1]
+    ["Coro", 2], ["Interludio", 1], ["Puente", 4], ["Coro", 2], ["Puente (final)", 2], ["Outro", 1]
   ]);
 });
 

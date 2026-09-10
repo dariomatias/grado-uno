@@ -280,6 +280,8 @@ const CREERE_PUENTE = [["A", "E/G#"], ["F#m", "E", "D"], ["A", "E/G#"], ["F#m", 
 const JEHOVA_CORO = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A", "E", "Esus"]];
 const JEHOVA_PUENTE = [["E", "Asus2"], ["E", "Asus2", "A"]];
 const JEHOVA_VAMP = [["E", "Esus"], ["E", "Esus"]]; // Interludio y Outro (2 compases)
+const JEHOVA_VERSO = [["E", "Esus"], ["E", "Esus"], ["C#m", "A", "E"], ["B"]]; // los 4 versos iguales (Darío)
+const JEHOVA_PUENTE_FINAL = [["E/G#", "A"], ["E/B", "A"]]; // puente del final, con bajo caminante
 
 // "Lavado": arreglo de la banda (Darío, 2026-09-09). Lo tocan leyendo formas
 // de A con capo 2 → suena en B (el tono del setlist y de la grabación).
@@ -485,17 +487,17 @@ export const setlists = [
         // Puente ×2 → Outro. V1–V4 = las dos mitades de cada verso del chart.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["E", "Esus"], ["E", "Esus"], ["E", "Esus"], ["E", "Esus"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "Esus"], ["E", "Esus"], ["C#m", "A", "E"], ["B"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["E", "A"], ["E", "A"], ["C#m", "A", "E"], ["B"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: JEHOVA_VERSO },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: JEHOVA_VERSO },
           { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO },
           { type: "interlude", label: "Interludio", repeats: 1, measures: JEHOVA_VAMP },
-          { type: "verse", label: "Verso 3", repeats: 1, measures: [["E", "Esus"], ["E", "A"], ["C#m", "A", "E"], ["B"]] },
-          { type: "verse", label: "Verso 4", repeats: 1, measures: [["E", "A"], ["E", "A"], ["C#m", "A", "F#m", "E"], ["A", "B"]] },
+          { type: "verse", label: "Verso 3", repeats: 1, measures: JEHOVA_VERSO },
+          { type: "verse", label: "Verso 4", repeats: 1, measures: JEHOVA_VERSO },
           { type: "chorus", label: "Coro", repeats: 2, measures: JEHOVA_CORO },
           { type: "interlude", label: "Interludio", repeats: 1, measures: JEHOVA_VAMP },
           { type: "bridge", label: "Puente", repeats: 4, measures: JEHOVA_PUENTE },
           { type: "chorus", label: "Coro", repeats: 2, measures: JEHOVA_CORO },
-          { type: "bridge", label: "Puente", repeats: 2, measures: JEHOVA_PUENTE },
+          { type: "bridge", label: "Puente (final)", repeats: 2, measures: JEHOVA_PUENTE_FINAL },
           { type: "outro", label: "Outro", repeats: 1, measures: JEHOVA_VAMP }
         ]
       }),
