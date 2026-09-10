@@ -251,15 +251,18 @@ test("Lavado: the band's arrangement — D shapes at capo 2 sound in E; Puente/T
   const shapesCoro = [["D"], ["A", "G"], ["A", "G"], ["Bm"], ["A", "D/F#"], ["G"], ["D"], ["A", "G"]];
   const toE = (measures) => transposeSections([{ measures }], 2, "sharp")[0].measures;
   const byLabel = (l) => song.sections.find((s) => s.label === l).measures;
-  assert.deepEqual(byLabel("Verso 1"), toE(shapesVerso));
-  assert.deepEqual(byLabel("Verso 2"), toE(shapesVerso));
+  for (const v of ["Verso 1", "Verso 2", "Verso 3", "Verso 4"]) assert.deepEqual(byLabel(v), toE(shapesVerso), v);
   assert.deepEqual(byLabel("Coro"), toE(shapesCoro));
-  // Puente y Tag: 1 4 6m 4 del chart oficial, convertido a E.
+  // Intro: vamp "A G | A G" (formas), asumido a partir de "están en el La".
+  assert.deepEqual(byLabel("Intro"), toE([["A", "G"], ["A", "G"]]));
+  // Puente: 1 4 6m 4 del chart oficial, convertido a E. Sin Tag.
   const puenteE = degreesToSections([{ measures: [["1"], ["4"], ["6m"], ["4"]] }], "E")[0].measures;
   assert.deepEqual(byLabel("Puente"), puenteE);
-  assert.deepEqual(byLabel("Tag"), puenteE);
+  assert.ok(!song.sections.some((s) => s.label === "Tag"));
+  // Estructura dictada por Darío, en orden y con repeticiones.
   assert.deepEqual(song.sections.map((s) => [s.label, s.repeats]), [
-    ["Verso 1", 2], ["Coro", 1], ["Verso 2", 2], ["Coro", 2], ["Puente", 4], ["Tag", 1], ["Coro", 1]
+    ["Intro", 2], ["Verso 1", 1], ["Verso 2", 1], ["Coro", 1], ["Verso 3", 1], ["Verso 4", 1],
+    ["Coro", 2], ["Puente", 1], ["Intro", 4], ["Intro", 3], ["Coro", 1]
   ]);
   // La heurística sola preferiría capo 4 (formas de C, cero cejillas); la banda
   // usa capo 2 (formas de D, con la cejilla de Bm). Por eso el capo del arreglo

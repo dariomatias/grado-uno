@@ -60,14 +60,16 @@ test("empty song yields an empty structure", () => {
   assert.deepEqual(songStructure([]), { roadmap: [], blocks: [], typeSummary: [] });
 });
 
-test("Lavado: Verso 1/Verso 2 merge, Puente/Tag merge, Coro appears 3 times", () => {
+test("Lavado: four verses collapse into one block, Intro appears 3 times with different repeats, Coro 3 times", () => {
   const s = songStructure(song("Lavado").sections);
   const titles = s.blocks.map((b) => b.title);
-  assert.ok(titles.includes("Verso 1 · Verso 2"), titles.join(" | "));
-  assert.ok(titles.includes("Puente · Tag"), titles.join(" | "));
-  const coro = s.blocks.find((b) => b.title === "Coro");
-  assert.equal(coro.occurrences.length, 3);
-  assert.equal(s.blocks.length, 3); // Verso, Coro, Puente·Tag (arreglo de la banda)
+  assert.deepEqual(titles, ["Intro", "Verso 1 · Verso 2 · Verso 3 · Verso 4", "Coro", "Puente"]);
+  assert.equal(s.blocks.find((b) => b.title === "Coro").occurrences.length, 3);
+  const intro = s.blocks.find((b) => b.title === "Intro");
+  assert.equal(intro.occurrences.length, 3);
+  // El recorrido conserva las repeticiones distintas de cada Intro (×2, ×4, ×3).
+  assert.deepEqual(s.roadmap.filter((r) => r.label === "Intro").map((r) => r.repeats), [2, 4, 3]);
+  assert.equal(structureSummary(s.typeSummary), "Intro · 4 versos · Coro · Puente");
 });
 
 test("A Jesús seguiré: Coro and Coro (final) share chords → one block; Tag once", () => {

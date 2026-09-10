@@ -88,12 +88,17 @@ el que quiere, así que **se cargó como elección deliberada**.
   A G | D A G`; Coro: `D | A G | A G | Bm | A D/F# | G | D | A G`. Se almacenan los
   acordes reales (+2: B A | C#m | E | E/G#) y el escenario, con capo 2, muestra
   exactamente esas formas. `capo: 2` queda como dato del arreglo.
-- **Puente y Tag**: progresión `1 4 6m 4` del chart oficial de Elevation
-  (NÚMEROS, Spanish CCLI 7275652, aportado el 2026-09-07), convertida a E
-  (E A C#m A). El resto de ese chart (Intro, Vamp, Instrumental, y su
-  armonía de verso `1/3 4 | 5 6m`) **no se usa**: la banda la hace distinto.
-- **Orden (7 secciones):** Verso 1 ×2 · Coro · Verso 2 ×2 · Coro ×2 · Puente ×4 ·
-  Tag · Coro. Los versos ×2 siguen la forma de Elevation; Darío puede corregir.
+- **Intro**: vamp `A G | A G` (formas; real B A | B A). **Asumido** a partir de
+  la respuesta de Darío "los acordes con las formas en el capo 2 están en el
+  La"; confirmar.
+- **Puente**: progresión `1 4 6m 4` del chart oficial de Elevation (NÚMEROS,
+  Spanish CCLI 7275652, aportado el 2026-09-07), convertida a E (E A C#m A;
+  formas D G Bm G), ×1. El resto de ese chart (su intro, Vamp, Tag,
+  Instrumental y su armonía de verso `1/3 4 | 5 6m`) **no se usa**: la banda la
+  hace distinto.
+- **Estructura dictada por Darío (2026-09-09, 11 pasos):** Intro ×2 · Verso 1 ·
+  Verso 2 · Coro · Verso 3 · Verso 4 · Coro ×2 · Puente · Intro ×4 · Intro ×3 ·
+  Coro. Los cuatro versos comparten acordes → un solo bloque en el escenario.
 - **Capo: el arreglo manda.** La heurística automática preferiría **capo 4**
   (formas de C: G F Am C C/E, cero cejillas); la banda usa **capo 2** (formas de
   D, con la cejilla de Bm). `capo: 2` en la canción hace que el escenario use el

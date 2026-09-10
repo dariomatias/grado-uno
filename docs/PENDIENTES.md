@@ -40,6 +40,10 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    sale de Darío. Formato: `Canción: Sección indicación · Sección indicación`.
    Hoy no hay ninguna cargada.
 
+8. **Confirmar dos supuestos de Lavado:** la **Intro** quedó como el vamp
+   `A G | A G` (interpreté "están en el La"); y el **Puente** quedó ×1 con la
+   progresión de Elevation (`D G Bm G` en tus formas), ya que no diste acordes
+   propios para él.
 7. **Enlaces a Cifra Club que faltan:** 19 de 22 cargados y verificados. Sin
    cifra en Cifra Club: *A Jesús seguiré*, *Creeré*, *Lavado* (si conocés otra
    URL, la verifico). Las 6 sin versión confirmada se enlazan cuando confirmes

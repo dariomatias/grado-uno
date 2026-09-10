@@ -286,6 +286,7 @@ const JEHOVA_PUENTE_BAJO = [["E/G#", "A"], ["E/B", "A"]];
 const LAVADO_VERSO = [["B", "A"], ["B", "A"], ["C#m"], ["B", "A"], ["E", "B", "A"]];
 const LAVADO_CORO = [["E"], ["B", "A"], ["B", "A"], ["C#m"], ["B", "E/G#"], ["A"], ["E"], ["B", "A"]];
 const LAVADO_PUENTE = [["E"], ["A"], ["C#m"], ["A"]];
+const LAVADO_INTRO = [["B", "A"], ["B", "A"]]; // vamp "A G | A G" en formas de D (capo 2)
 
 // "El Nombre de Jesús" (chart en Db → D, +1). Bloques repetidos.
 const NOMBRE_JESUS_INSTR1 = [["Em"], ["G"], ["Em"], ["G"], ["Bm"], ["A"], ["Bm"], ["A"]];
@@ -501,13 +502,18 @@ export const setlists = [
         // Arreglo de la banda dado por Darío (2026-09-09): verso y coro propios,
         // más Puente y Tag (1 4 6m 4) del chart oficial de Elevation. El setlist
         // decía B; la banda la toca en E. Sin BPM. Sólo acordes.
+        // Estructura dictada por Darío (2026-09-09).
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 2, measures: LAVADO_VERSO },
+          { type: "intro", label: "Intro", repeats: 2, measures: LAVADO_INTRO },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: LAVADO_VERSO },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: LAVADO_VERSO },
           { type: "chorus", label: "Coro", repeats: 1, measures: LAVADO_CORO },
-          { type: "verse", label: "Verso 2", repeats: 2, measures: LAVADO_VERSO },
+          { type: "verse", label: "Verso 3", repeats: 1, measures: LAVADO_VERSO },
+          { type: "verse", label: "Verso 4", repeats: 1, measures: LAVADO_VERSO },
           { type: "chorus", label: "Coro", repeats: 2, measures: LAVADO_CORO },
-          { type: "bridge", label: "Puente", repeats: 4, measures: LAVADO_PUENTE },
-          { type: "tag", label: "Tag", repeats: 1, measures: LAVADO_PUENTE },
+          { type: "bridge", label: "Puente", repeats: 1, measures: LAVADO_PUENTE },
+          { type: "intro", label: "Intro", repeats: 4, measures: LAVADO_INTRO },
+          { type: "intro", label: "Intro", repeats: 3, measures: LAVADO_INTRO },
           { type: "chorus", label: "Coro", repeats: 1, measures: LAVADO_CORO }
         ]
       }),
