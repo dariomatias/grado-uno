@@ -109,6 +109,13 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   aparición (o se deja en automático). Con capo, la partitura muestra las
   **formas que se digitan** (en B con capo 4 se lee G, C, D, Em); el popover
   dice "digitás X, suena Y, grado N".
+- **Estructura + bloques únicos** (2026-09-09, pedido de Darío): el escenario
+  muestra primero la **estructura** ("Contiene: Intro · 2 versos · Coro · …" y
+  el recorrido en orden con repeticiones e indicaciones, chips que llevan a su
+  bloque) y después **cada secuencia de acordes una sola vez**, titulada con
+  todas las secciones que la usan ("Verso 1 · Verso 2", "Coro · aparece 4
+  veces"). Misma etiqueta con acordes distintos → "Coro (A)" / "Coro (B)",
+  también en el recorrido.
 - **Enlaces a Cifra Club** (2026-09-09): cada canción puede llevar `chartUrl`
   con link externo a su cifra ("Cifra Club" en la tarjeta y en el escenario).
   **Corrección** a lo que dije antes: el spec prohíbe *scrapear/integrar* Cifra

@@ -62,6 +62,12 @@ Bm7 sin cejilla, D/F#, F compacta…), no digitaciones clásicas. Para tonalidad
 no abiertas se sugiere **capo** automáticamente y el diagrama muestra la forma
 que se digita con ese capo. Lo que no tiene digitación dice "no disponible".
 
+El Escenario muestra primero la **estructura** de la canción (qué contiene y el
+recorrido en orden, con repeticiones) y luego **cada secuencia de acordes una
+sola vez**, titulada con todas las secciones que la usan ("Verso 1 · Verso 2").
+Secciones homónimas con acordes distintos se distinguen como "Coro (A)" y
+"Coro (B)".
+
 Los compases se muestran en una **grilla de 4 por fila** (ancho fijo, barras
 como separadores; los acordes de un compás se reparten en tiempos parejos), con
 un botón *Vista: grilla / lista* para volver a los recuadros.

@@ -103,6 +103,25 @@
       #stageView h2 { margin: 4px 0; font-size: clamp(1.3rem, 4vw, 2rem); }
       .keyline { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
       .transpose-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      /* Estructura: recorrido de la canción con chips que llevan a cada bloque */
+      .roadmap {
+        background: var(--panel); border: 1px solid var(--gold); border-radius: var(--radius);
+        padding: 12px; margin: 12px 0;
+      }
+      .roadmap h3 { margin: 0 0 4px; font-size: 1rem; color: var(--gold-strong); }
+      .roadmap .hint { margin: 0 0 8px; }
+      .road { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 4px; align-items: center; }
+      .road li { display: flex; align-items: center; gap: 4px; }
+      .road li + li::before { content: "→"; color: var(--muted); font-size: .9rem; }
+      .road .step {
+        min-height: 44px; padding: 6px 12px; border-radius: 999px; font-size: .95rem;
+        background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+        display: inline-flex; align-items: center; gap: 6px;
+      }
+      .road .step .cue { margin-left: 0; font-size: .72rem; }
+      .section .uses { color: var(--muted); font-size: .85rem; font-weight: 400; }
+      .section.flash { outline: 3px solid var(--gold); outline-offset: 2px; transition: outline-color .8s ease; }
+      @media (prefers-reduced-motion: reduce) { .section.flash { transition: none; } }
       .sections { list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 14px; }
       .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
       .section .slabel { color: var(--gold-strong); font-weight: 700; margin-bottom: 8px; display: flex; gap: 8px; align-items: baseline; }
@@ -1133,6 +1152,72 @@ export function voicingsIntegrity(table = WORSHIP_VOICINGS) {
 }
 /* voicings-module:end */
 
+/* structure-module:start */
+// Estructura de la canción para el escenario: el RECORRIDO en orden (con
+// repeticiones e indicaciones) y los BLOQUES ÚNICOS de acordes. Secciones con la
+// misma secuencia de acordes se muestran una sola vez, con todas sus etiquetas
+// ("Verso 1 · Verso 2"). Si una misma etiqueta corresponde a secuencias
+// distintas, se desambigua con (A), (B)… por orden de aparición.
+export const SECTION_TYPE_LABELS = {
+  intro: ["Intro", "Intros"], verse: ["Verso", "Versos"], prechorus: ["Pre-coro", "Pre-coros"],
+  chorus: ["Coro", "Coros"], bridge: ["Puente", "Puentes"], instrumental: ["Instrumental", "Instrumentales"],
+  interlude: ["Interludio", "Interludios"], vamp: ["Vamp", "Vamps"], tag: ["Tag", "Tags"],
+  outro: ["Outro", "Outros"], other: ["Sección", "Secciones"]
+};
+
+export function songStructure(sections) {
+  const blocks = [];
+  const byKey = new Map();
+  const roadmap = sections.map((s, index) => {
+    const key = JSON.stringify(s.measures);
+    let block = byKey.get(key);
+    if (!block) {
+      block = { id: blocks.length, labels: [], occurrences: [], measures: s.measures, firstIndex: index };
+      byKey.set(key, block);
+      blocks.push(block);
+    }
+    if (!block.labels.includes(s.label)) block.labels.push(s.label);
+    block.occurrences.push(index);
+    return { index, label: s.label, repeats: s.repeats ?? 1, cue: s.cue ?? null, type: s.type ?? "other", blockId: block.id };
+  });
+
+  // Una etiqueta usada por más de un bloque distinto → sufijo (A), (B)…
+  const labelToBlocks = new Map();
+  for (const b of blocks) for (const l of b.labels) labelToBlocks.set(l, [...(labelToBlocks.get(l) ?? []), b.id]);
+  const suffix = new Map();
+  for (const [label, ids] of labelToBlocks) {
+    if (ids.length > 1) ids.forEach((id, i) => suffix.set(`${id}|${label}`, ` (${String.fromCharCode(65 + i)})`));
+  }
+  const display = (blockId, label) => label + (suffix.get(`${blockId}|${label}`) ?? "");
+
+  const namedBlocks = blocks.map((b) => {
+    const displayLabels = b.labels.map((l) => display(b.id, l));
+    return { ...b, displayLabels, title: displayLabels.join(" · ") };
+  });
+  const namedRoadmap = roadmap.map((r) => ({ ...r, displayLabel: display(r.blockId, r.label) }));
+
+  // Resumen de tipos: cuántas secciones DISTINTAS (por etiqueta) hay de cada tipo.
+  const perType = new Map();
+  sections.forEach((s, i) => {
+    const t = s.type ?? "other";
+    const e = perType.get(t) ?? { type: t, labels: new Set(), firstIndex: i };
+    e.labels.add(s.label);
+    perType.set(t, e);
+  });
+  const typeSummary = [...perType.values()].sort((a, b) => a.firstIndex - b.firstIndex)
+    .map((e) => ({ type: e.type, count: e.labels.size }));
+
+  return { roadmap: namedRoadmap, blocks: namedBlocks, typeSummary };
+}
+
+export function structureSummary(typeSummary, labels = SECTION_TYPE_LABELS) {
+  return typeSummary.map(({ type, count }) => {
+    const [singular, plural] = labels[type] ?? labels.other;
+    return count > 1 ? `${count} ${plural.toLowerCase()}` : singular;
+  }).join(" · ");
+}
+/* structure-module:end */
+
 /* ============================================================
    Capa DOM (impura): consume los módulos puros de arriba.
    ============================================================ */
@@ -1488,12 +1573,28 @@ function renderStage() {
     p.textContent = "Partitura no disponible.";
     el.stageView.appendChild(p);
   } else {
+    // 1) Estructura: recorrido en orden con repeticiones e indicaciones.
+    // 2) Bloques únicos: cada secuencia de acordes una sola vez, con todas las
+    //    secciones que la usan. Con capo se leen las formas; el popover y el
+    //    grado siempre parten del acorde real (sounding).
+    const structure = songStructure(transposed);
+    el.stageView.appendChild(renderRoadmap(structure));
     const ol = document.createElement("ol");
     ol.className = "sections";
-    // Con capo se leen las formas; sin capo, los acordes reales. El popover y
-    // el grado siempre parten del acorde real (sounding).
-    const displayed = stageCapo ? transposeSections(transposed, -stageCapo, "sharp") : transposed;
-    displayed.forEach((section, i) => ol.appendChild(renderSection(section, transposed[i], stageKeyRoot)));
+    structure.blocks.forEach((block) => {
+      const shapes = stageCapo
+        ? transposeSections([{ measures: block.measures }], -stageCapo, "sharp")[0].measures
+        : block.measures;
+      const li = renderSection({ label: block.title, repeats: 1, measures: shapes }, { measures: block.measures }, stageKeyRoot);
+      li.id = `block-${block.id}`;
+      if (block.occurrences.length > 1) {
+        const uses = document.createElement("span");
+        uses.className = "uses";
+        uses.textContent = `aparece ${block.occurrences.length} veces`;
+        li.querySelector(".slabel")?.appendChild(uses);
+      }
+      ol.appendChild(li);
+    });
     el.stageView.appendChild(ol);
   }
 
@@ -1510,6 +1611,50 @@ function renderStage() {
   next.disabled = state.selectedSongIndex === sl.songs.length - 1;
   nav.append(prev, next);
   el.stageView.appendChild(nav);
+}
+
+/** Recorrido de la canción: "Contiene: …" + chips en orden que llevan a su bloque. */
+function renderRoadmap(structure) {
+  const wrap = document.createElement("section");
+  wrap.className = "roadmap";
+  wrap.setAttribute("aria-label", "Estructura de la canción");
+  const h3 = document.createElement("h3");
+  h3.textContent = "Estructura";
+  wrap.appendChild(h3);
+  const summary = document.createElement("p");
+  summary.className = "hint";
+  summary.textContent = `Contiene: ${structureSummary(structure.typeSummary)}`;
+  wrap.appendChild(summary);
+
+  const ol = document.createElement("ol");
+  ol.className = "road";
+  const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  structure.roadmap.forEach((step) => {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "step";
+    b.textContent = step.displayLabel + (step.repeats > 1 ? ` ×${step.repeats}` : "");
+    if (step.cue) {
+      const c = document.createElement("span");
+      c.className = "cue";
+      c.textContent = step.cue;
+      b.appendChild(c);
+    }
+    b.setAttribute("aria-label",
+      `${step.displayLabel}${step.repeats > 1 ? `, ${step.repeats} veces` : ""}${step.cue ? `, ${step.cue}` : ""}: ir a sus acordes`);
+    b.addEventListener("click", () => {
+      const target = document.getElementById(`block-${step.blockId}`);
+      if (!target) return;
+      target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      target.classList.add("flash");
+      setTimeout(() => target.classList.remove("flash"), 1200);
+    });
+    li.appendChild(b);
+    ol.appendChild(li);
+  });
+  wrap.appendChild(ol);
+  return wrap;
 }
 
 /**
