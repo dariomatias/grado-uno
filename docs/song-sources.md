@@ -68,9 +68,10 @@ el que quiere, así que **se cargó como elección deliberada**.
   equivale al tono sonante **+3** (Db→E): C→E, Csus→Esus, Am→C#m, F→A, G→B,
   Dm→F#m, Fsus2→Asus2, C/E→E/G#, C/G→E/B. Test dorado en
   `tests/content.test.mjs`.
-- **Capo sugerido: 4 (tocás en C, sin cejillas)** — en E abierto habría 3
-  cejillas (C#m, B, F#m); con capo 4 son exactamente las formas del chart.
-  Esto motivó que la sugerencia de capo considere las cejillas del tema.
+- **Capo del arreglo: 2 (formas de D)** — pedido de Darío (2026-09-09), fijado
+  en `capo: 2`. Se digita D | Dsus | Bm | G | A | Em | Gsus2 | D/F# | D/A. La
+  heurística automática habría sugerido capo 4 (formas de C, sin cejillas, las
+  del chart original); el arreglo de la banda manda.
 - **Orden de ejecución (15 secciones):** Intro ×4 · Verso 1 · Coro · Interludio ·
   Verso 2 · Coro · Coro · Interludio ×2 · Puente ×4 · Puente (bajo) ×3 ·
   Puente (cierre) · Coro (variación) · Coro (variación 2) · Puente (bajo) ×4 ·

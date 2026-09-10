@@ -195,6 +195,7 @@ test("Jehová: Elevation chart written in C shapes with capo 1 (Db), normalized 
   const song = setlists[1].songs[0];
   assert.equal(song.title, "Jehová");
   assert.equal(song.sourceKey, "Db"); // tono que suena en la fuente (capo 1 sobre formas de C)
+  assert.equal(song.capo, 2);         // arreglo de la banda: formas de D (E − 2)
   assert.equal(song.assignedKey, "E");
   assert.equal(song.tempoBpm, null); // la fuente no indica BPM
   assert.equal(song.sourceStatus, "confirmed");

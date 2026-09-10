@@ -81,6 +81,16 @@ test("suggestCapo moves the capo only when it removes two or more barre chords",
   assert.equal(suggestCapo("G", transposeChord, ["G", "N.C."]).barres, 0);
 });
 
+test("Jehová at the band's capo 2 (D shapes): every chord has a voicing", () => {
+  const shown = [];
+  for (const chord of ["E", "Esus", "C#m", "A", "B", "F#m", "Asus2", "E/G#", "E/B"]) {
+    const shape = shapeForCapo(chord, 2, transposeChord);
+    shown.push(shape);
+    assert.ok(findVoicing(shape), `${chord} → ${shape} needs a voicing`);
+  }
+  assert.deepEqual(shown, ["D", "Dsus", "Bm", "G", "A", "Em", "Gsus2", "D/F#", "D/A"]);
+});
+
 test("shapes the Jehová chart needs at capo 4 all have a voicing", () => {
   for (const chord of ["E", "Esus", "C#m", "A", "B", "F#m", "Asus2", "E/G#", "E/B"]) {
     const shape = shapeForCapo(chord, 4, transposeChord);
