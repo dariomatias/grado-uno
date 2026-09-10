@@ -4,8 +4,9 @@ import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-modu
 
 const { setlists, appearanceKey, validateSetlists, allAppearanceKeys } =
   await extractInlineModule(indexHtmlUrl, "content-module");
-const { transposeSections, semitoneDistance, degreesToSections } =
+const { transposeSections, semitoneDistance, degreesToSections, transposeChord } =
   await extractInlineModule(indexHtmlUrl, "transposer-module");
+const { suggestCapo } = await extractInlineModule(indexHtmlUrl, "voicings-module");
 
 const expected = [
   ["2026-09-04", [
@@ -14,7 +15,7 @@ const expected = [
     ["Dios de avivamiento", "C"]
   ]],
   ["2026-09-13", [
-    ["Jehová", "E"], ["Lavado", "B"], ["Nadie", "G"], ["Quién Más", "G"],
+    ["Jehová", "E"], ["Lavado", "E"], ["Nadie", "G"], ["Quién Más", "G"],
     ["Canta al Señor", "G"], ["No Hay Otro Nombre", "G"], ["El Nombre de Jesús", "D"]
   ]],
   ["2026-09-18", [
@@ -236,41 +237,42 @@ test("Jehová: Elevation chart written in C shapes with capo 1 (Db), normalized 
   assert.equal(reps["14:Outro"], 2);
 });
 
-test("Lavado: official Elevation Español number chart converted to B via degreeToChord", () => {
+test("Lavado: the band's arrangement — D shapes at capo 2 sound in E; Puente/Tag from Elevation's numbers", () => {
   const song = setlists[1].songs[1];
   assert.equal(song.title, "Lavado");
-  assert.equal(song.assignedKey, "B");
-  assert.equal(song.sourceKey, null); // chart en números: no tiene tono de fuente
+  assert.equal(song.assignedKey, "E"); // la banda la toca en E (el setlist decía B)
+  assert.equal(song.sourceKey, "D");   // formas de D…
+  assert.equal(song.capo, 2);          // …con capo 2
   assert.equal(song.tempoBpm, null);
   assert.equal(song.sourceStatus, "confirmed");
 
-  // Transcripción del chart oficial en números (sólo grados).
-  const prog = [["1/3", "4"], ["5", "6m"]];
-  const verso = [["1/3", "4"], ["5", "6m", "1/3", "4"], ["5", "6m", "1/3", "4"], ["5", "6m", "2m"], ["4"]];
-  const coro = [["1"], ["4"], ["6m"], ["5"], ["1"], ["4"], ["6m"], ["5"]];
-  const puente = [["1"], ["4"], ["6m"], ["4"]];
-  const numbers = [
-    { label: "Intro", measures: prog },
-    { label: "Verso 1", measures: verso },
-    { label: "Coro", measures: coro },
-    { label: "Verso 2", measures: verso },
-    { label: "Coro", measures: coro },
-    { label: "Vamp", measures: [["1"], ["1"]] },
-    { label: "Puente", measures: puente },
-    { label: "Tag", measures: puente },
-    { label: "Instrumental", measures: [...prog, ...prog, ...prog, ["2m"], ["4"]] },
-    { label: "Coro", measures: coro }
-  ];
-
-  const converted = degreesToSections(numbers, "B");
-  assert.deepEqual(song.sections.map((s) => s.label), numbers.map((s) => s.label));
-  assert.deepEqual(song.sections.map((s) => s.measures), converted.map((s) => s.measures));
-  // Repeticiones según el chart: Intro 2x, versos 2x, segundo Coro 2x, Puente 4x, Instrumental 2x.
-  const reps = song.sections.map((s) => s.repeats);
-  assert.deepEqual(reps, [2, 2, 1, 2, 2, 1, 4, 1, 2, 1]);
-  // Sólo los seis acordes del chart.
-  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
-  assert.deepEqual([...chords].sort(), ["B", "B/D#", "C#m", "E", "F#", "G#m"]);
+  // Formas tal como las dio Darío (D, capo 2): subirlas 2 semitonos = acordes reales.
+  const shapesVerso = [["A", "G"], ["A", "G"], ["Bm"], ["A", "G"], ["D", "A", "G"]];
+  const shapesCoro = [["D"], ["A", "G"], ["A", "G"], ["Bm"], ["A", "D/F#"], ["G"], ["D"], ["A", "G"]];
+  const toE = (measures) => transposeSections([{ measures }], 2, "sharp")[0].measures;
+  const byLabel = (l) => song.sections.find((s) => s.label === l).measures;
+  assert.deepEqual(byLabel("Verso 1"), toE(shapesVerso));
+  assert.deepEqual(byLabel("Verso 2"), toE(shapesVerso));
+  assert.deepEqual(byLabel("Coro"), toE(shapesCoro));
+  // Puente y Tag: 1 4 6m 4 del chart oficial, convertido a E.
+  const puenteE = degreesToSections([{ measures: [["1"], ["4"], ["6m"], ["4"]] }], "E")[0].measures;
+  assert.deepEqual(byLabel("Puente"), puenteE);
+  assert.deepEqual(byLabel("Tag"), puenteE);
+  assert.deepEqual(song.sections.map((s) => [s.label, s.repeats]), [
+    ["Verso 1", 2], ["Coro", 1], ["Verso 2", 2], ["Coro", 2], ["Puente", 4], ["Tag", 1], ["Coro", 1]
+  ]);
+  // La heurística sola preferiría capo 4 (formas de C, cero cejillas); la banda
+  // usa capo 2 (formas de D, con la cejilla de Bm). Por eso el capo del arreglo
+  // es un dato de la canción y manda sobre la sugerencia.
+  const chords = [...new Set(song.sections.flatMap((s) => s.measures.flat()))];
+  const heuristic = suggestCapo("E", transposeChord, chords);
+  assert.equal(heuristic.capo, 4);
+  assert.equal(heuristic.shapeRoot, "C");
+  assert.equal(heuristic.barres, 0);
+  assert.notEqual(heuristic.capo, song.capo, "el arreglo difiere de la heurística: song.capo debe mandar");
+  // Con el capo del arreglo (2) las formas mostradas son exactamente las que tipeó Darío.
+  assert.deepEqual(transposeSections([{ measures: byLabel("Coro") }], -song.capo, "sharp")[0].measures, shapesCoro);
+  assert.deepEqual(transposeSections([{ measures: byLabel("Verso 1") }], -song.capo, "sharp")[0].measures, shapesVerso);
 });
 
 test("El Nombre de Jesús: chart in Db normalized to D via the transposer", () => {

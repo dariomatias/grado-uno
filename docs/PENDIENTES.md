@@ -109,6 +109,13 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   aparición (o se deja en automático). Con capo, la partitura muestra las
   **formas que se digitan** (en B con capo 4 se lee G, C, D, Em); el popover
   dice "digitás X, suena Y, grado N".
+- **El arreglo de la banda manda sobre el chart de la fuente** (2026-09-09):
+  cuando Darío dicta cómo tocan una canción, eso reemplaza al chart cargado
+  (Lavado: su verso/coro + Puente/Tag de Elevation). Si lo dicta en formas
+  con capo, se guardan los acordes reales y el capo queda como dato del arreglo
+  (`song.capo`), que el escenario usa por defecto ("Capo N (arreglo de la
+  banda)") — sólo en el tono original; al transponer vuelve la sugerencia.
+  Lavado pasó de B a **E** por esta vía.
 - **Estructura + bloques únicos** (2026-09-09, pedido de Darío): el escenario
   muestra primero la **estructura** ("Contiene: Intro · 2 versos · Coro · …" y
   el recorrido en orden con repeticiones e indicaciones, chips que llevan a su

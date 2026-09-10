@@ -67,7 +67,7 @@ test("Lavado: Verso 1/Verso 2 merge, Puente/Tag merge, Coro appears 3 times", ()
   assert.ok(titles.includes("Puente · Tag"), titles.join(" | "));
   const coro = s.blocks.find((b) => b.title === "Coro");
   assert.equal(coro.occurrences.length, 3);
-  assert.equal(s.blocks.length, 6); // Intro, Verso, Coro, Vamp, Puente·Tag, Instrumental
+  assert.equal(s.blocks.length, 3); // Verso, Coro, Puente·Tag (arreglo de la banda)
 });
 
 test("A Jesús seguiré: Coro and Coro (final) share chords → one block; Tag once", () => {
