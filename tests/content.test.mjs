@@ -429,6 +429,23 @@ test("chartUrl, when present, is a Cifra Club song page and unique per song", ()
   }
 });
 
+test("No Hay Otro Nombre: Cifra Club chart (Hillsong Worship, G) — full verses, real chorus, Verso 3, Final", () => {
+  const song = setlists[1].songs[5];
+  assert.equal(song.title, "No Hay Otro Nombre");
+  assert.equal(song.assignedKey, "G");
+  assert.equal(song.sourceKey, "G");
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.deepEqual(song.sections.map((s) => s.label), ["Intro", "Verso 1", "Verso 2", "Coro", "Verso 3", "Puente", "Final"]);
+  const byLabel = (l) => song.sections.find((s) => s.label === l).measures;
+  assert.deepEqual(byLabel("Verso 1"), byLabel("Verso 2"));
+  assert.equal(byLabel("Verso 1").length, 17);
+  assert.deepEqual(byLabel("Coro"), [["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"], ["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"]]);
+  assert.deepEqual(byLabel("Puente"), [["G"], ["Em"], ["C"], ["Em", "C"]]);
+  assert.deepEqual(byLabel("Final"), [["G"], ["Em"], ["C"], ["Em"], ["C"], ["G"]]);
+  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
+  assert.deepEqual([...chords].sort(), ["Am", "Bm", "C", "D", "D/F#", "Em", "G", "G/B"]);
+});
+
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
   assert.equal(allAppearanceKeys().length, 28);

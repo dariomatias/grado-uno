@@ -283,6 +283,15 @@ const JEHOVA_VAMP = [["E", "Esus"], ["E", "Esus"]]; // Interludio y Outro (2 com
 const JEHOVA_VERSO = [["E", "Esus"], ["E", "Esus"], ["C#m", "A", "E"], ["B"]]; // los 4 versos iguales (Darío)
 const JEHOVA_PUENTE_FINAL = [["E/G#", "A"], ["E/B", "A"]]; // puente del final, con bajo caminante
 
+// "No Hay Otro Nombre" (cifra de Cifra Club, Hillsong Worship, G sin capo;
+// re-transcrita a pedido de Darío el 2026-09-10). Versos 1 y 2 idénticos.
+const NHON_VERSO = [
+  ["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"],
+  ["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"],
+  ["G/B", "C"], ["G/B", "C"], ["D", "C"], ["G/B", "Em"],
+  ["G", "C"], ["G/B", "C"], ["D", "C"], ["G/B", "Em"], ["C"]
+];
+
 // "Lavado": arreglo de la banda (Darío, 2026-09-09). Lo tocan leyendo formas
 // de A con capo 2 → suena en B (el tono del setlist y de la grabación).
 // Formas dictadas → acordes reales (+2):
@@ -589,12 +598,18 @@ export const setlists = [
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/no-hay-otro-nombre-hillsong-worship/",
         tempoBpm: 74,
         beatsPerMeasure: 4,
-        // BORRADOR (simplificado) desde worshiptogether (G). Revisar con Darío.
+        // Cifra de Cifra Club (Hillsong Worship, G), transcrita el 2026-09-10 tras
+        // el aviso de Darío de que la versión anterior (worshiptogether,
+        // simplificada) estaba mal. Orden del chart; Cifra Club omite los coros
+        // repetidos → el recorrido lo dicta la banda. Sólo acordes.
         sections: [
-          { type: "intro", label: "Intro", repeats: 1, measures: [["G", "D/F#"], ["G", "Am", "G", "D/F#"], ["Em"]] },
-          { type: "verse", label: "Verso", repeats: 2, measures: [["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["C", "G"], ["Em"], ["Bm", "C"], ["Em"]] },
-          { type: "bridge", label: "Puente", repeats: 2, measures: [["G", "Em"], ["C", "Em"]] }
+          { type: "intro", label: "Intro", repeats: 1, measures: [["G", "D/F#"], ["G", "Am"], ["G", "D/F#"], ["Em"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: NHON_VERSO },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: NHON_VERSO },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"], ["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"]] },
+          { type: "verse", label: "Verso 3", repeats: 1, measures: [["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"], ["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"], ["G/B", "C"], ["Em"], ["G", "C"], ["Em", "C"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["G"], ["Em"], ["C"], ["Em", "C"]] },
+          { type: "outro", label: "Final", repeats: 1, measures: [["G"], ["Em"], ["C"], ["Em"], ["C"], ["G"]] }
         ]
       }),
       song("el-nombre-de-jesus", "El Nombre de Jesús", "D", {

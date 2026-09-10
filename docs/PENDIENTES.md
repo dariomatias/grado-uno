@@ -14,11 +14,11 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 2. **Versión de las 5 que siguen sin confirmar** (link de YouTube, otra playlist
    o `canción — artista`): Para siempre Cristo · Agnus Dei · Eres libre ·
    Adiós al ayer · Clamo a Dios.
-3. **Revisar musicalmente los 4 charts borrador** del Dom 13 antes de usarlos en
-   vivo: Nadie, Quién Más, No Hay Otro Nombre (worshiptogether) y Canta al
-   Señor (Cifra Club vía web, A→G). Vinieron por extracción web, no por PDF
-   renderizado, así que conviene un vistazo; están normalizados a G con el
-   motor de transposición.
+3. **Revisar musicalmente los 3 charts borrador** del Dom 13 antes de usarlos en
+   vivo: Nadie, Quién Más (worshiptogether) y Canta al Señor (Cifra Club vía
+   web, A→G). Vinieron por extracción web, no por PDF renderizado. *No Hay Otro
+   Nombre* ya fue re-transcrita desde Cifra Club (2026-09-10) tras el aviso de
+   Darío; **dictar su recorrido** (el chart omite los coros repetidos).
    **Del Vie 4, dos detalles a revisar:** el `D11+` de *Al que está sentado*
    (notación rara del chart, quedó literal sin digitación) y que el chart de
    *Dios de avivamiento* omite los coros repetidos (se cargó tal cual; decime

@@ -162,8 +162,16 @@ el que quiere, así que **se cargó como elección deliberada**.
 - Letra/cifra (spec): https://acordesweb.com/cancion/ingrid-rosario/canta-al-senor
 - Videos candidatos (Ingrid Rosario): lyric https://www.youtube.com/watch?v=FL1dbBVvhzU · en vivo medley https://www.youtube.com/watch?v=0c690UCX0oU · acústica https://www.youtube.com/watch?v=I5UND-9HlKo
 
-### No Hay Otro Nombre — Hillsong en Español — G — `BORRADOR confirmado` ✅
-- Chart: worshiptogether (fuente **G**, 74 BPM), sin transposición; secciones simplificadas.
+### No Hay Otro Nombre — Hillsong en Español — G — `confirmado (Cifra Club)` ✅
+- **Re-transcrito el 2026-09-10** desde la cifra de Cifra Club (Hillsong Worship,
+  **G, sin capo**) a pedido de Darío: la versión anterior (worshiptogether,
+  extracción automática) estaba **simplificada y con el coro mal**. Ahora: Intro
+  `G D/F# | G Am | G D/F# | Em`; Verso 1 = Verso 2 (17 compases, con la bajada
+  `G/B C … D C G/B Em`); Coro `G | Em | Bm | C | Em C` ×2; Verso 3 distinto;
+  Puente `G | Em | C | Em C`; Final `G | Em | C | Em | C | G`. Compases
+  agrupados de a dos acordes. Cifra Club omite los coros repetidos: el recorrido
+  lo dicta la banda.
+- Referencia previa: worshiptogether (74 BPM) — se conserva el BPM.
 - Fuente: https://www.worshiptogether.com/es/canciones/no-hay-otro-nombre-hillsong-worship/
 - **Video fijado:** https://www.youtube.com/watch?v=2BuifDijlFY — *"No Hay Otro
   Nombre"*, Hillsong Worship (link de Darío, verificado).
