@@ -22,7 +22,7 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 7 | Dios de avivamiento | C | *God of Revival (Live)* — Bethel Music, Brian & Jenn Johnson (inglés; OK Darío) | ✅ |
 | **Dom 13** | | | | |
 | 1 | Jehová | E | Elevation Español | ✅ |
-| 2 | Lavado | **E** | Elevation Español — confirmada por su video oficial (link de Darío). **Tono corregido**: el setlist decía B, pero la banda la toca en E (formas de D con capo 2) | ✅ |
+| 2 | Lavado | **B** | Elevation Español — confirmada por su video oficial (link de Darío). La banda la toca con **formas de A y capo 2 → suena en B**, el tono del setlist (Darío dijo "queda en Mi": con capo 2 no es posible; confirmar) | ✅ |
 | 3 | Nadie | G | Elevation Worship — *Nadie (No One), Letras Oficiales*; confirmada por el video oficial (link de Darío), coincide con el chart | ✅ |
 | 4 | Quién Más | G | *Quién Más (Live)* — Gateway Worship Español, Miel San Marcos, Waleska Morales | ✅ |
 | 5 | Canta al Señor | G | Ingrid Rosario (*Cante al Señor*) — confirmada por Darío al indicar su chart; resuelve la duda "Cante al señor toda la": es esta | ✅ |
@@ -81,31 +81,37 @@ el que quiere, así que **se cargó como elección deliberada**.
   Video Oficial Con Letras"*, canal Elevation Español (verificado). Era el ID del
   spec; la búsqueda web no lo había mostrado y se marcó como dudoso por error.
 
-### Lavado — Elevation Español — E — `confirmado (arreglo de la banda)`
-- **Fuente de verdad: el arreglo de la banda**, dictado por Darío el 2026-09-09.
-  Lo tocan leyendo **formas de D con capo 2**, que suena en **E** — por eso el
-  tono asignado pasó de B (el del setlist original) a E. Verso: `A G | A G | Bm |
-  A G | D A G`; Coro: `D | A G | A G | Bm | A D/F# | G | D | A G`. Se almacenan los
-  acordes reales (+2: B A | C#m | E | E/G#) y el escenario, con capo 2, muestra
-  exactamente esas formas. `capo: 2` queda como dato del arreglo.
-- **Intro**: vamp `A G | A G` (formas; real B A | B A). **Asumido** a partir de
-  la respuesta de Darío "los acordes con las formas en el capo 2 están en el
-  La"; confirmar.
+### Lavado — Elevation Español — B — `confirmado (arreglo de la banda)`
+- **Fuente de verdad: el arreglo de la banda**, dictado por Darío el 2026-09-09
+  en **formas de A con capo 2**, que suena en **B** (el tono del setlist y de la
+  grabación). Darío escribió "queda en Mi", pero A + capo 2 = B (para Mi haría
+  falta capo 7): **confirmar**. Se almacenan los acordes reales (+2) y el
+  escenario, con capo 2, muestra exactamente las formas dictadas. `capo: 2`
+  queda como dato del arreglo.
+- **Intro** (dictada): `A | A5 | E | F#m` (real B | B5 | F# | G#m). El "F" del
+  mensaje era F#m (confirmado por Darío).
+- **Versos** (dictados): "Intro ×3 y en la cuarta vuelta hace B, D" →
+  `A A5 E F#m ×3 | B | D` (real … C# | E). Los cuatro versos comparten acordes.
+  **Confirmar si "B" es B o Bm** (en Elevation ese lugar es 2m).
+- **Coro**: el dictado inicial `D | A G | A G | Bm | A D/F# | G | D | A G`,
+  reinterpretado como formas de A (real E | B A | B A | C#m | B E/G# | A | E | B A).
+  **Pendiente de re-dictado**: se dio antes de aclarar las formas.
 - **Puente**: progresión `1 4 6m 4` del chart oficial de Elevation (NÚMEROS,
-  Spanish CCLI 7275652, aportado el 2026-09-07), convertida a E (E A C#m A;
-  formas D G Bm G), ×1. El resto de ese chart (su intro, Vamp, Tag,
+  Spanish CCLI 7275652, aportado el 2026-09-07), convertida a B (B E G#m E;
+  formas A D F#m D), ×1. El resto de ese chart (su intro, Vamp, Tag,
   Instrumental y su armonía de verso `1/3 4 | 5 6m`) **no se usa**: la banda la
-  hace distinto.
+  hace distinto. Confirmar o re-dictar.
 - **Estructura dictada por Darío (2026-09-09, 11 pasos):** Intro ×2 · Verso 1 ·
   Verso 2 · Coro · Verso 3 · Verso 4 · Coro ×2 · Puente · Intro ×4 · Intro ×3 ·
   Coro. Los cuatro versos comparten acordes → un solo bloque en el escenario.
 - **Capo: el arreglo manda.** La heurística automática preferiría **capo 4**
-  (formas de C: G F Am C C/E, cero cejillas); la banda usa **capo 2** (formas de
-  D, con la cejilla de Bm). `capo: 2` en la canción hace que el escenario use el
+  (formas de G, sin cejillas); la banda usa **capo 2** (formas de A, con
+  cejillas en F#m, B y Bm). `capo: 2` en la canción hace que el escenario use el
   de la banda por defecto; el selector permite probar el 4 si quieren.
-- **Tests:** las formas en D subidas 2 semitonos deben dar lo almacenado; la
-  heurística da 4/C (documentado) y difiere de `song.capo`; con el capo del
-  arreglo las formas mostradas coinciden con lo dictado.
+- **Tests:** las formas en A subidas 2 semitonos deben dar lo almacenado; la
+  heurística da 4/G (documentado) y difiere de `song.capo`; con el capo del
+  arreglo las formas mostradas (intro, verso, coro, puente) coinciden con lo
+  dictado.
 - **Sin letra**: sólo acordes, compases y repeticiones.
 - Letra/cifra del spec (e-chords, bloqueado al fetch): https://www.e-chords.com/es/acordes/elevation-espanol/lavado
 - **Video fijado:** https://www.youtube.com/watch?v=C75PF1pOM40 — *"Lavado | Video

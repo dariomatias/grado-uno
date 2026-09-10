@@ -40,10 +40,11 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    sale de Darío. Formato: `Canción: Sección indicación · Sección indicación`.
    Hoy no hay ninguna cargada.
 
-8. **Confirmar dos supuestos de Lavado:** la **Intro** quedó como el vamp
-   `A G | A G` (interpreté "están en el La"); y el **Puente** quedó ×1 con la
-   progresión de Elevation (`D G Bm G` en tus formas), ya que no diste acordes
-   propios para él.
+8. **Confirmar en Lavado:** (a) el **tono**: formas de A con capo 2 suenan en
+   **B** — dijiste "queda en Mi", que con capo 2 no es posible; (b) en la cuarta
+   vuelta del verso, ¿**B o Bm**?; (c) **re-dictar el Coro** en formas de A (el
+   que está es el dictado inicial, previo a aclarar las formas); (d) el
+   **Puente** quedó ×1 con la progresión de Elevation (`A D F#m D` en tus formas).
 7. **Enlaces a Cifra Club que faltan:** 19 de 22 cargados y verificados. Sin
    cifra en Cifra Club: *A Jesús seguiré*, *Creeré*, *Lavado* (si conocés otra
    URL, la verifico). Las 6 sin versión confirmada se enlazan cuando confirmes

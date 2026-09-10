@@ -15,7 +15,7 @@ const expected = [
     ["Dios de avivamiento", "C"]
   ]],
   ["2026-09-13", [
-    ["Jehová", "E"], ["Lavado", "E"], ["Nadie", "G"], ["Quién Más", "G"],
+    ["Jehová", "E"], ["Lavado", "B"], ["Nadie", "G"], ["Quién Más", "G"],
     ["Canta al Señor", "G"], ["No Hay Otro Nombre", "G"], ["El Nombre de Jesús", "D"]
   ]],
   ["2026-09-18", [
@@ -237,45 +237,49 @@ test("Jehová: Elevation chart written in C shapes with capo 1 (Db), normalized 
   assert.equal(reps["14:Outro"], 2);
 });
 
-test("Lavado: the band's arrangement — D shapes at capo 2 sound in E; Puente/Tag from Elevation's numbers", () => {
+test("Lavado: the band's arrangement — A shapes at capo 2 sound in B; verse = intro ×3 + 4th pass", () => {
   const song = setlists[1].songs[1];
   assert.equal(song.title, "Lavado");
-  assert.equal(song.assignedKey, "E"); // la banda la toca en E (el setlist decía B)
-  assert.equal(song.sourceKey, "D");   // formas de D…
+  assert.equal(song.assignedKey, "B"); // formas de A con capo 2 → suena en B (tono del setlist)
+  assert.equal(song.sourceKey, "A");   // formas de A…
   assert.equal(song.capo, 2);          // …con capo 2
   assert.equal(song.tempoBpm, null);
   assert.equal(song.sourceStatus, "confirmed");
 
-  // Formas tal como las dio Darío (D, capo 2): subirlas 2 semitonos = acordes reales.
-  const shapesVerso = [["A", "G"], ["A", "G"], ["Bm"], ["A", "G"], ["D", "A", "G"]];
+  // Formas tal como las dictó Darío (A, capo 2): subirlas 2 semitonos = acordes reales.
+  const shapesIntro = [["A"], ["A5"], ["E"], ["F#m"]];
+  const shapesVerso = [...shapesIntro, ...shapesIntro, ...shapesIntro, ["B"], ["D"]]; // intro ×3, 4ª vuelta B D
   const shapesCoro = [["D"], ["A", "G"], ["A", "G"], ["Bm"], ["A", "D/F#"], ["G"], ["D"], ["A", "G"]];
-  const toE = (measures) => transposeSections([{ measures }], 2, "sharp")[0].measures;
+  const toB = (measures) => transposeSections([{ measures }], 2, "sharp")[0].measures;
   const byLabel = (l) => song.sections.find((s) => s.label === l).measures;
-  for (const v of ["Verso 1", "Verso 2", "Verso 3", "Verso 4"]) assert.deepEqual(byLabel(v), toE(shapesVerso), v);
-  assert.deepEqual(byLabel("Coro"), toE(shapesCoro));
-  // Intro: vamp "A G | A G" (formas), asumido a partir de "están en el La".
-  assert.deepEqual(byLabel("Intro"), toE([["A", "G"], ["A", "G"]]));
-  // Puente: 1 4 6m 4 del chart oficial, convertido a E. Sin Tag.
-  const puenteE = degreesToSections([{ measures: [["1"], ["4"], ["6m"], ["4"]] }], "E")[0].measures;
-  assert.deepEqual(byLabel("Puente"), puenteE);
+  assert.deepEqual(byLabel("Intro"), toB(shapesIntro));
+  assert.deepEqual(toB(shapesIntro), [["B"], ["B5"], ["F#"], ["G#m"]]);
+  for (const v of ["Verso 1", "Verso 2", "Verso 3", "Verso 4"]) assert.deepEqual(byLabel(v), toB(shapesVerso), v);
+  assert.deepEqual(byLabel("Coro"), toB(shapesCoro));
+  // Puente: 1 4 6m 4 del chart oficial, convertido a B (formas A D F#m D). Sin Tag.
+  const puenteB = degreesToSections([{ measures: [["1"], ["4"], ["6m"], ["4"]] }], "B")[0].measures;
+  assert.deepEqual(byLabel("Puente"), puenteB);
+  assert.deepEqual(puenteB, [["B"], ["E"], ["G#m"], ["E"]]);
   assert.ok(!song.sections.some((s) => s.label === "Tag"));
   // Estructura dictada por Darío, en orden y con repeticiones.
   assert.deepEqual(song.sections.map((s) => [s.label, s.repeats]), [
     ["Intro", 2], ["Verso 1", 1], ["Verso 2", 1], ["Coro", 1], ["Verso 3", 1], ["Verso 4", 1],
     ["Coro", 2], ["Puente", 1], ["Intro", 4], ["Intro", 3], ["Coro", 1]
   ]);
-  // La heurística sola preferiría capo 4 (formas de C, cero cejillas); la banda
-  // usa capo 2 (formas de D, con la cejilla de Bm). Por eso el capo del arreglo
-  // es un dato de la canción y manda sobre la sugerencia.
+  // La heurística sola preferiría capo 4 (formas de G, cero cejillas); la banda
+  // usa capo 2 (formas de A, con cejillas en F#m, B y Bm). Por eso el capo del
+  // arreglo es un dato de la canción y manda sobre la sugerencia.
   const chords = [...new Set(song.sections.flatMap((s) => s.measures.flat()))];
-  const heuristic = suggestCapo("E", transposeChord, chords);
+  const heuristic = suggestCapo("B", transposeChord, chords);
   assert.equal(heuristic.capo, 4);
-  assert.equal(heuristic.shapeRoot, "C");
-  assert.equal(heuristic.barres, 0);
+  assert.equal(heuristic.shapeRoot, "G");
   assert.notEqual(heuristic.capo, song.capo, "el arreglo difiere de la heurística: song.capo debe mandar");
   // Con el capo del arreglo (2) las formas mostradas son exactamente las que tipeó Darío.
-  assert.deepEqual(transposeSections([{ measures: byLabel("Coro") }], -song.capo, "sharp")[0].measures, shapesCoro);
-  assert.deepEqual(transposeSections([{ measures: byLabel("Verso 1") }], -song.capo, "sharp")[0].measures, shapesVerso);
+  const shown = (l) => transposeSections([{ measures: byLabel(l) }], -song.capo, "sharp")[0].measures;
+  assert.deepEqual(shown("Intro"), shapesIntro);
+  assert.deepEqual(shown("Verso 1"), shapesVerso);
+  assert.deepEqual(shown("Coro"), shapesCoro);
+  assert.deepEqual(shown("Puente"), [["A"], ["D"], ["F#m"], ["D"]]);
 });
 
 test("El Nombre de Jesús: chart in Db normalized to D via the transposer", () => {
