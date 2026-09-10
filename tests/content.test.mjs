@@ -249,8 +249,9 @@ test("Lavado: the band's arrangement — A shapes at capo 2 sound in B; verse = 
   // Formas tal como las dictó Darío (A, capo 2): subirlas 2 semitonos = acordes reales.
   const shapesIntro = [["A"], ["A5"], ["E"], ["F#m"]];
   const shapesVerso = [...shapesIntro, ...shapesIntro, ...shapesIntro, ["B"], ["D"]]; // intro ×3, 4ª vuelta B D
-  const shapesCoro = [["D"], ["A", "G"], ["A", "G"], ["Bm"], ["A", "D/F#"], ["G"], ["D"], ["A", "G"]];
+  const shapesCoro = [["A5"], ["D2"], ["F#"], ["E"]]; // dictado 2026-09-09 (F# mayor, tal cual)
   const toB = (measures) => transposeSections([{ measures }], 2, "sharp")[0].measures;
+  assert.deepEqual(toB(shapesCoro), [["B5"], ["E2"], ["G#"], ["F#"]]);
   const byLabel = (l) => song.sections.find((s) => s.label === l).measures;
   assert.deepEqual(byLabel("Intro"), toB(shapesIntro));
   assert.deepEqual(toB(shapesIntro), [["B"], ["B5"], ["F#"], ["G#m"]]);

@@ -285,11 +285,11 @@ const JEHOVA_PUENTE_BAJO = [["E/G#", "A"], ["E/B", "A"]];
 // Formas dictadas → acordes reales (+2):
 //   Intro  A | A5 | E | F#m            → B | B5 | F# | G#m
 //   Verso  Intro ×3 y 4ª vuelta B | D  → … C# | E
-//   Coro   D | A G | A G | Bm | A D/F# | G | D | A G → E | B A | B A | C#m | B E/G# | A | E | B A
+//   Coro   A5 | D2 | F# | E           → B5 | E2 | G# | F#   (F# mayor, tal como se dictó)
 //   Puente 1 4 6m 4 (Elevation) en B   → B E G#m E  (formas A D F#m D)
 const LAVADO_INTRO = [["B"], ["B5"], ["F#"], ["G#m"]];
 const LAVADO_VERSO = [...LAVADO_INTRO, ...LAVADO_INTRO, ...LAVADO_INTRO, ["C#"], ["E"]];
-const LAVADO_CORO = [["E"], ["B", "A"], ["B", "A"], ["C#m"], ["B", "E/G#"], ["A"], ["E"], ["B", "A"]];
+const LAVADO_CORO = [["B5"], ["E2"], ["G#"], ["F#"]];
 const LAVADO_PUENTE = [["B"], ["E"], ["G#m"], ["E"]];
 
 // "El Nombre de Jesús" (chart en Db → D, +1). Bloques repetidos.
@@ -1082,6 +1082,8 @@ export const WORSHIP_VOICINGS = {
   "C#m7":  V([X, 4, 2, 1, 0, 0], [0, 4, 2, 1, 0, 0], { note: "C#m7 abierta, muy usada en E" }),
   "F#m":   V([2, 4, 4, 2, 2, 2], [1, 3, 4, 1, 1, 1], { barre: { fret: 2, from: 0, to: 5 } }),
   "F#m7":  V([2, 4, 2, 2, 2, 2], [1, 3, 1, 1, 1, 1], { barre: { fret: 2, from: 0, to: 5 } }),
+  "F#":    V([2, 4, 4, 3, 2, 2], [1, 3, 4, 2, 1, 1], { barre: { fret: 2, from: 0, to: 5 } }),
+  "G#":    V([4, 6, 6, 5, 4, 4], [1, 3, 4, 2, 1, 1], { barre: { fret: 4, from: 0, to: 5 } }),
   "G#m":   V([4, 6, 6, 4, 4, 4], [1, 3, 4, 1, 1, 1], { barre: { fret: 4, from: 0, to: 5 } }),
   "G#m7":  V([4, 6, 4, 4, 4, 4], [1, 3, 1, 1, 1, 1], { barre: { fret: 4, from: 0, to: 5 } })
 };

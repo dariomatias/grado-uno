@@ -93,9 +93,13 @@ el que quiere, así que **se cargó como elección deliberada**.
 - **Versos** (dictados): "Intro ×3 y en la cuarta vuelta hace B, D" →
   `A A5 E F#m ×3 | B | D` (real … C# | E). Los cuatro versos comparten acordes.
   **Confirmar si "B" es B o Bm** (en Elevation ese lugar es 2m).
-- **Coro**: el dictado inicial `D | A G | A G | Bm | A D/F# | G | D | A G`,
-  reinterpretado como formas de A (real E | B A | B A | C#m | B E/G# | A | E | B A).
-  **Pendiente de re-dictado**: se dio antes de aclarar las formas.
+- **Coro** (re-dictado 2026-09-09): `A5 | D2 | F# | E` (real B5 | E2 | G# | F#).
+  Cargado con **F# mayor tal como se escribió**; en Elevation esa posición es
+  6m (F#m) y el "F" anterior resultó ser F#m → **confirmar F# vs F#m**.
+  Reemplaza al dictado inicial (`D | A G | …`), que era previo a aclarar las formas.
+- **Confirmado por Darío (2026-09-09):** tono B (formas de A, capo 2); en la
+  cuarta vuelta del verso va **B mayor**; Puente ×1 con la progresión de
+  Elevation.
 - **Puente**: progresión `1 4 6m 4` del chart oficial de Elevation (NÚMEROS,
   Spanish CCLI 7275652, aportado el 2026-09-07), convertida a B (B E G#m E;
   formas A D F#m D), ×1. El resto de ese chart (su intro, Vamp, Tag,
