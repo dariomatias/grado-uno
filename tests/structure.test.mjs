@@ -81,13 +81,16 @@ test("A Jesús seguiré: Coro and Coro (final) share chords → one block; Tag o
   assert.equal(s.blocks.length, 5); // Coro(+final), Tag, Verso 1, Pre-coro, Verso 2
 });
 
-test("Jehová: two different 'Coro' sequences become Coro (A)/(B); Intro, Interludio and Outro share one block", () => {
+test("Jehová: band structure — one Coro (×3), Interludio·Outro share a block, Puente twice", () => {
   const s = songStructure(song("Jehová").sections);
-  const titles = s.blocks.map((b) => b.title);
-  assert.ok(titles.some((t) => t.includes("Coro (A)")) && titles.some((t) => t.includes("Coro (B)")), titles.join(" | "));
-  const shared = s.blocks.find((b) => b.labels.includes("Intro"));
-  assert.deepEqual(shared.labels, ["Intro", "Interludio", "Outro"]);
-  // El recorrido usa los mismos nombres desambiguados.
-  const coroSteps = s.roadmap.filter((r) => r.label === "Coro").map((r) => r.displayLabel);
-  assert.deepEqual(coroSteps, ["Coro (A)", "Coro (B)", "Coro (A)"]);
+  assert.deepEqual(s.blocks.map((b) => b.title), [
+    "Intro", "Verso 1", "Verso 2", "Coro", "Interludio · Outro", "Verso 3", "Verso 4", "Puente"
+  ]);
+  assert.equal(s.blocks.find((b) => b.title === "Coro").occurrences.length, 3);
+  assert.equal(s.blocks.find((b) => b.title === "Puente").occurrences.length, 2);
+  assert.deepEqual(s.roadmap.map((r) => r.displayLabel + (r.repeats > 1 ? ` ×${r.repeats}` : "")), [
+    "Intro", "Verso 1", "Verso 2", "Coro", "Interludio", "Verso 3", "Verso 4", "Coro ×2", "Interludio",
+    "Puente ×4", "Coro ×2", "Puente ×2", "Outro"
+  ]);
+  assert.equal(structureSummary(s.typeSummary), "Intro · 4 versos · Coro · Interludio · Puente · Outro");
 });

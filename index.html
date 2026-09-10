@@ -274,11 +274,12 @@ const A_JESUS_TAG = [["G", "D", "A"]];
 const CREERE_CORO = [["A", "Asus", "A"], ["F#m", "E", "D", "E"], ["A", "Asus", "A"], ["F#m", "E", "D", "A"]];
 const CREERE_PUENTE = [["A", "E/G#"], ["F#m", "E", "D"], ["A", "E/G#"], ["F#m", "E", "D"], ["A"], ["F#m", "D"], ["A/E", "F#m", "E"], ["D"], ["D"]];
 
-// "Jehová" (chart Elevation escrito en formas de C con capo 1 = Db; normalizado
-// a E, +4 sobre las formas). Coro A termina en A E; Coro B remata con Esus.
-const JEHOVA_CORO_A = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A", "E"]];
-const JEHOVA_CORO_B = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A", "E", "Esus"]];
-const JEHOVA_PUENTE_BAJO = [["E/G#", "A"], ["E/B", "A"]];
+// "Jehová": acordes del chart de Elevation (formas de C con capo 1 = Db,
+// normalizadas a E) sobre la ESTRUCTURA dictada por la banda (Darío,
+// 2026-09-09). Coro unificado (remate con Esus); un solo Puente.
+const JEHOVA_CORO = [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A", "E", "Esus"]];
+const JEHOVA_PUENTE = [["E", "Asus2"], ["E", "Asus2", "A"]];
+const JEHOVA_VAMP = [["E", "Esus"], ["E", "Esus"]]; // Interludio y Outro (2 compases)
 
 // "Lavado": arreglo de la banda (Darío, 2026-09-09). Lo tocan leyendo formas
 // de A con capo 2 → suena en B (el tono del setlist y de la grabación).
@@ -479,22 +480,23 @@ export const setlists = [
         // escrito en formas de C con capo 1 (suena Db). Normalizado a E
         // transponiendo las formas +4 (≡ Db→E, +3). Sin BPM en la fuente.
         // Misma armonía que la versión de Elevation Español. Sólo acordes.
+        // Estructura dictada por Darío (2026-09-09): Intro → V1, V2 → Coro →
+        // Interludio → V3, V4 → Coro ×2 → Interludio → Puente ×4 → Coro ×2 →
+        // Puente ×2 → Outro. V1–V4 = las dos mitades de cada verso del chart.
         sections: [
-          { type: "intro", label: "Intro", repeats: 4, measures: [["E", "Esus"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "Esus"], ["E", "Esus"], ["C#m", "A", "E"], ["B"], ["E", "A"], ["E", "A"], ["C#m", "A", "E"], ["B"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO_B },
-          { type: "instrumental", label: "Interludio", repeats: 1, measures: [["E", "Esus"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["E", "Esus"], ["E", "A"], ["C#m", "A", "E"], ["B"], ["E", "A"], ["E", "A"], ["C#m", "A", "F#m", "E"], ["A", "B"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO_A },
-          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO_B },
-          { type: "instrumental", label: "Interludio", repeats: 2, measures: [["E", "Esus"]] },
-          { type: "bridge", label: "Puente", repeats: 4, measures: [["E", "Asus2"], ["E", "Asus2", "A"]] },
-          { type: "bridge", label: "Puente (bajo)", repeats: 3, measures: JEHOVA_PUENTE_BAJO },
-          { type: "bridge", label: "Puente (cierre)", repeats: 1, measures: [["E/G#", "A"], ["E/B", "B"]] },
-          { type: "chorus", label: "Coro (variación)", repeats: 1, measures: [["E", "A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E/G#"], ["C#m"], ["A", "E"]] },
-          { type: "chorus", label: "Coro (variación 2)", repeats: 1, measures: [["A"], ["E"], ["C#m"], ["A", "E"], ["A"], ["E"], ["C#m"], ["A"]] },
-          { type: "bridge", label: "Puente (bajo)", repeats: 4, measures: JEHOVA_PUENTE_BAJO },
-          { type: "outro", label: "Outro", repeats: 2, measures: [["E", "Esus"]] }
+          { type: "intro", label: "Intro", repeats: 1, measures: [["E", "Esus"], ["E", "Esus"], ["E", "Esus"], ["E", "Esus"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "Esus"], ["E", "Esus"], ["C#m", "A", "E"], ["B"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["E", "A"], ["E", "A"], ["C#m", "A", "E"], ["B"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO },
+          { type: "interlude", label: "Interludio", repeats: 1, measures: JEHOVA_VAMP },
+          { type: "verse", label: "Verso 3", repeats: 1, measures: [["E", "Esus"], ["E", "A"], ["C#m", "A", "E"], ["B"]] },
+          { type: "verse", label: "Verso 4", repeats: 1, measures: [["E", "A"], ["E", "A"], ["C#m", "A", "F#m", "E"], ["A", "B"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: JEHOVA_CORO },
+          { type: "interlude", label: "Interludio", repeats: 1, measures: JEHOVA_VAMP },
+          { type: "bridge", label: "Puente", repeats: 4, measures: JEHOVA_PUENTE },
+          { type: "chorus", label: "Coro", repeats: 2, measures: JEHOVA_CORO },
+          { type: "bridge", label: "Puente", repeats: 2, measures: JEHOVA_PUENTE },
+          { type: "outro", label: "Outro", repeats: 1, measures: JEHOVA_VAMP }
         ]
       }),
       song("lavado", "Lavado", "B", {

@@ -44,6 +44,10 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    con **F# mayor** tal cual; si es **F#m** (como hace Elevation en esa posición),
    avisá y es un cambio de una letra. Ya confirmado: tono B, B mayor en la
    cuarta vuelta del verso, Puente ×1 de Elevation.
+9. **Confirmar en Jehová (estructura de la banda):** V1–V4 tomados como las dos
+   mitades de cada verso del chart; Coro unificado con remate `G D Dsus`; un
+   solo Puente (`D Gsus2 | D Gsus2 G`) — si el segundo puente (×2) es el de bajo
+   caminante `D/F# G | D/A G`, avisá.
 7. **Enlaces a Cifra Club que faltan:** 19 de 22 cargados y verificados. Sin
    cifra en Cifra Club: *A Jesús seguiré*, *Creeré*, *Lavado* (si conocés otra
    URL, la verifico). Las 6 sin versión confirmada se enlazan cuando confirmes

@@ -191,7 +191,7 @@ test("Creeré: official Bethel chart (Bb, 72 BPM) normalized to A via the transp
   assert.ok(chords.has("E/G#") && chords.has("A/E") && chords.has("Asus"));
 });
 
-test("Jehová: Elevation chart written in C shapes with capo 1 (Db), normalized to E via the transposer", () => {
+test("Jehová: Elevation chart (C shapes, capo 1 = Db) normalized to E, on the band's structure", () => {
   const song = setlists[1].songs[0];
   assert.equal(song.title, "Jehová");
   assert.equal(song.sourceKey, "Db"); // tono que suena en la fuente (capo 1 sobre formas de C)
@@ -203,39 +203,24 @@ test("Jehová: Elevation chart written in C shapes with capo 1 (Db), normalized 
   assert.equal(semitoneDistance("Db", "E"), 3);
   assert.equal(semitoneDistance("C", "E"), 4);
 
-  // Transcripción de las formas escritas en el chart (sólo acordes).
-  const coroA = [["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F", "C"]];
-  const coroB = [["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F", "C", "Csus"]];
-  const puenteBajo = [["C/E", "F"], ["C/G", "F"]];
-  const writtenC = [
-    { label: "Intro", measures: [["C", "Csus"]] },
-    { label: "Verso 1", measures: [["C", "Csus"], ["C", "Csus"], ["Am", "F", "C"], ["G"], ["C", "F"], ["C", "F"], ["Am", "F", "C"], ["G"]] },
-    { label: "Coro", measures: coroB },
-    { label: "Interludio", measures: [["C", "Csus"]] },
-    { label: "Verso 2", measures: [["C", "Csus"], ["C", "F"], ["Am", "F", "C"], ["G"], ["C", "F"], ["C", "F"], ["Am", "F", "Dm", "C"], ["F", "G"]] },
-    { label: "Coro", measures: coroA },
-    { label: "Coro", measures: coroB },
-    { label: "Interludio", measures: [["C", "Csus"]] },
-    { label: "Puente", measures: [["C", "Fsus2"], ["C", "Fsus2", "F"]] },
-    { label: "Puente (bajo)", measures: puenteBajo },
-    { label: "Puente (cierre)", measures: [["C/E", "F"], ["C/G", "G"]] },
-    { label: "Coro (variación)", measures: [["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C/E"], ["Am"], ["F", "C"]] },
-    { label: "Coro (variación 2)", measures: [["F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F"]] },
-    { label: "Puente (bajo)", measures: puenteBajo },
-    { label: "Outro", measures: [["C", "Csus"]] }
-  ];
-
-  const normalized = transposeSections(writtenC, semitoneDistance("C", "E"), "sharp");
-  assert.deepEqual(song.sections.map((s) => s.label), writtenC.map((s) => s.label));
-  assert.deepEqual(song.sections.map((s) => s.measures), normalized.map((s) => s.measures));
-  // Repeticiones según el chart.
-  const reps = Object.fromEntries(song.sections.map((s, i) => [`${i}:${s.label}`, s.repeats]));
-  assert.equal(reps["0:Intro"], 4);
-  assert.equal(reps["7:Interludio"], 2);
-  assert.equal(reps["8:Puente"], 4);
-  assert.equal(reps["9:Puente (bajo)"], 3);
-  assert.equal(reps["13:Puente (bajo)"], 4);
-  assert.equal(reps["14:Outro"], 2);
+  // Bloques del chart en sus formas escritas (C), +4 → E. V1–V4 son las dos
+  // mitades de cada verso del chart; el Coro es el que remata en Csus.
+  const c = (measures) => transposeSections([{ measures }], semitoneDistance("C", "E"), "sharp")[0].measures;
+  const byLabel = (l) => song.sections.find((s) => s.label === l).measures;
+  assert.deepEqual(byLabel("Intro"), c([["C", "Csus"], ["C", "Csus"], ["C", "Csus"], ["C", "Csus"]]));
+  assert.deepEqual(byLabel("Verso 1"), c([["C", "Csus"], ["C", "Csus"], ["Am", "F", "C"], ["G"]]));
+  assert.deepEqual(byLabel("Verso 2"), c([["C", "F"], ["C", "F"], ["Am", "F", "C"], ["G"]]));
+  assert.deepEqual(byLabel("Verso 3"), c([["C", "Csus"], ["C", "F"], ["Am", "F", "C"], ["G"]]));
+  assert.deepEqual(byLabel("Verso 4"), c([["C", "F"], ["C", "F"], ["Am", "F", "Dm", "C"], ["F", "G"]]));
+  assert.deepEqual(byLabel("Coro"), c([["C", "F"], ["C"], ["Am"], ["F", "C"], ["F"], ["C"], ["Am"], ["F", "C", "Csus"]]));
+  assert.deepEqual(byLabel("Puente"), c([["C", "Fsus2"], ["C", "Fsus2", "F"]]));
+  assert.deepEqual(byLabel("Interludio"), c([["C", "Csus"], ["C", "Csus"]]));
+  assert.deepEqual(byLabel("Outro"), byLabel("Interludio"));
+  // Estructura dictada por Darío, en orden y con repeticiones.
+  assert.deepEqual(song.sections.map((s) => [s.label, s.repeats]), [
+    ["Intro", 1], ["Verso 1", 1], ["Verso 2", 1], ["Coro", 1], ["Interludio", 1], ["Verso 3", 1], ["Verso 4", 1],
+    ["Coro", 2], ["Interludio", 1], ["Puente", 4], ["Coro", 2], ["Puente", 2], ["Outro", 1]
+  ]);
 });
 
 test("Lavado: the band's arrangement — A shapes at capo 2 sound in B; verse = intro ×3 + 4th pass", () => {
