@@ -127,6 +127,12 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   (`song.capo`), que el escenario usa por defecto ("Capo N (arreglo de la
   banda)") — sólo en el tono original; al transponer vuelve la sugerencia.
   Lavado pasó de B a **E** por esta vía.
+- **Simplificar acordes** (2026-09-17, pedido de Darío): selector en la barra
+  del escenario "Acordes: Completos / Básicos / Mínimos". Básicos = tríadas
+  (sin bajo ni sus/add/7…, se conservan menores) con repeticiones colapsadas;
+  Mínimos = además un acorde por compás (el del tiempo fuerte). Se aplica antes
+  de armar la estructura, así los bloques que diferían por acordes de paso se
+  unifican. Preferencia de sesión, vale para todas las canciones.
 - **Estructura + bloques únicos** (2026-09-09, pedido de Darío): el escenario
   muestra primero la **estructura** ("Contiene: Intro · 2 versos · Coro · …" y
   el recorrido en orden con repeticiones e indicaciones, chips que llevan a su

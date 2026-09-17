@@ -65,6 +65,12 @@ test("Cifra Club chart links are wired (card and stage)", () => {
   assert.match(html, /chartUrl: null/);
 });
 
+test("chord simplification selector is wired", () => {
+  assert.match(html, /simplify-module:start/);
+  assert.match(html, /setAttribute\("aria-label", "Simplificar acordes"\)/);
+  assert.match(html, /simplifySections\(/);
+});
+
 test("section arrangement cues are wired", () => {
   assert.match(html, /\.section \.cue/);
   assert.match(html, /section\.cue/);

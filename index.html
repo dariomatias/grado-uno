@@ -982,6 +982,7 @@ export function initialState() {
     capoOverrides: {},
     chartLayout: "grid", // "grid" = grilla de compases (4 por fila) · "flow" = recuadros
     accidentalMode: "sharp",
+    simplify: "none", // "none" | "basic" | "minimal" — ver simplify-module
     metronomeRunning: false
   };
 }
@@ -1372,6 +1373,48 @@ export function structureSummary(typeSummary, labels = SECTION_TYPE_LABELS) {
 }
 /* structure-module:end */
 
+/* simplify-module:start */
+// Simplificación de acordes (pedido de Darío, 2026-09-17): menos acordes de paso.
+//  - "none":    tal cual el chart.
+//  - "basic":   cada acorde a su tríada (sin bajo, sin sus/add/2/9/7/maj7/5…;
+//               se conservan menores, dim, aug y N.C.) y se colapsan las
+//               repeticiones consecutivas dentro del compás.
+//  - "minimal": "basic" + un solo acorde por compás (el del tiempo fuerte).
+// Se aplica antes de armar la estructura, así bloques que sólo diferían por
+// un acorde de paso se unifican.
+export const SIMPLIFY_LEVELS = ["none", "basic", "minimal"];
+export const SIMPLIFY_LABELS = { none: "Completos", basic: "Básicos", minimal: "Mínimos" };
+const SIMPLE_RE = /^([A-G](?:#|b)?)([^/]*)(?:\/.*)?$/;
+
+export function simplifyChord(chord) {
+  const m = SIMPLE_RE.exec(String(chord ?? "").trim());
+  if (!m) return chord; // N.C. u otros tokens: intactos
+  const [, root, suffix] = m;
+  if (/^(dim|°)/.test(suffix)) return root + "dim";
+  if (/^aug|^\+/.test(suffix)) return root + "aug";
+  if (/^(m|min|-)(?!aj)/.test(suffix)) return root + "m";
+  return root;
+}
+
+export function simplifyMeasure(measure, level = "basic") {
+  if (level === "none") return measure;
+  const out = [];
+  for (const chord of measure) {
+    const s = simplifyChord(chord);
+    if (out[out.length - 1] !== s) out.push(s);
+  }
+  return level === "minimal" ? out.slice(0, 1) : out;
+}
+
+export function simplifySections(sections, level = "none") {
+  if (level === "none") return sections;
+  return sections.map((section) => ({
+    ...section,
+    measures: section.measures.map((measure) => simplifyMeasure(measure, level))
+  }));
+}
+/* simplify-module:end */
+
 /* ============================================================
    Capa DOM (impura): consume los módulos puros de arriba.
    ============================================================ */
@@ -1633,7 +1676,21 @@ function renderStage() {
     isGrid ? "Cambiar a vista de lista" : "Cambiar a vista de grilla de compases"
   );
   layoutBtn.setAttribute("aria-pressed", String(isGrid));
-  toolbar.append(back, pos, layoutBtn, fs);
+  const simplifySelect = document.createElement("select");
+  simplifySelect.setAttribute("aria-label", "Simplificar acordes");
+  for (const level of SIMPLIFY_LEVELS) {
+    const opt = document.createElement("option");
+    opt.value = level;
+    opt.textContent = `Acordes: ${SIMPLIFY_LABELS[level]}`;
+    if ((state.simplify ?? "none") === level) opt.selected = true;
+    simplifySelect.appendChild(opt);
+  }
+  simplifySelect.addEventListener("change", () => {
+    state = { ...state, simplify: simplifySelect.value };
+    renderStage();
+    announce(`Acordes ${SIMPLIFY_LABELS[simplifySelect.value].toLowerCase()}`);
+  });
+  toolbar.append(back, pos, layoutBtn, simplifySelect, fs);
   el.stageView.appendChild(toolbar);
 
   const h2 = document.createElement("h2");
@@ -1674,9 +1731,11 @@ function renderStage() {
   // sobre los acordes que suenan con la transposición actual, o el capo fijado
   // a mano para esta aparición. Con capo, la partitura muestra las FORMAS que se
   // digitan; el grado (subíndice) es siempre el del tono real, invariante al capo.
-  const transposed = song.sections.length
-    ? transposeSections(song.sections, semis, state.accidentalMode)
-    : [];
+  // Acordes transpuestos y, si se pidió, simplificados (menos acordes de paso).
+  const transposed = simplifySections(
+    song.sections.length ? transposeSections(song.sections, semis, state.accidentalMode) : [],
+    state.simplify ?? "none"
+  );
   const soundingChords = [...new Set(transposed.flatMap((s) => s.measures.flat()))];
   stageKeyRoot = currentKey(song);
   const suggestion = suggestCapo(stageKeyRoot, transposeChord, soundingChords);

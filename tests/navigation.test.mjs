@@ -30,6 +30,7 @@ test("initialState shape", () => {
     capoOverrides: {},
     chartLayout: "grid",
     accidentalMode: "sharp",
+    simplify: "none",
     metronomeRunning: false
   });
 });
