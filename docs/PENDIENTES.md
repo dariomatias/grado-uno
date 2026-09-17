@@ -5,16 +5,16 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 **Última actualización:** 2026-09-17
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
-**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 25 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 6/7 con chart y 7/7 con video.**
+**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 25 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 7/7 con chart y video.**
 
 ## Lo que Darío me debe (bloquea contenido)
 
 1. **Versión de las 3 que siguen sin confirmar** (Dom 27): Eres libre ·
    Adiós al ayer · Clamo a Dios.
 2. **Revisar musicalmente los charts borrador** (extracción web, no PDF): Dom 13
-   → Nadie, Quién Más, Canta al Señor; **Vie 18 → las seis cargadas el
+   → Nadie, Quién Más, Canta al Señor; **Vie 18 → las siete cargadas el
    2026-09-17** (Señor eres fiel, En el nombre de Jesús, Clamo a Cristo, Cómo no
-   voy a creer, Agnus Dei, Alabaré al Señor). Cifra Club omite coros repetidos:
+   voy a creer, Para siempre Cristo, Agnus Dei, Alabaré al Señor). Cifra Club omite coros repetidos:
    dictá los recorridos como en Jehová/Lavado. *No Hay Otro
    Nombre* ya fue re-transcrita desde Cifra Club (2026-09-10) tras el aviso de
    Darío; **dictar su recorrido** (el chart omite los coros repetidos).
@@ -31,9 +31,8 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    Michael W. Smith (misma canción; el tono de Passion puede diferir).
 4. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
-   `pending`: *Para siempre Cristo* (Vie 18; UG bloquea el fetch y Cifra Club
-   sólo tiene letra → pegame los acordes o un PDF) y las 7 del Dom 27. **Vie 4 y
-   Dom 13 completos; Vie 18 6/7.**
+   `pending`: las 7 del Dom 27. **Vie 4, Dom 13 y Vie 18 completos (21/21 con
+   chart).**
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 

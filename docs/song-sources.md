@@ -338,7 +338,7 @@ cifra es la de Michael W. Smith. Ambos cargados tal cual.
 | En el nombre de Jesús | cifraclub ingrid-rosario/en-el-nombre-de-jesus | D → C (−2, bemoles) | Intro ×2 · Verso ×2 · Coro · Verso · Coro ×2 · Puente ×4 · Puente (tag) ×2 · Coro ×2 · Puente (tag) ×2 | qehwr2MMTqg |
 | Clamo a Cristo | cifraclub elevation-worship/clamo-a-cristo | F → E (−1) | Intro · Verso 1 · Coro · Verso 2 · Puente · Puente 2 · Puente 3 | KTxfFEB8gAI |
 | Cómo no voy a creer | cifraclub bethel-music/como-no-voy-a-creer | C → E (+4) | Intro ×2 · Verso 1 · Coro · Verso 2 · Tag · Puente ×4 · Final | 1REIaIcLDFo |
-| Para siempre Cristo | Ultimate Guitar (forever-yhwh) — **bloquea el fetch**; Cifra Club sólo letra | — | **sin chart** | y7GlaEinjeM |
+| Para siempre Cristo | **PDF de Cifra Club "Forever Yhwh"** dejado por Darío en Downloads (2026-09-17). Formas de **G con capo 2** (suena A); el PDF rotula "F#", inconsistente con el capo | A → E (formas G→E, −3) | Intro · Verso 1 · Coro ×2 · Verso 2 · Coro ×4 · Instrumental ×2 · Puente ×3 · Puente (desarrollo) · Instrumental 2 · Coro ×4 · Puente (final); 142 BPM (patrón de rasgueo) | y7GlaEinjeM |
 | Agnus Dei | cifraclub michael-w-smith-musicas/agnus-dei | A → E (−5) | Verso 1 · Verso 2 · Coro · Coro (final) (etiquetas inferidas: el chart no las trae) | har4itYxlBg |
 | Alabaré al Señor | cifraclub hillsong-united/alabare-al-senor-anastasis (reemplaza la de "en Español") | C → D (+2) | Intro ×2 · Verso 1 · Verso 2 · Coro · Verso 3 · Verso 4 · Coro ×2 | bggLFqnXygs |
 

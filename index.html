@@ -724,9 +724,26 @@ export const setlists = [
       }),
       song("para-siempre-cristo", "Para siempre Cristo", "E", {
         artist: "Elevation Español (Siempre YHWH · Forever YHWH)",
+        sourceKey: "A", // cifra en formas de G con capo 2 (suena A); el PDF decía "F#", inconsistente con capo 2
+        tempoBpm: 142, // patrón de rasgueo de la cifra
+        beatsPerMeasure: 4,
         youtubeUrl: "https://www.youtube.com/watch?v=y7GlaEinjeM",
-        youtubeVideoId: "y7GlaEinjeM"
-        // Cifra indicada por Darío en Ultimate Guitar (bloquea el fetch); Cifra Club sólo tiene letra: sin chart aún.
+        youtubeVideoId: "y7GlaEinjeM",
+        // PDF de Cifra Club "Forever Yhwh" aportado por Darío (2026-09-17); formas G → E (-3).
+        // Orden del chart (recortado por su autor antes del selah final). Sólo acordes.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["A/E", "E"], ["C#m"], ["F#m", "E", "A"], ["A", "E", "B"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A/E", "E", "C#m"], ["F#m", "E", "A", "E", "B"], ["A/E", "E", "C#m"], ["F#m", "E", "A", "E", "B"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["A", "C#m"], ["E", "B"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A/E", "E", "C#m"], ["F#m", "E", "A", "A/C#", "E", "B"], ["A/E", "E", "C#m"], ["F#m", "E", "A", "A/C#", "E", "B"]] },
+          { type: "chorus", label: "Coro", repeats: 4, measures: [["A", "C#m"], ["E", "B"]] },
+          { type: "instrumental", label: "Instrumental", repeats: 2, measures: [["E", "A/E"]] },
+          { type: "bridge", label: "Puente", repeats: 3, measures: [["E", "A/E"], ["E", "A/E"]] },
+          { type: "bridge", label: "Puente (desarrollo)", repeats: 1, measures: [["E", "A/E"], ["E", "A"], ["C#m", "B"], ["E", "A"], ["C#m", "B"], ["E", "A"]] },
+          { type: "instrumental", label: "Instrumental 2", repeats: 1, measures: [["C#m", "B"]] },
+          { type: "chorus", label: "Coro", repeats: 4, measures: [["A", "C#m"], ["E", "B"]] },
+          { type: "bridge", label: "Puente (final)", repeats: 1, measures: [["C#m", "B"], ["E", "A"], ["C#m", "B"], ["E", "A"], ["C#m", "B/D#"], ["E/G#", "A"], ["C#m", "B"], ["E", "A"]] }
+        ]
       }),
       song("agnus-dei", "Agnus Dei", "E", {
         artist: "Michael W. Smith",

@@ -6,18 +6,21 @@ const { transposeChord, semitoneDistance } = await extractInlineModule(indexHtml
 const vie18 = setlists[2];
 const by = (t) => vie18.songs.find((s) => s.title === t);
 
-test("Vie 18: six of seven songs have charts; Para siempre Cristo has its version but no chart yet", () => {
-  const withChart = vie18.songs.filter((s) => s.sourceStatus === "confirmed").map((s) => s.title);
-  assert.deepEqual(withChart, ["Señor eres fiel", "En el nombre de Jesús", "Clamo a Cristo", "Cómo no voy a creer", "Agnus Dei", "Alabaré al Señor"]);
+test("Vie 18: all seven songs have charts and confirmed versions", () => {
+  for (const s of vie18.songs) assert.equal(s.sourceStatus, "confirmed", `${s.id} should have a chart`);
   const psc = by("Para siempre Cristo");
-  assert.equal(psc.sourceStatus, "pending");
   assert.match(psc.artist, /Siempre YHWH/);
+  assert.equal(psc.tempoBpm, 142);
+  assert.deepEqual(psc.sections.map((s) => [s.label, s.repeats]), [
+    ["Intro", 1], ["Verso 1", 1], ["Coro", 2], ["Verso 2", 1], ["Coro", 4], ["Instrumental", 2],
+    ["Puente", 3], ["Puente (desarrollo)", 1], ["Instrumental 2", 1], ["Coro", 4], ["Puente (final)", 1]
+  ]);
   for (const s of vie18.songs) assert.notEqual(s.artist, "Versión por confirmar", `${s.id}: version should be confirmed`);
 });
 
 test("Vie 18: every chart is normalized to its assigned key (sourceKey → assignedKey)", () => {
   const expect = { "Señor eres fiel": ["E", "C"], "En el nombre de Jesús": ["D", "C"], "Clamo a Cristo": ["F", "E"],
-    "Cómo no voy a creer": ["C", "E"], "Agnus Dei": ["A", "E"], "Alabaré al Señor": ["C", "D"] };
+    "Cómo no voy a creer": ["C", "E"], "Agnus Dei": ["A", "E"], "Alabaré al Señor": ["C", "D"], "Para siempre Cristo": ["A", "E"] };
   for (const [title, [from, to]] of Object.entries(expect)) {
     const s = by(title);
     assert.equal(s.sourceKey, from, title);
@@ -30,6 +33,9 @@ test("Vie 18: every chart is normalized to its assigned key (sourceKey → assig
   assert.equal(by("Cómo no voy a creer").sections[0].measures[0][0], "A");
   assert.equal(by("En el nombre de Jesús").sections[0].measures[0][0], "C");
   assert.equal(by("Señor eres fiel").sections[0].measures[0][0], "C");
+  // Forever YHWH: formas de G con capo 2 → E: C/G→A/E, G→E, Em→C#m, Am→F#m, C→A, D→B.
+  assert.deepEqual(by("Para siempre Cristo").sections[0].measures, [["A/E", "E"], ["C#m"], ["F#m", "E", "A"], ["A", "E", "B"]]);
+  assert.deepEqual(by("Para siempre Cristo").sections[2].measures, [["A", "C#m"], ["E", "B"]]);
 });
 
 test("Vie 18: flat keys are spelled with flats, sharp keys with sharps", () => {
