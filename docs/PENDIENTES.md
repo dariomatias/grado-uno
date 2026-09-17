@@ -5,18 +5,19 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 **Última actualización:** 2026-09-06
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
-**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" — 22 de 28 validadas (17 por la playlist + 4 por videos oficiales que pasó Darío: Digno de alabar, Lavado, Nadie, El Nombre de Jesús; + Canta al Señor por el chart de Ingrid Rosario que indicó). **Vie 4 y Dom 13: las 14 con chart.**
+**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 25 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 6/7 con chart y 7/7 con video.**
 
 ## Lo que Darío me debe (bloquea contenido)
 
 1. **Confirmar la versión de 1 canción** que no cerró con la playlist:
    - *Señor eres fiel* → ¿es *Eres Fiel* de Israel Houghton?
-2. **Versión de las 5 que siguen sin confirmar** (link de YouTube, otra playlist
-   o `canción — artista`): Para siempre Cristo · Agnus Dei · Eres libre ·
+2. **Versión de las 3 que siguen sin confirmar** (Dom 27): Eres libre ·
    Adiós al ayer · Clamo a Dios.
-3. **Revisar musicalmente los 3 charts borrador** del Dom 13 antes de usarlos en
-   vivo: Nadie, Quién Más (worshiptogether) y Canta al Señor (Cifra Club vía
-   web, A→G). Vinieron por extracción web, no por PDF renderizado. *No Hay Otro
+3. **Revisar musicalmente los charts borrador** (extracción web, no PDF): Dom 13
+   → Nadie, Quién Más, Canta al Señor; **Vie 18 → las seis cargadas el
+   2026-09-17** (Señor eres fiel, En el nombre de Jesús, Clamo a Cristo, Cómo no
+   voy a creer, Agnus Dei, Alabaré al Señor). Cifra Club omite coros repetidos:
+   dictá los recorridos como en Jehová/Lavado. *No Hay Otro
    Nombre* ya fue re-transcrita desde Cifra Club (2026-09-10) tras el aviso de
    Darío; **dictar su recorrido** (el chart omite los coros repetidos).
    **Del Vie 4, dos detalles a revisar:** el `D11+` de *Al que está sentado*
@@ -28,8 +29,9 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    fijados (el de *Quién Más* es un cover elegido a sabiendas por Darío).
 5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
-   `pending`: las 14 de Vie 18 / Dom 27 sin chart. **Vie 4 y Dom 13 ya están
-   completos (14/14 con chart).**
+   `pending`: *Para siempre Cristo* (Vie 18; UG bloquea el fetch y Cifra Club
+   sólo tiene letra → pegame los acordes o un PDF) y las 7 del Dom 27. **Vie 4 y
+   Dom 13 completos; Vie 18 6/7.**
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 

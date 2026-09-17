@@ -644,24 +644,124 @@ export const setlists = [
     shortLabel: "Vie 18",
     date: "2026-09-18",
     songs: [
-      song("senor-eres-fiel", "Señor eres fiel", "C"),
+      song("senor-eres-fiel", "Señor eres fiel", "C", {
+        artist: "Israel Houghton (You Are Good)",
+        sourceKey: "E",
+        beatsPerMeasure: 4,
+        chartUrl: "https://www.cifraclub.com/israel-houghton/you-are-good/",
+        youtubeUrl: "https://www.youtube.com/watch?v=5KiQDoWo5t4",
+        youtubeVideoId: "5KiQDoWo5t4",
+        // BORRADOR: cifra indicada por Darío (2026-09-17), leída vía web; en E,
+        // normalizada a C (-4) con el motor. Orden del chart. Sólo acordes. Revisar.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 4, measures: [["C"], ["G/C"], ["Bb/C"], ["F/C"]] },
+          { type: "verse", label: "Verso", repeats: 1, measures: [["C"], ["G/C"], ["Bb/C"], ["F/C"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["F", "G/F"], ["Fm7", "Bb/F"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["C", "G", "Bb", "F"], ["C", "G", "Bb", "F"], ["C", "G", "Bb", "F"], ["C/E", "Gm7", "Ab", "Bb"], ["Cm7"]] },
+          { type: "instrumental", label: "Instrumental", repeats: 4, measures: [["Cm7", "Dm7/C"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["N.C."]] },
+          { type: "outro", label: "Final", repeats: 1, measures: [["Bb", "Ab/C"], ["Bb/D", "Fm7"], ["Gm7", "C7#9"]] }
+        ]
+      }),
       song("en-el-nombre-de-jesus", "En el nombre de Jesús", "C", {
         artist: "Ingrid Rosario (En Tu Nombre · In Jesus' Name)",
-        chartUrl: "https://www.cifraclub.com/ingrid-rosario/en-el-nombre-de-jesus/"
+        sourceKey: "D",
+        youtubeUrl: "https://www.youtube.com/watch?v=qehwr2MMTqg",
+        youtubeVideoId: "qehwr2MMTqg",
+        beatsPerMeasure: 4,
+        chartUrl: "https://www.cifraclub.com/ingrid-rosario/en-el-nombre-de-jesus/",
+        // BORRADOR: cifra indicada por Darío (2026-09-17), leída vía web; en D,
+        // normalizada a C (-2) con el motor. Orden del chart. Sólo acordes. Revisar.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 2, measures: [["C", "Bb", "C", "Bb"]] },
+          { type: "verse", label: "Verso", repeats: 2, measures: [["F", "Dm"], ["Am", "C"], ["F", "Dm"], ["C"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
+          { type: "verse", label: "Verso", repeats: 1, measures: [["F", "Dm"], ["Am", "C"], ["F", "Dm"], ["C"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
+          { type: "bridge", label: "Puente", repeats: 4, measures: [["F", "G", "Am", "C"]] },
+          { type: "tag", label: "Puente (tag)", repeats: 2, measures: [["F", "G"], ["Am", "C"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
+          { type: "tag", label: "Puente (tag)", repeats: 2, measures: [["F", "G"], ["Am", "C"]] }
+        ]
       }),
       song("clamo-a-cristo", "Clamo a Cristo", "E", {
         artist: "Elevation Español",
-        chartUrl: "https://www.cifraclub.com/elevation-worship/clamo-a-cristo/"
+        sourceKey: "F",
+        youtubeUrl: "https://www.youtube.com/watch?v=KTxfFEB8gAI",
+        youtubeVideoId: "KTxfFEB8gAI",
+        beatsPerMeasure: 4,
+        chartUrl: "https://www.cifraclub.com/elevation-worship/clamo-a-cristo/",
+        // BORRADOR: cifra indicada por Darío (2026-09-17), leída vía web; en F,
+        // normalizada a E (-1) con el motor. Orden del chart. Sólo acordes. Revisar.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["B", "A", "E"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "B", "A", "E"], ["E", "B", "A", "E"], ["E", "B", "A", "E"], ["A", "E"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["B", "A"], ["E", "A"], ["B", "A"], ["E", "A", "E"], ["B"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["B", "A", "E"], ["B", "A", "E"], ["B", "A", "E"], ["A", "E"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["A", "B", "E"], ["A", "B", "E"], ["B", "B", "E"]] },
+          { type: "bridge", label: "Puente 2", repeats: 1, measures: [["B", "F#m", "E"], ["B", "F#m", "E"]] },
+          { type: "bridge", label: "Puente 3", repeats: 1, measures: [["B", "B"], ["A", "E"]] }
+        ]
       }),
       song("como-no-voy-a-creer", "Cómo no voy a creer", "E", {
         artist: "Bethel Music, Christine D'Clario, Edward Rivera",
-        chartUrl: "https://www.cifraclub.com/bethel-music/como-no-voy-a-creer/"
+        sourceKey: "C",
+        youtubeUrl: "https://www.youtube.com/watch?v=1REIaIcLDFo",
+        youtubeVideoId: "1REIaIcLDFo",
+        beatsPerMeasure: 4,
+        chartUrl: "https://www.cifraclub.com/bethel-music/como-no-voy-a-creer/",
+        // BORRADOR: cifra indicada por Darío (2026-09-17), leída vía web; en C,
+        // normalizada a E (+4) con el motor. Orden del chart. Sólo acordes. Revisar.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 2, measures: [["A", "E", "C#m", "B"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A", "E"], ["C#m", "B"], ["A", "E"], ["E"], ["B"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["A", "E"], ["C#m", "B", "A"], ["C#m", "E"], ["B", "A"], ["C#m", "E", "B"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A", "E"], ["C#m", "B"], ["A", "C#m"], ["E"], ["B"]] },
+          { type: "tag", label: "Tag", repeats: 1, measures: [["A", "C#m", "E", "B"]] },
+          { type: "bridge", label: "Puente", repeats: 4, measures: [["A", "C#m"], ["E"], ["B"]] },
+          { type: "outro", label: "Final", repeats: 1, measures: [["F#m"], ["C#m"], ["B/D#", "E"], ["B"], ["F#m", "E/G#"], ["C#m", "B"], ["A"], ["C#m", "E", "B"]] }
+        ]
       }),
-      song("para-siempre-cristo", "Para siempre Cristo", "E"),
-      song("agnus-dei", "Agnus Dei", "E"),
+      song("para-siempre-cristo", "Para siempre Cristo", "E", {
+        artist: "Elevation Español (Siempre YHWH · Forever YHWH)",
+        youtubeUrl: "https://www.youtube.com/watch?v=y7GlaEinjeM",
+        youtubeVideoId: "y7GlaEinjeM"
+        // Cifra indicada por Darío en Ultimate Guitar (bloquea el fetch); Cifra Club sólo tiene letra: sin chart aún.
+      }),
+      song("agnus-dei", "Agnus Dei", "E", {
+        artist: "Michael W. Smith",
+        sourceKey: "A",
+        youtubeUrl: "https://www.youtube.com/watch?v=har4itYxlBg",
+        youtubeVideoId: "har4itYxlBg",
+        beatsPerMeasure: 4,
+        chartUrl: "https://www.cifraclub.com/michael-w-smith-musicas/agnus-dei/",
+        // BORRADOR: cifra indicada por Darío (2026-09-17), leída vía web; en A,
+        // normalizada a E (-5) con el motor. Orden del chart. Sólo acordes. Revisar.
+        sections: [
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "E"], ["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["B/E", "A/E", "E"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "E"], ["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["B/E", "A/E", "E"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["A/E", "B/E", "E"], ["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E/G#", "A"], ["A", "B/A", "E"]] },
+          { type: "chorus", label: "Coro (final)", repeats: 1, measures: [["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E", "A"], ["A", "B/A", "E"], ["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E/G#", "A"], ["A", "B/A", "A", "E"]] }
+        ]
+      }),
       song("alabare-al-senor", "Alabaré al Señor", "D", {
         artist: "Hillsong en Español",
-        chartUrl: "https://www.cifraclub.com/hillsong-en-espaol/alabare-al-senor-anastasis/"
+        sourceKey: "C",
+        youtubeUrl: "https://www.youtube.com/watch?v=bggLFqnXygs",
+        youtubeVideoId: "bggLFqnXygs",
+        beatsPerMeasure: 4,
+        chartUrl: "https://www.cifraclub.com/hillsong-united/alabare-al-senor-anastasis/",
+        // BORRADOR: cifra indicada por Darío (2026-09-17), leída vía web; en C,
+        // normalizada a D (+2) con el motor. Orden del chart. Sólo acordes. Revisar.
+        sections: [
+          { type: "intro", label: "Intro", repeats: 2, measures: [["D", "D7M/F#", "G"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A11", "D", "D7M/F#", "G"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D", "D7M/F#", "G"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["G", "D"], ["Bm", "A4", "A"], ["D/F#", "G", "Bm"], ["G", "A", "D"], ["D", "D7M/F#", "G"]] },
+          { type: "verse", label: "Verso 3", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D", "D4", "D"]] },
+          { type: "verse", label: "Verso 4", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["D"], ["G", "D"], ["Bm", "A4", "A"], ["D/F#", "G", "Bm"], ["G", "A", "D"], ["D", "D7M/F#", "G"]] }
+        ]
       })
     ]
   },
@@ -1021,7 +1121,7 @@ export const MAX_SUGGESTED_CAPO = 7;
 // el dominante con novena; "E4" es Esus4. Se resuelven como alias de forma.
 const SUFFIX_ALIASES = {
   "2": "add9", "9": "add9", "4": "sus4", "sus": "sus4", "M7": "maj7", "Maj7": "maj7", "maj": "",
-  "min": "m", "-": "m", "-7": "m7"
+  "min": "m", "-": "m", "-7": "m7", "7M": "maj7"
 };
 const CHORD_RE = /^([A-G](?:#|b)?)([^/]*)(?:\/([A-G](?:#|b)?))?$/;
 const X = "x";

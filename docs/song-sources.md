@@ -29,12 +29,12 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 6 | No Hay Otro Nombre | G | Hillsong en Español | ✅ |
 | 7 | El Nombre de Jesús | D | Elevation Español — confirmada por su video oficial con letras (link de Darío) | ✅ |
 | **Vie 18** | | | | |
-| 1 | Señor eres fiel | C | ¿*Eres Fiel* — Israel Houghton? Darío confirma. | ⏳ |
+| 1 | Señor eres fiel | C | Israel Houghton — *You Are Good* (cifra indicada por Darío, 2026-09-17) | ✅ |
 | 2 | En el nombre de Jesús | C | *En Tu Nombre (In Jesus' Name)* — Ingrid Rosario (OK Darío) | ✅ |
 | 3 | Clamo a Cristo | E | Elevation Español | ✅ |
 | 4 | Cómo no voy a creer | E | Bethel Music, Christine D'Clario, Edward Rivera | ✅ |
-| 5 | Para siempre Cristo | E | — | ❌ |
-| 6 | Agnus Dei | E | — | ❌ |
+| 5 | Para siempre Cristo | E | Elevation Español — *Siempre YHWH (Forever YHWH)* (cifra UG indicada por Darío; está en la playlist como Siempre YHWH) | ✅ |
+| 6 | Agnus Dei | E | Michael W. Smith (cifra indicada por Darío) | ✅ |
 | 7 | Alabaré al Señor | D | *Alabaré Al Señor (Anástasis)* — Hillsong en Español | ✅ |
 | **Dom 27** | | | | |
 | 1 | Júbilo | C | Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr. | ✅ |
@@ -45,7 +45,7 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 6 | Vida nueva | A | Bethel Music, Zahriya Zachary | ✅ |
 | 7 | De gracia en gracia | Eb | Hillsong en Español | ✅ |
 
-**Totales:** 22 ✅ · 1 ⏳ · 5 ❌
+**Totales:** 25 ✅ · 0 ⏳ · 3 ❌
 
 Videos del Dom 13 fijados el 2026-09-07 desde la tabla de Darío, verificando
 título y canal de cada uno: Jehová, Lavado, Nadie, No Hay Otro Nombre y El
@@ -317,3 +317,24 @@ descartaron). Peculiaridades de slugs: la ñ se cae (`cante-al-seor`,
 (sólo letra). **Pendientes de versión** (no se enlazan hasta confirmar artista):
 Señor eres fiel, Para siempre Cristo, Agnus Dei, Eres libre, Adiós al ayer,
 Clamo a Dios.
+
+## 5. Viernes 18 — cargado el 2026-09-17 (cifras y videos indicados por Darío)
+
+Las seis cifras se leyeron **vía web** (extracción con modelo chico) → `BORRADOR`,
+revisar antes del viernes. Normalización con el motor; orden del chart (Cifra
+Club omite coros repetidos: el recorrido lo dicta la banda). Videos cargados en
+el orden que dio Darío; verificación de título por oembed cuando fue posible.
+
+| Canción | Cifra (link de Darío) | Tono cifra → asignado | Secciones | Video |
+|---|---|:-:|---|---|
+| Señor eres fiel | cifraclub israel-houghton/you-are-good | E → C (−4, bemoles) | Intro ×4 · Verso · Pre-coro · Coro · Instrumental ×4 · Puente (N.C.) · Final | 5KiQDoWo5t4 |
+| En el nombre de Jesús | cifraclub ingrid-rosario/en-el-nombre-de-jesus | D → C (−2, bemoles) | Intro ×2 · Verso ×2 · Coro · Verso · Coro ×2 · Puente ×4 · Puente (tag) ×2 · Coro ×2 · Puente (tag) ×2 | qehwr2MMTqg |
+| Clamo a Cristo | cifraclub elevation-worship/clamo-a-cristo | F → E (−1) | Intro · Verso 1 · Coro · Verso 2 · Puente · Puente 2 · Puente 3 | KTxfFEB8gAI |
+| Cómo no voy a creer | cifraclub bethel-music/como-no-voy-a-creer | C → E (+4) | Intro ×2 · Verso 1 · Coro · Verso 2 · Tag · Puente ×4 · Final | 1REIaIcLDFo |
+| Para siempre Cristo | Ultimate Guitar (forever-yhwh) — **bloquea el fetch**; Cifra Club sólo letra | — | **sin chart** | y7GlaEinjeM |
+| Agnus Dei | cifraclub michael-w-smith-musicas/agnus-dei | A → E (−5) | Verso 1 · Verso 2 · Coro · Coro (final) (etiquetas inferidas: el chart no las trae) | har4itYxlBg |
+| Alabaré al Señor | cifraclub hillsong-united/alabare-al-senor-anastasis (reemplaza la de "en Español") | C → D (+2) | Intro ×2 · Verso 1 · Verso 2 · Coro · Verso 3 · Verso 4 · Coro ×2 | bggLFqnXygs |
+
+Notas: en *Señor eres fiel* la cifra decía "Em" pero la armonía es E mixolidio
+(E · B/E · D/E · A/E); se trató como E. "C7M" (Cifra Club) = Cmaj7: alias
+`7M→maj7` agregado a las digitaciones.
