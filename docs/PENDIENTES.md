@@ -3,17 +3,15 @@
 Lista viva de lo que falta. Cuando Darío pregunte "¿qué necesitamos hacer?",
 esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
-**Última actualización:** 2026-09-06
+**Última actualización:** 2026-09-17
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
 **Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 25 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 6/7 con chart y 7/7 con video.**
 
 ## Lo que Darío me debe (bloquea contenido)
 
-1. **Confirmar la versión de 1 canción** que no cerró con la playlist:
-   - *Señor eres fiel* → ¿es *Eres Fiel* de Israel Houghton?
-2. **Versión de las 3 que siguen sin confirmar** (Dom 27): Eres libre ·
+1. **Versión de las 3 que siguen sin confirmar** (Dom 27): Eres libre ·
    Adiós al ayer · Clamo a Dios.
-3. **Revisar musicalmente los charts borrador** (extracción web, no PDF): Dom 13
+2. **Revisar musicalmente los charts borrador** (extracción web, no PDF): Dom 13
    → Nadie, Quién Más, Canta al Señor; **Vie 18 → las seis cargadas el
    2026-09-17** (Señor eres fiel, En el nombre de Jesús, Clamo a Cristo, Cómo no
    voy a creer, Agnus Dei, Alabaré al Señor). Cifra Club omite coros repetidos:
@@ -24,10 +22,14 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    (notación rara del chart, quedó literal sin digitación) y que el chart de
    *Dios de avivamiento* omite los coros repetidos (se cargó tal cual; decime
    dónde vuelve el coro y lo agrego).
-4. **Videos que faltan:** *Canta al Señor* y las 21 canciones de Vie 4 /
-   Vie 18 / Dom 27 salvo *Digno de alabar*. Los 6 del Dom 13 con link ya están
-   fijados (el de *Quién Más* es un cover elegido a sabiendas por Darío).
-5. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
+3. **Videos que faltan:** *Canta al Señor* (Dom 13), Vie 4 salvo *Digno de
+   alabar* (6) y las 7 del Dom 27. Dom 13 y Vie 18 completos. **Dos videos de
+   Vie 18 para que confirmes** (cargados tal cual, verificados por título):
+   *En el nombre de Jesús* → "In Jesus Name" de **Israel Houghton** (el
+   original en inglés, no la versión de Ingrid Rosario); *Agnus Dei* → **Passion
+   / Kristian Stanfill (Live 2024)**, mientras que la cifra cargada es la de
+   Michael W. Smith (misma canción; el tono de Passion puede diferir).
+4. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
    `pending`: *Para siempre Cristo* (Vie 18; UG bloquea el fetch y Cifra Club
    sólo tiene letra → pegame los acordes o un PDF) y las 7 del Dom 27. **Vie 4 y
@@ -35,22 +37,22 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
 
-6. **Indicaciones de arreglo por sección** (dónde entra/toca la acústica, piano
+5. **Indicaciones de arreglo por sección** (dónde entra/toca la acústica, piano
    solo, banda, build…): el campo `cue` ya existe y se muestra como etiqueta
    junto al nombre de la sección. **No se puede deducir de los charts ni de la
    web** (es dato de escuchar la grabación / del arreglo de la banda), así que
    sale de Darío. Formato: `Canción: Sección indicación · Sección indicación`.
    Hoy no hay ninguna cargada.
 
-8. **Lavado, un solo detalle:** el Coro dictado es `A5 | D2 | F# | E` y quedó
+6. **Lavado, un solo detalle:** el Coro dictado es `A5 | D2 | F# | E` y quedó
    con **F# mayor** tal cual; si es **F#m** (como hace Elevation en esa posición),
    avisá y es un cambio de una letra. Ya confirmado: tono B, B mayor en la
    cuarta vuelta del verso, Puente ×1 de Elevation.
-9. **Jehová, un solo detalle:** los cuatro versos quedaron con la progresión
+7. **Jehová, un solo detalle:** los cuatro versos quedaron con la progresión
    `D Dsus | D Dsus | Bm G D | A` (la de la primera mitad del chart). Si la que
    usan es `D G | D G | Bm G D | A`, avisá. Ya confirmado: Coro unificado y dos
    puentes (el del final es el de bajo caminante).
-7. **Enlaces a Cifra Club que faltan:** 19 de 22 cargados y verificados. Sin
+8. **Enlaces a Cifra Club que faltan:** 19 de 22 cargados y verificados. Sin
    cifra en Cifra Club: *A Jesús seguiré*, *Creeré*, *Lavado* (si conocés otra
    URL, la verifico). Las 6 sin versión confirmada se enlazan cuando confirmes
    el artista.

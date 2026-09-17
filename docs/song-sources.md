@@ -323,7 +323,14 @@ Clamo a Dios.
 Las seis cifras se leyeron **vía web** (extracción con modelo chico) → `BORRADOR`,
 revisar antes del viernes. Normalización con el motor; orden del chart (Cifra
 Club omite coros repetidos: el recorrido lo dicta la banda). Videos cargados en
-el orden que dio Darío; verificación de título por oembed cuando fue posible.
+el orden que dio Darío; verificados por título con el endpoint oembed de YouTube (2026-09-17):
+Señor eres fiel = "You Are Good" (Israel & New Breed) ✓ · Clamo a Cristo =
+Elevation Español oficial ✓ · Cómo no voy a creer = Bethel ✓ · Para siempre
+Cristo = "Siempre YHWH" letras oficiales ✓ · Alabaré al Señor = Hillsong en
+Español ✓. **Dos a confirmar con Darío:** *En el nombre de Jesús* → "In Jesus
+Name" de Israel Houghton (original en inglés; la cifra es de Ingrid Rosario);
+*Agnus Dei* → Passion / Kristian Stanfill (Live From Passion 2024) mientras la
+cifra es la de Michael W. Smith. Ambos cargados tal cual.
 
 | Canción | Cifra (link de Darío) | Tono cifra → asignado | Secciones | Video |
 |---|---|:-:|---|---|
