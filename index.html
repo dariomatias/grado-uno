@@ -788,9 +788,22 @@ export const setlists = [
     shortLabel: "Dom 27",
     date: "2026-09-27",
     songs: [
-      song("jubilo", "Júbilo", "C", {
+      // Júbilo: grados dictados por Darío (2026-09-21) sobre el tono original D
+      // (la cifra de Cifra Club también está en D: D Em7 D/F# G7M). Un acorde por
+      // compás; Verso = I ii I/3 IV vi iii IV, Coro/Interludio = I ii I/3 IV,
+      // Puente = vi IV I ii.
+      song("jubilo", "Júbilo", "D", {
         artist: "Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr.",
-        chartUrl: "https://www.cifraclub.com/miel-san-marcos/jubilo-part-maverick-city-musica/"
+        sourceKey: "D",
+        chartUrl: "https://www.cifraclub.com/miel-san-marcos/jubilo-part-maverick-city-musica/",
+        sections: [
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["D"], ["Em"], ["D/F#"], ["G"]] },
+          { type: "instrumental", label: "Interludio", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["Bm"], ["G"], ["D"], ["Em"], ["Bm"], ["G"], ["D"], ["Em"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["D"], ["Em"], ["D/F#"], ["G"]] }
+        ]
       }),
       song("eres-libre", "Eres libre", "G"),
       song("adios-al-ayer", "Adiós al ayer", "F"),

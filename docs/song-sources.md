@@ -37,7 +37,7 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 6 | Agnus Dei | E | Michael W. Smith (cifra indicada por Darío) | ✅ |
 | 7 | Alabaré al Señor | D | *Alabaré Al Señor (Anástasis)* — Hillsong en Español | ✅ |
 | **Dom 27** | | | | |
-| 1 | Júbilo | C | Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr. | ✅ |
+| 1 | Júbilo | D | Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr. — **chart en grados dictado por Darío (2026-09-21), tono original D** | ✅ |
 | 2 | Eres libre | G | — | ❌ |
 | 3 | Adiós al ayer | F | — | ❌ |
 | 4 | Clamo a Dios | D | — | ❌ |
@@ -278,6 +278,24 @@ el que quiere, así que **se cargó como elección deliberada**.
   coro. Sin letra.
 
 ### Vie 18 y Dom 27
+
+#### Júbilo (Dom 27) — grados de Darío, 2026-09-21
+
+Darío pasó la canción en grados y pidió cargarla sobre el **tono original**.
+Cifra Club la transcribe en **D** sin capo (`D Em7 D/F# G7M`, que es
+`I ii I/3 IV`) y la grabación de Miel San Marcos / Maverick City suena en Re,
+así que la clave pasó de C (asignada en el diseño) a **D**. Cargada con un
+acorde por compás y las tríadas tal como fueron dictadas (`ii` = Em, no Em7):
+
+| Sección | Grados | En D |
+|---|---|---|
+| Verso 1 / Verso 2 | I ii I/3 IV vi iii IV | D Em D/F# G Bm F#m G |
+| Coro (×2 líneas) | I ii I/3 IV | D Em D/F# G |
+| Interludio | I ii I/3 IV | D Em D/F# G |
+| Puente (×2 líneas) | vi IV I ii | Bm G D Em |
+
+Recorrido: Verso 1 · Verso 2 · Coro · Interludio · Puente · Coro. Sin intro
+dictada (la cifra abre con la misma vuelta del coro). Video: no disponible.
 Versiones validadas según la tabla; **sin acordes ni videos todavía**
 (`pending` → "Partitura no disponible").
 

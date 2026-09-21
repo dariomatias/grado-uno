@@ -3,7 +3,7 @@
 Lista viva de lo que falta. Cuando Darío pregunte "¿qué necesitamos hacer?",
 esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
-**Última actualización:** 2026-09-17
+**Última actualización:** 2026-09-21
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
 **Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 25 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 7/7 con chart y video.**
 
@@ -31,7 +31,7 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    Michael W. Smith (misma canción; el tono de Passion puede diferir).
 4. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
-   `pending`: las 7 del Dom 27. **Vie 4, Dom 13 y Vie 18 completos (21/21 con
+   `pending`: 6 del Dom 27 (Júbilo ya está, dictada en grados el 2026-09-21). **Vie 4, Dom 13 y Vie 18 completos (21/21 con
    chart).**
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
@@ -82,6 +82,13 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
     ver los acordes reales con el capo puesto (hoy están en el popover).
 
 ## Decisiones tomadas (no son pendientes)
+
+- **Charts en grados → tono original** (2026-09-21, Darío): cuando pasa una
+  canción en grados (I, ii, I/3…), se identifica el tono original de la
+  grabación (contrastado con la cifra de Cifra Club) y ese pasa a ser la clave
+  asignada; los grados se convierten a acordes reales con `degreesToSections`.
+  Un grado = un compás salvo que se dicte otra cosa; las tríadas quedan como se
+  dictan (sin agregar séptimas de la cifra). Primera: Júbilo, C → **D**.
 
 - El **worship setlist es el producto principal**; **Grado Uno es una feature**
   servida en `/grado-uno/`.
