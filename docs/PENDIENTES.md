@@ -5,7 +5,7 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 **Última actualización:** 2026-09-21
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
-**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 27 de 28 validadas. **Vie 4 y Dom 13 completos; **Vie 18 7/7 con chart y video; Dom 27 6/7 con chart (grados de Darío), sin videos.**
+**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 27 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 7/7 con chart y video; Dom 27 6/7 con chart (grados de Darío), sin videos.**
 
 ## Lo que Darío me debe (bloquea contenido)
 
