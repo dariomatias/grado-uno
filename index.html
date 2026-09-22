@@ -95,6 +95,18 @@
       }
       .badge .k { color: var(--gold-strong); font-weight: 700; }
       .card .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+      .card .appearances { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+      button.badge { cursor: pointer; color: inherit; font: inherit; font-size: .85rem; min-height: 36px; }
+      button.badge[disabled] { cursor: default; opacity: .6; }
+
+      /* Home: índice de todas las canciones con búsqueda y filtros */
+      .home-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+      .home-controls input[type="search"] {
+        flex: 1 1 220px; min-height: 44px; padding: 10px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--panel-2); color: inherit; font: inherit;
+      }
+      .home-count { color: var(--muted); font-size: .85rem; }
+      .home-empty { color: var(--muted); padding: 16px; }
       .pending { color: var(--muted); font-style: italic; }
 
       /* Stage */
@@ -220,7 +232,7 @@
     <a class="skip-link" href="#mainContent">Saltar al contenido</a>
     <header class="app">
       <h1>Setlist de Worship</h1>
-      <p>Cuatro reuniones · acordes transponibles · letras locales</p>
+      <p>Home con todas las canciones · cuatro reuniones · acordes transponibles · letras locales</p>
     </header>
 
     <main id="mainContent">
@@ -1079,6 +1091,8 @@ export function initialState() {
     chartLayout: "grid", // "grid" = grilla de compases (4 por fila) · "flow" = recuadros
     accidentalMode: "sharp",
     simplify: "none", // "none" | "basic" | "minimal" — ver simplify-module
+    home: true, // true = pestaña Home (índice de todas las canciones); false = una reunión
+    homeFilters: { query: "", key: "", setlistId: "", status: "" },
     metronomeRunning: false
   };
 }
@@ -1090,8 +1104,14 @@ export function selectSetlist(state, index) {
     ...state,
     activeSetlistIndex: clamp(index, 0, 3),
     selectedSongIndex: 0,
+    home: false,
     metronomeRunning: false
   };
+}
+
+/** Filtros del Home (búsqueda, tono, reunión, partitura); preferencia de sesión. */
+export function setHomeFilters(state, patch) {
+  return { ...state, homeFilters: { ...(state.homeFilters ?? {}), ...patch } };
 }
 
 export function selectSong(state, index) {
@@ -1512,6 +1532,53 @@ export function simplifySections(sections, level = "none") {
 }
 /* simplify-module:end */
 
+/* catalog-module:start */
+// Home (pedido de Darío, 2026-09-22): índice de todas las canciones de todas las
+// reuniones, una entrada por canción (agrupadas por id) con sus apariciones,
+// buscable por título/artista (sin distinguir acentos ni mayúsculas) y
+// filtrable por tono, reunión y disponibilidad de partitura.
+const KEY_ORDER = ["C", "C#", "Db", "D", "D#", "Eb", "E", "F", "F#", "Gb", "G", "G#", "Ab", "A", "A#", "Bb", "B"];
+
+export function normalizeText(text) {
+  return String(text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+export function buildCatalog(setlists) {
+  const byId = new Map();
+  setlists.forEach((sl, setlistIndex) => {
+    sl.songs.forEach((song, songIndex) => {
+      const entry = byId.get(song.id) ?? {
+        id: song.id, title: song.title, artist: song.artist,
+        hasChart: song.sections.length > 0,
+        chartUrl: song.chartUrl, lyricsUrl: song.lyricsUrl, youtubeUrl: song.youtubeUrl,
+        appearances: []
+      };
+      entry.hasChart = entry.hasChart || song.sections.length > 0;
+      entry.appearances.push({
+        setlistIndex, setlistId: sl.id, label: sl.shortLabel, date: sl.date, songIndex, assignedKey: song.assignedKey
+      });
+      byId.set(song.id, entry);
+    });
+  });
+  return [...byId.values()].sort((a, b) => a.title.localeCompare(b.title, "es", { sensitivity: "base" }));
+}
+
+export function catalogKeys(items) {
+  const keys = new Set(items.flatMap((it) => it.appearances.map((a) => a.assignedKey)));
+  return [...keys].sort((a, b) => KEY_ORDER.indexOf(a) - KEY_ORDER.indexOf(b));
+}
+
+export function filterCatalog(items, { query = "", key = "", setlistId = "", status = "" } = {}) {
+  const q = normalizeText(query);
+  return items.filter((it) =>
+    (!q || normalizeText(it.title).includes(q) || normalizeText(it.artist).includes(q)) &&
+    (!key || it.appearances.some((a) => a.assignedKey === key)) &&
+    (!setlistId || it.appearances.some((a) => a.setlistId === setlistId)) &&
+    (!status || (status === "chart" ? it.hasChart : !it.hasChart))
+  );
+}
+/* catalog-module:end */
+
 /* ============================================================
    Capa DOM (impura): consume los módulos puros de arriba.
    ============================================================ */
@@ -1537,6 +1604,9 @@ const el = {
 let state = initialState();
 let scrollBySetlist = {};
 let lastOpenerButton = null;
+let returnToHome = false; // el escenario vuelve al Home si se abrió desde ahí
+let homeControls = null;
+const catalog = buildCatalog(setlists);
 let dialogTargetKey = null;
 let metronome = null;
 /** Capo vigente en el escenario (manual o sugerido) y tono real que suena;
@@ -1612,46 +1682,216 @@ function currentKey(song) {
   return table[((idx + semis) % 12 + 12) % 12];
 }
 
-/* ---- Render: pestañas ---- */
+/* ---- Render: pestañas (Home + una por reunión) ---- */
+function tabDefs() {
+  return [{ id: "home", label: "Home", home: true }, ...setlists.map((sl, index) => ({ id: sl.id, label: sl.shortLabel, index }))];
+}
+
 function renderTabs() {
   el.tablist.innerHTML = "";
-  setlists.forEach((sl, index) => {
+  const tabs = tabDefs();
+  tabs.forEach((t, i) => {
     const tab = document.createElement("button");
     tab.type = "button";
     tab.role = "tab";
-    tab.id = `tab-${sl.id}`;
-    tab.textContent = sl.shortLabel;
+    tab.id = `tab-${t.id}`;
+    tab.textContent = t.label;
     tab.setAttribute("aria-controls", "tabpanel");
-    const selected = index === state.activeSetlistIndex;
+    const selected = t.home ? Boolean(state.home) : (!state.home && t.index === state.activeSetlistIndex);
     tab.setAttribute("aria-selected", String(selected));
     tab.tabIndex = selected ? 0 : -1;
     tab.addEventListener("click", () => {
-      state = selectSetlist(state, index);
-      renderTabs();
-      renderSetlist();
-      tab.focus();
+      activateTab(i);
+      el.tablist.children[i]?.focus();
     });
-    tab.addEventListener("keydown", (e) => onTabKeydown(e, index));
+    tab.addEventListener("keydown", (e) => onTabKeydown(e, i, tabs.length));
     el.tablist.appendChild(tab);
   });
 }
 
-function onTabKeydown(e, index) {
+function activateTab(i) {
+  state = i === 0 ? { ...state, home: true } : selectSetlist(state, i - 1);
+  renderTabs();
+  renderList();
+}
+
+function onTabKeydown(e, index, count) {
   let next = null;
-  if (e.key === "ArrowRight") next = (index + 1) % setlists.length;
-  else if (e.key === "ArrowLeft") next = (index - 1 + setlists.length) % setlists.length;
+  if (e.key === "ArrowRight") next = (index + 1) % count;
+  else if (e.key === "ArrowLeft") next = (index - 1 + count) % count;
   else if (e.key === "Home") next = 0;
-  else if (e.key === "End") next = setlists.length - 1;
+  else if (e.key === "End") next = count - 1;
   if (next === null) return;
   e.preventDefault();
-  state = selectSetlist(state, next);
-  renderTabs();
-  renderSetlist();
+  activateTab(next);
   el.tablist.children[next].focus();
+}
+
+/** Listado bajo las pestañas: Home (índice) o la reunión activa. */
+function renderList() {
+  if (state.home) renderHome(); else renderList();
+}
+
+/* ---- Render: Home (índice de todas las canciones) ---- */
+function ensureHomeControls() {
+  if (homeControls) return homeControls;
+  const wrap = document.createElement("div");
+  wrap.className = "home-controls";
+  wrap.id = "homeControls";
+
+  const search = document.createElement("input");
+  search.type = "search";
+  search.id = "homeSearch";
+  search.placeholder = "Buscar por título o artista";
+  search.setAttribute("aria-label", "Buscar canción por título o artista");
+  search.autocomplete = "off";
+  search.addEventListener("input", () => {
+    state = setHomeFilters(state, { query: search.value });
+    renderHomeCards();
+  });
+
+  const makeSelect = (id, label, options) => {
+    const select = document.createElement("select");
+    select.id = id;
+    select.setAttribute("aria-label", label);
+    for (const [value, text] of options) {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = text;
+      select.appendChild(opt);
+    }
+    return select;
+  };
+  const keySelect = makeSelect("homeKey", "Filtrar por tono",
+    [["", "Tono: todos"], ...catalogKeys(catalog).map((k) => [k, `Tono: ${k}`])]);
+  const setlistSelect = makeSelect("homeSetlist", "Filtrar por reunión",
+    [["", "Reunión: todas"], ...setlists.map((sl) => [sl.id, `Reunión: ${sl.shortLabel}`])]);
+  const statusSelect = makeSelect("homeStatus", "Filtrar por partitura",
+    [["", "Partitura: todas"], ["chart", "Con partitura"], ["pending", "Sin partitura"]]);
+  for (const [select, field] of [[keySelect, "key"], [setlistSelect, "setlistId"], [statusSelect, "status"]]) {
+    select.addEventListener("change", () => {
+      state = setHomeFilters(state, { [field]: select.value });
+      renderHomeCards();
+    });
+  }
+
+  const clear = document.createElement("button");
+  clear.type = "button";
+  clear.textContent = "Limpiar";
+  clear.addEventListener("click", () => {
+    state = setHomeFilters(state, { query: "", key: "", setlistId: "", status: "" });
+    renderHome();
+    search.focus();
+  });
+
+  const count = document.createElement("span");
+  count.className = "home-count";
+  count.id = "homeCount";
+  count.setAttribute("aria-live", "polite");
+
+  wrap.append(search, keySelect, setlistSelect, statusSelect, clear, count);
+  el.cards.parentElement.insertBefore(wrap, el.cards);
+  homeControls = { wrap, search, keySelect, setlistSelect, statusSelect, count };
+  return homeControls;
+}
+
+function renderHome() {
+  const c = ensureHomeControls();
+  c.wrap.hidden = false;
+  const f = state.homeFilters ?? {};
+  c.search.value = f.query ?? "";
+  c.keySelect.value = f.key ?? "";
+  c.setlistSelect.value = f.setlistId ?? "";
+  c.statusSelect.value = f.status ?? "";
+  renderHomeCards();
+}
+
+function renderHomeCards() {
+  const c = ensureHomeControls();
+  const filters = state.homeFilters ?? {};
+  const items = filterCatalog(catalog, filters);
+  c.count.textContent = `${items.length} de ${catalog.length} canciones`;
+  el.cards.innerHTML = "";
+  if (items.length === 0) {
+    const li = document.createElement("li");
+    li.className = "home-empty";
+    li.textContent = "Ninguna canción coincide con la búsqueda.";
+    el.cards.appendChild(li);
+    return;
+  }
+  items.forEach((item, position) => {
+    // Aparición "principal": la de la reunión filtrada si hay, si no la primera.
+    const main = item.appearances.find((a) => a.setlistId === filters.setlistId) ?? item.appearances[0];
+    const li = document.createElement("li");
+    li.className = "card";
+
+    const row1 = document.createElement("div");
+    row1.className = "row1";
+    row1.innerHTML = `<span class="num">${position + 1}</span><span class="title"></span>`;
+    row1.querySelector(".title").textContent = item.title;
+    li.appendChild(row1);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent = item.artist;
+    li.appendChild(meta);
+
+    const keys = document.createElement("div");
+    keys.className = "keys";
+    const uniqueKeys = [...new Set(item.appearances.map((a) => a.assignedKey))];
+    keys.innerHTML = uniqueKeys.map((k) => `<span class="badge">Tono <span class="k">${k}</span></span>`).join("");
+    li.appendChild(keys);
+
+    const apps = document.createElement("div");
+    apps.className = "appearances";
+    const lbl = document.createElement("span");
+    lbl.className = "hint";
+    lbl.textContent = item.appearances.length > 1 ? "Reuniones:" : "Reunión:";
+    apps.appendChild(lbl);
+    for (const a of item.appearances) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "badge";
+      chip.textContent = a.label;
+      chip.setAttribute("aria-label", `Abrir ${item.title} en la reunión ${a.label}`);
+      if (!item.hasChart) chip.disabled = true;
+      else chip.addEventListener("click", () => openStageAt(a.setlistIndex, a.songIndex, chip, true));
+      apps.appendChild(chip);
+    }
+    li.appendChild(apps);
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.className = "primary";
+    if (!item.hasChart) {
+      openBtn.textContent = "Partitura no disponible";
+      openBtn.disabled = true;
+    } else {
+      openBtn.textContent = "Abrir partitura";
+      openBtn.addEventListener("click", () => openStageAt(main.setlistIndex, main.songIndex, openBtn, true));
+    }
+    actions.appendChild(openBtn);
+
+    const lyricKey = appearanceKey(main.setlistId, item.id);
+    const lyricBtn = document.createElement("button");
+    lyricBtn.type = "button";
+    lyricBtn.textContent = lyricsStore.has(lyricKey) ? "Editar letra" : "Agregar letra";
+    lyricBtn.addEventListener("click", () => openLyricsDialog(lyricKey, lyricBtn));
+    actions.appendChild(lyricBtn);
+
+    actions.appendChild(externalLink("Cifra Club", item.chartUrl));
+    actions.appendChild(externalLink("Letra completa", item.lyricsUrl));
+    actions.appendChild(externalLink("YouTube", item.youtubeUrl));
+    li.appendChild(actions);
+    el.cards.appendChild(li);
+  });
 }
 
 /* ---- Render: setlist ---- */
 function renderSetlist() {
+  if (homeControls) homeControls.wrap.hidden = true;
   el.cards.innerHTML = "";
   const sl = activeSetlist();
   sl.songs.forEach((song, index) => {
@@ -1727,9 +1967,15 @@ function externalLink(label, url) {
 
 /* ---- Stage ---- */
 function openStage(index, opener) {
-  scrollBySetlist[state.activeSetlistIndex] = window.scrollY;
+  openStageAt(state.activeSetlistIndex, index, opener, false);
+}
+
+/** Abre el escenario en una aparición concreta (desde una reunión o desde el Home). */
+function openStageAt(setlistIndex, songIndex, opener, fromHome) {
+  scrollBySetlist[fromHome ? "home" : state.activeSetlistIndex] = window.scrollY;
   lastOpenerButton = opener ?? null;
-  state = { ...selectSong(state, index), view: "stage" };
+  returnToHome = Boolean(fromHome);
+  state = { ...selectSong(selectSetlist(state, setlistIndex), songIndex), view: "stage" };
   renderStage();
   el.setlistView.hidden = true;
   el.stageView.hidden = false;
@@ -1741,12 +1987,12 @@ function backToSetlist() {
   destroyVideo();
   hideChordPopover();
   void exitStageFullscreen(); // el listado vive fuera de #stageView
-  state = { ...state, view: "setlist" };
+  state = { ...state, view: "setlist", home: returnToHome };
   el.stageView.hidden = true;
   el.setlistView.hidden = false;
   renderTabs();
-  renderSetlist();
-  window.scrollTo(0, scrollBySetlist[state.activeSetlistIndex] ?? 0);
+  renderList();
+  window.scrollTo(0, scrollBySetlist[returnToHome ? "home" : state.activeSetlistIndex] ?? 0);
   if (lastOpenerButton && document.contains(lastOpenerButton)) lastOpenerButton.focus();
 }
 
@@ -2167,7 +2413,7 @@ el.lyricsSave.addEventListener("click", () => {
   }
   const persisted = lyricsStore.set(dialogTargetKey, text);
   el.dialog.close();
-  if (state.view === "stage") renderStage(); else renderSetlist();
+  if (state.view === "stage") renderStage(); else renderList();
   announce(persisted ? "Letra guardada" : "Letra guardada sólo para esta sesión");
 });
 el.lyricsFile.addEventListener("change", () => {
@@ -2218,7 +2464,7 @@ function importLyrics(input) {
     } else {
       lyricsStore.replaceAll(merged);
     }
-    if (state.view === "stage") renderStage(); else renderSetlist();
+    if (state.view === "stage") renderStage(); else renderList();
     announce(`Letras importadas${parsed.errors.length ? ` (${parsed.errors.length} omitidas)` : ""}`);
   };
   reader.readAsText(file, "utf-8");
@@ -2685,7 +2931,7 @@ window.addEventListener("pagehide", stopMetronome);
 
 /* ---- Boot ---- */
 renderTabs();
-renderSetlist();
+renderList();
     </script>
   </body>
 </html>

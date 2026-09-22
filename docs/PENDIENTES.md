@@ -3,7 +3,7 @@
 Lista viva de lo que falta. Cuando Darío pregunte "¿qué necesitamos hacer?",
 esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
-**Última actualización:** 2026-09-21
+**Última actualización:** 2026-09-22
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
 **Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 27 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 7/7 con chart y video; Dom 27 6/7 con chart (grados de Darío), sin videos.**
 
@@ -100,6 +100,14 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
     ver los acordes reales con el capo puesto (hoy están en el popover).
 
 ## Decisiones tomadas (no son pendientes)
+
+- **Home** (2026-09-22, pedido de Darío): primera pestaña, con **todas las
+  canciones en una sola lista** (una entrada por canción, con chips de las
+  reuniones en que aparece), **búsqueda** por título o artista (sin distinguir
+  acentos ni mayúsculas) y **filtros** por tono, reunión y partitura
+  disponible. Abre el escenario en la aparición elegida y al volver regresa al
+  Home con los filtros intactos. Es la pantalla inicial; las pestañas por fecha
+  siguen igual.
 
 - **Charts en grados → tono original** (2026-09-21, Darío): cuando pasa una
   canción en grados (I, ii, I/3…), se identifica el tono original de la

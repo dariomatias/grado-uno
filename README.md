@@ -79,6 +79,10 @@ que aporta la banda, no se infiere de las fuentes.
 Cada canción puede tener un enlace externo **"Cifra Club"** a su cifra (nueva
 pestaña; no se extrae contenido). Sin enlace, dice "no disponible".
 
+La pestaña **Home** lista todas las canciones de todas las reuniones en un solo
+índice, con búsqueda por título o artista y filtros por tono, reunión y
+partitura disponible; cada tarjeta abre el escenario en la reunión elegida.
+
 Un selector **"Acordes: Completos / Básicos / Mínimos"** simplifica la partitura
 para tocar con menos acordes de paso (tríadas sin bajos ni extensiones; en
 Mínimos, un acorde por compás).

@@ -65,6 +65,14 @@ test("Cifra Club chart links are wired (card and stage)", () => {
   assert.match(html, /chartUrl: null/);
 });
 
+test("Home index with search and filters is wired", () => {
+  assert.match(html, /catalog-module:start/);
+  assert.match(html, /label: "Home", home: true/);
+  assert.match(html, /placeholder = "Buscar por título o artista"/);
+  for (const id of ["homeSearch", "homeKey", "homeSetlist", "homeStatus", "homeCount"]) assert.ok(html.includes(`"${id}"`), id);
+  assert.match(html, /openStageAt\(/);
+});
+
 test("chord simplification selector is wired", () => {
   assert.match(html, /simplify-module:start/);
   assert.match(html, /setAttribute\("aria-label", "Simplificar acordes"\)/);

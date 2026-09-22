@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { initialState, selectSetlist, selectSong, moveSong, setTranspose, setCapo } =
+const { initialState, selectSetlist, selectSong, moveSong, setTranspose, setCapo, setHomeFilters } =
   await extractInlineModule(indexHtmlUrl, "navigation-module");
 
 test("setCapo is per-appearance, clamped 0..11, and null restores automatic", () => {
@@ -31,6 +31,8 @@ test("initialState shape", () => {
     chartLayout: "grid",
     accidentalMode: "sharp",
     simplify: "none",
+    home: true,
+    homeFilters: { query: "", key: "", setlistId: "", status: "" },
     metronomeRunning: false
   });
 });
@@ -70,4 +72,15 @@ test("state updates are immutable", () => {
   const next = moveSong(base, 1);
   assert.notEqual(base, next);
   assert.equal(base.selectedSongIndex, 0);
+});
+
+test("Home: selecting a setlist leaves Home; setHomeFilters merges and keeps the rest of the state", () => {
+  const s0 = initialState();
+  assert.equal(s0.home, true);
+  const s1 = selectSetlist(s0, 2);
+  assert.equal(s1.home, false);
+  const s2 = setHomeFilters({ ...s1, home: true }, { query: "jub", key: "D" });
+  assert.deepEqual(s2.homeFilters, { query: "jub", key: "D", setlistId: "", status: "" });
+  assert.equal(s2.activeSetlistIndex, 2);
+  assert.deepEqual(setHomeFilters(s2, { query: "" }).homeFilters.key, "D");
 });
