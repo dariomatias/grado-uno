@@ -74,6 +74,10 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
      secundarias (Chordify/Scribd y cifras web); Adiós al ayer (Ab), Es Él (Bb)
      y Vida nueva (B) están confirmados por MultiTracks/Tunebat/Cifra Club.
 
+10. **Compases por línea por canción:** todas están en 4. Decime cuáles van
+    de a 2 (o de a 8) y lo dejo grabado; mientras tanto se puede cambiar en el
+    escenario con el selector "N compases por línea".
+
 ## Backlog técnico (mío, no bloquea publicar)
 
 6. **Iconos PWA reales de Grado Uno** — placeholders de 1×1 px.
@@ -101,6 +105,12 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 ## Decisiones tomadas (no son pendientes)
 
+- **Compases por línea** (2026-09-22, pedido de Darío): una sección de 8
+  compases se veía "6 y 2" en la vista de lista (fluía por ancho). Ahora las
+  dos vistas cortan en **filas explícitas de 2, 4 u 8 compases** y una línea
+  nunca continúa abajo. Es dato por canción (`barsPerLine`, hoy 4 en todas) con
+  selector en el escenario ("N compases por línea") para ajustarlo en sesión.
+  Cuando Darío indique qué canciones van de a 2 (u 8), se graba en el dato.
 - **Home** (2026-09-22, pedido de Darío): primera pestaña, con **todas las
   canciones en una sola lista** (una entrada por canción, con chips de las
   reuniones en que aparece), **búsqueda** por título o artista (sin distinguir

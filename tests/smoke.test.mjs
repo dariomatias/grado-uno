@@ -45,9 +45,12 @@ test("fullscreen stage scrolls on its own and has a pseudo-fullscreen fallback",
   assert.match(html, /setPseudoFullscreen\(true\)/);
 });
 
-test("measure grid layout (4 bars per row) with a list fallback is wired", () => {
-  assert.match(html, /\.bars\s*\{[\s\S]*?repeat\(4, minmax\(0, 1fr\)\)/);
-  assert.match(html, /\.bar:nth-child\(4n\)/);
+test("measure rows (2/4/8 bars per line, never flowing) with a list fallback are wired", () => {
+  assert.match(html, /\.bars\s*\{[\s\S]*?repeat\(var\(--per-line, 4\), minmax\(0, 1fr\)\)/);
+  assert.doesNotMatch(html, /\.bar:nth-child\(4n\)/);
+  assert.match(html, /\.measures \{ display: flex; flex-wrap: nowrap;/);
+  assert.match(html, /setAttribute\("aria-label", "Compases por línea"\)/);
+  assert.match(html, /chunkMeasures\(section\.measures, perLine\)/);
   assert.match(html, /chartLayout: "grid"/);
   assert.match(html, /Vista: grilla/);
   assert.match(html, /Vista: lista/);

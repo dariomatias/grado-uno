@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { initialState, selectSetlist, selectSong, moveSong, setTranspose, setCapo, setHomeFilters } =
+const { initialState, selectSetlist, selectSong, moveSong, setTranspose, setCapo, setHomeFilters, setBarsPerLine } =
   await extractInlineModule(indexHtmlUrl, "navigation-module");
 
 test("setCapo is per-appearance, clamped 0..11, and null restores automatic", () => {
@@ -28,6 +28,7 @@ test("initialState shape", () => {
     tempoOverrides: {},
     meterOverrides: {},
     capoOverrides: {},
+    lineOverrides: {},
     chartLayout: "grid",
     accidentalMode: "sharp",
     simplify: "none",
@@ -83,4 +84,14 @@ test("Home: selecting a setlist leaves Home; setHomeFilters merges and keeps the
   assert.deepEqual(s2.homeFilters, { query: "jub", key: "D", setlistId: "", status: "" });
   assert.equal(s2.activeSetlistIndex, 2);
   assert.deepEqual(setHomeFilters(s2, { query: "" }).homeFilters.key, "D");
+});
+
+test("setBarsPerLine is per-appearance, accepts only 2/4/8 (else 4), null restores the song default", () => {
+  let s = setBarsPerLine(initialState(), "2026-09-13", "lavado", 2);
+  s = setBarsPerLine(s, "2026-09-13", "jehova", 5);
+  assert.equal(s.lineOverrides["2026-09-13:lavado"], 2);
+  assert.equal(s.lineOverrides["2026-09-13:jehova"], 4);
+  s = setBarsPerLine(s, "2026-09-13", "lavado", null);
+  assert.ok(!("2026-09-13:lavado" in s.lineOverrides));
+  assert.equal(s.lineOverrides["2026-09-13:jehova"], 4);
 });

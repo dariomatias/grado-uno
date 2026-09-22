@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { songStructure, structureSummary } = await extractInlineModule(indexHtmlUrl, "structure-module");
+const { songStructure, structureSummary, chunkMeasures, BARS_PER_LINE_OPTIONS } = await extractInlineModule(indexHtmlUrl, "structure-module");
 const { setlists } = await extractInlineModule(indexHtmlUrl, "content-module");
 
 const song = (title) => setlists.flatMap((s) => s.songs).find((s) => s.title === title);
@@ -92,4 +92,20 @@ test("Jehová: band structure — four identical verses in one block, one Coro (
     "Puente ×4", "Coro ×2", "Puente (final) ×2", "Outro"
   ]);
   assert.equal(structureSummary(s.typeSummary), "Intro · 4 versos · Coro · Interludio · 2 puentes · Outro");
+});
+
+test("chunkMeasures cuts a section into rows of 2/4/8 bars; never 6+2", () => {
+  const eight = Array.from({ length: 8 }, (_, i) => [String(i)]);
+  assert.deepEqual(chunkMeasures(eight, 4).map((r) => r.length), [4, 4]);
+  assert.deepEqual(chunkMeasures(eight, 2).map((r) => r.length), [2, 2, 2, 2]);
+  assert.deepEqual(chunkMeasures(eight, 8).map((r) => r.length), [8]);
+  assert.deepEqual(chunkMeasures(eight.slice(0, 7), 4).map((r) => r.length), [4, 3]);
+  assert.deepEqual(chunkMeasures(eight.slice(0, 1), 4).map((r) => r.length), [1]);
+  assert.deepEqual(chunkMeasures([], 4), []);
+  assert.deepEqual(chunkMeasures(eight, 6).map((r) => r.length), [4, 4]); // valor inválido → 4
+  assert.deepEqual(BARS_PER_LINE_OPTIONS, [2, 4, 8]);
+});
+
+test("every song defaults to 4 bars per line", () => {
+  for (const s of setlists.flatMap((sl) => sl.songs)) assert.equal(s.barsPerLine, 4, s.title);
 });

@@ -83,6 +83,9 @@ La pestaña **Home** lista todas las canciones de todas las reuniones en un solo
 índice, con búsqueda por título o artista y filtros por tono, reunión y
 partitura disponible; cada tarjeta abre el escenario en la reunión elegida.
 
+Las secciones se muestran en **filas de 2, 4 u 8 compases** (dato por canción,
+ajustable en el escenario); una línea nunca continúa en la de abajo.
+
 Un selector **"Acordes: Completos / Básicos / Mínimos"** simplifica la partitura
 para tocar con menos acordes de paso (tríadas sin bajos ni extensiones; en
 Mínimos, un acorde por compás).

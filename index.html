@@ -144,19 +144,27 @@
         color: var(--text); background: var(--panel-2); border: 1px solid var(--border);
         border-radius: 999px; padding: 2px 10px; white-space: nowrap;
       }
-      .measures { display: flex; flex-wrap: wrap; gap: 8px; }
-      /* Grilla de compases: 4 por fila, ancho fijo, barras como separadores.
+      /* Filas de compases (pedido de Darío, 2026-09-22): cada sección se corta en
+         líneas de N compases (2, 4 u 8 según la canción) y una línea NUNCA
+         continúa en la de abajo. Cada fila es su propio contenedor; una fila
+         incompleta conserva el ancho de columna de las demás. */
+      .measures { display: flex; flex-wrap: nowrap; gap: 8px; }
+      .measures + .measures { margin-top: 8px; }
+      .measures .measure { flex: 1 1 0; min-width: 0; justify-content: center; }
+      .measures .measure.filler { visibility: hidden; }
+      /* Grilla de compases: N por fila, ancho fijo, barras como separadores.
          Cada compás reparte su ancho entre sus acordes (tiempos parejos). */
       .bars {
-        display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+        display: grid; grid-template-columns: repeat(var(--per-line, 4), minmax(0, 1fr));
         border-top: 1px solid var(--border);
       }
+      .bars + .bars { border-top: 0; }
       .bar {
         display: grid; align-items: center; gap: 2px; min-height: 56px;
         padding: 4px 4px 4px 6px;
         border-left: 2px solid var(--muted); border-bottom: 1px solid var(--border);
       }
-      .bar:nth-child(4n), .bar:last-child { border-right: 2px solid var(--muted); }
+      .bar:last-child { border-right: 2px solid var(--muted); }
       .bar .chord {
         min-width: 0; justify-self: start; padding: 4px 6px;
         font-size: clamp(1rem, 3.4vw, 1.45rem); line-height: 1.1;
@@ -941,6 +949,7 @@ function song(id, title, assignedKey, overrides = {}) {
     tempoBpm: null,
     beatsPerMeasure: 4,
     capo: null, // capo con el que la banda toca la canción (dato del arreglo); null = sugerido
+    barsPerLine: 4, // compases por línea en el escenario (2, 4 u 8), según la canción
     sections: []
   };
   const merged = { ...base, ...overrides };
@@ -1088,6 +1097,7 @@ export function initialState() {
     tempoOverrides: {},
     meterOverrides: {},
     capoOverrides: {},
+    lineOverrides: {}, // compases por línea elegidos en sesión, por aparición
     chartLayout: "grid", // "grid" = grilla de compases (4 por fila) · "flow" = recuadros
     accidentalMode: "sharp",
     simplify: "none", // "none" | "basic" | "minimal" — ver simplify-module
@@ -1139,6 +1149,15 @@ export function setTranspose(state, setlistId, songId, semitones) {
       [key]: clamp(Math.trunc(semitones), -11, 11)
     }
   };
+}
+
+/** Compases por línea por aparición (2, 4 u 8). `null` vuelve al dato de la canción. */
+export function setBarsPerLine(state, setlistId, songId, perLine) {
+  const key = `${setlistId}:${songId}`;
+  const lineOverrides = { ...(state.lineOverrides ?? {}) };
+  if (perLine === null || perLine === undefined) delete lineOverrides[key];
+  else lineOverrides[key] = [2, 4, 8].includes(Number(perLine)) ? Number(perLine) : 4;
+  return { ...state, lineOverrides };
 }
 
 /** Capo manual por aparición (0..11). `null` vuelve al capo automático. */
@@ -1488,6 +1507,16 @@ export function structureSummary(typeSummary, labels = SECTION_TYPE_LABELS) {
     return count > 1 ? `${count} ${plural.toLowerCase()}` : singular;
   }).join(" · ");
 }
+
+/** Corta los compases de una sección en filas de `perLine` (2, 4 u 8). La
+ *  última fila puede quedar incompleta; nunca se reparte "6 y 2". */
+export const BARS_PER_LINE_OPTIONS = [2, 4, 8];
+export function chunkMeasures(measures, perLine = 4) {
+  const n = BARS_PER_LINE_OPTIONS.includes(perLine) ? perLine : 4;
+  const rows = [];
+  for (let i = 0; i < measures.length; i += n) rows.push(measures.slice(i, i + n));
+  return rows;
+}
 /* structure-module:end */
 
 /* simplify-module:start */
@@ -1612,6 +1641,8 @@ let metronome = null;
 /** Capo vigente en el escenario (manual o sugerido) y tono real que suena;
  *  la partitura muestra las formas para ese capo y los popovers lo usan. */
 let stageCapo = 0;
+/** Compases por línea vigentes en el escenario (override de sesión o dato de la canción). */
+let stageBarsPerLine = 4;
 let stageKeyRoot = "C";
 let popoverTrigger = null;
 
@@ -2129,6 +2160,26 @@ function renderStage() {
       : "Tonalidad abierta · sin capo";
   }
   keyline.appendChild(capoHint);
+
+  // Compases por línea (2 / 4 / 8): dato de la canción, ajustable en sesión.
+  const lineOverride = state.lineOverrides?.[keyFor(song)];
+  stageBarsPerLine = lineOverride ?? song.barsPerLine ?? 4;
+  const lineSelect = document.createElement("select");
+  lineSelect.setAttribute("aria-label", "Compases por línea");
+  for (const n of BARS_PER_LINE_OPTIONS) {
+    const opt = document.createElement("option");
+    opt.value = String(n);
+    opt.textContent = `${n} compases por línea${n === (song.barsPerLine ?? 4) ? " (canción)" : ""}`;
+    if (n === stageBarsPerLine) opt.selected = true;
+    lineSelect.appendChild(opt);
+  }
+  lineSelect.addEventListener("change", () => {
+    const n = Number(lineSelect.value);
+    state = setBarsPerLine(state, activeSetlist().id, song.id, n === (song.barsPerLine ?? 4) ? null : n);
+    renderStage();
+    announce(`${n} compases por línea`);
+  });
+  keyline.appendChild(lineSelect);
   el.stageView.appendChild(keyline);
 
   // Sections
@@ -2245,9 +2296,18 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
   li.appendChild(label);
 
   const grid = (state.chartLayout ?? "grid") === "grid";
-  const measures = document.createElement("div");
-  measures.className = grid ? "bars" : "measures";
+  const perLine = stageBarsPerLine;
+  const rows = chunkMeasures(section.measures, perLine);
+  let measures = null; // contenedor de la fila en curso
   section.measures.forEach((measure, mi) => {
+    if (mi % perLine === 0) {
+      measures = document.createElement("div");
+      measures.className = grid ? "bars" : "measures";
+      measures.style.setProperty("--per-line", String(perLine));
+      measures.setAttribute("role", "group");
+      measures.setAttribute("aria-label", `Línea ${Math.floor(mi / perLine) + 1} de ${rows.length}`);
+      li.appendChild(measures);
+    }
     const m = document.createElement("div");
     m.className = grid ? "bar" : "measure";
     // En la grilla cada compás reparte su ancho entre sus acordes: 1 = todo el
@@ -2277,7 +2337,16 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
     });
     measures.appendChild(m);
   });
-  li.appendChild(measures);
+  // La última fila incompleta mantiene el ancho de columna: en la grilla lo da
+  // el grid de N columnas; en la lista, se rellena con celdas vacías.
+  if (!grid && measures && section.measures.length % perLine) {
+    for (let k = section.measures.length % perLine; k < perLine; k++) {
+      const filler = document.createElement("div");
+      filler.className = "measure filler";
+      filler.setAttribute("aria-hidden", "true");
+      measures.appendChild(filler);
+    }
+  }
   return li;
 }
 
