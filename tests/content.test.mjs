@@ -24,8 +24,8 @@ const expected = [
     ["Alabaré al Señor", "D"]
   ]],
   ["2026-09-27", [
-    ["Júbilo", "D"], ["Eres libre", "G"], ["Adiós al ayer", "F"], ["Clamo a Dios", "D"],
-    ["Es Él", "A"], ["Vida nueva", "A"], ["De gracia en gracia", "Eb"]
+    ["Júbilo", "D"], ["Glorioso Día (Remix)", "D"], ["Adiós al ayer", "Ab"], ["Clamo a Dios", "D"],
+    ["Es Él", "Bb"], ["Vida nueva", "B"], ["De gracia en gracia", "B"]
   ]]
 ];
 

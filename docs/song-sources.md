@@ -38,14 +38,14 @@ Leyenda: ✅ confirmada por la playlist · ⏳ Darío confirma · ❌ no está e
 | 7 | Alabaré al Señor | D | *Alabaré Al Señor (Anástasis)* — Hillsong en Español | ✅ |
 | **Dom 27** | | | | |
 | 1 | Júbilo | D | Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr. — **chart en grados dictado por Darío (2026-09-21), tono original D** | ✅ |
-| 2 | Eres libre | G | — | ❌ |
-| 3 | Adiós al ayer | F | — | ❌ |
+| 2 | Glorioso Día (Remix) | D | Josué Ávila — *Glorious Day (Remix)*; **reemplaza a "Eres libre"** en el slot 2 (numeración de Darío, 2026-09-21). Chart en grados de Darío; tono D según Chordify/Scribd, 114 bpm | ✅ |
+| 3 | Adiós al ayer | Ab | Elevation Español / ELEVATION RHYTHM (*Algo Nuevo Viene*) — tono Ab y 150 bpm según MultiTracks. Chart en grados de Darío | ✅ |
 | 4 | Clamo a Dios | D | — | ❌ |
-| 5 | Es Él | A | *Es Él (En Vivo)* — Felipe S. Santos, Marcos Brunet | ✅ |
-| 6 | Vida nueva | A | Bethel Music, Zahriya Zachary | ✅ |
-| 7 | De gracia en gracia | Eb | Hillsong en Español | ✅ |
+| 5 | Es Él | Bb | *Es Él (En Vivo)* — Felipe S. Santos, Marcos Brunet — tono Bb (Cifra Club y Tunebat), 143 bpm. Chart en grados de Darío | ✅ |
+| 6 | Vida nueva | B | Bethel Music, Zahriya Zachary (*Back to Life* en español, *Homecoming Español*) — tono B y 73 bpm según MultiTracks. Chart en grados de Darío | ✅ |
+| 7 | De gracia en gracia | B | Hillsong en Español (*Grace to Grace*) — tono B según la cifra de Cifra Club (UNITED) y lacuerda. Chart en grados de Darío | ✅ |
 
-**Totales:** 25 ✅ · 0 ⏳ · 3 ❌
+**Totales:** 27 ✅ · 0 ⏳ · 1 ❌ (Clamo a Dios)
 
 Videos del Dom 13 fijados el 2026-09-07 desde la tabla de Darío, verificando
 título y canal de cada uno: Jehová, Lavado, Nadie, No Hay Otro Nombre y El
@@ -278,6 +278,90 @@ el que quiere, así que **se cargó como elección deliberada**.
   coro. Sin letra.
 
 ### Vie 18 y Dom 27
+
+#### Glorioso Día (Remix) (Dom 27) — grados de Darío, 2026-09-21 · tono original **D**
+
+Josué Ávila, remix de *Glorious Day* (Passion). Tono D (relativo Bm) y 114 bpm según Chordify y un chart de Scribd ("Glorioso Dia D"); no hay cifra en Cifra Club ni ficha en MultiTracks, así que el tono es de fuente secundaria. **Interpretaciones:** el "VI" del Coro y del Instrumental se cargó como **vi** (Bm), y el "III" del Instrumental como **iii** (F#m), por coherencia con el "vi" del Intro/Verso. Recorrido más allá de lo dictado: pendiente. Ocupa el slot 2 en lugar de *Eres libre*.
+
+| Sección | Grados (1=I, m=menor, /n=bajo) | En D |
+|---|---|---|
+| Intro | 4 5 6m | G A Bm |
+| Verso | 4 5 6m | G A Bm |
+| Pre-coro | 4 | G |
+| Coro | 6m 4 5 | Bm G A |
+| Instrumental | 4 5 6m 1 4 5 6m 3m 4 | G A Bm D G A Bm F#m G |
+
+Recorrido: Intro · Verso · Pre-coro · Coro · Instrumental.
+
+#### Adiós al ayer (Dom 27) — grados de Darío, 2026-09-21 · tono original **Ab**
+
+Elevation Español / ELEVATION RHYTHM, álbum *Algo Nuevo Viene*: MultiTracks lista Ab, 150 bpm, 4/4. La cifra de Cifra Club (ELEVATION RHYTHM) está en formas de G y confirma las lecturas: "II" = **ii** (G Am en la cifra → Ab Bbm) y "VI - V - IV" = **vi V IV** (Em D C → Fm Eb Db). "Otra vez…" se tomó como el **Coro / sección principal** que se repite al final (la cifra también la repite); si la sección principal es "He decidido…", es un cambio de etiqueta.
+
+| Sección | Grados (1=I, m=menor, /n=bajo) | En Ab |
+|---|---|---|
+| Intro | 1 4 | Ab Db |
+| Verso 1 | 1 4 1 4 | Ab Db Ab Db |
+| Verso 2 | 1 4 1 4 | Ab Db Ab Db |
+| He decidido… | 1 2m 1 2m 1 2m 6m 5 4 | Ab Bbm Ab Bbm Ab Bbm Fm Eb Db |
+| Otra vez… | 4 5 6m 4 4 5 6m | Db Eb Fm Db Db Eb Fm |
+| Puente | 1 2m 3m 5 1 2m 6m 5 | Ab Bbm Cm Eb Ab Bbm Fm Eb |
+
+Recorrido: Intro · Verso 1 · Verso 2 · He decidido… · Otra vez… · Puente · Otra vez….
+
+#### Es Él (Dom 27) — grados de Darío, 2026-09-21 · tono original **Bb**
+
+Felipe S. Santos ft. Marcos Brunet: Cifra Club transcribe en Bb (`Eb F Gm Dm` = IV V vi iii, igual al Intro dictado) y Tunebat da Bb, 143 bpm. **Interpretaciones:** en Verso 2 el "VI" se cargó como **vi** (Gm) —Darío marcó explícitamente "V(menor)" e "iv", que quedaron **Fm** y **Ebm**—; "V/3" (Solo) y "V/VII" (Puente 2) se tomaron como el mismo acorde, **V con la 3ª en el bajo = F/A** (bajo ascendente Gm → F/A → Bb). El Instrumental "vale la pena" lleva la indicación "repite varias veces" en vez de un número.
+
+| Sección | Grados (1=I, m=menor, /n=bajo) | En Bb |
+|---|---|---|
+| Intro | 4 5 6m 3m 4 5 | Eb F Gm Dm Eb F |
+| Verso 1 | 1 6m 4 1 | Bb Gm Eb Bb |
+| Pre-coro | 4 6m 1 5 4 6m 1 5 | Eb Gm Bb F Eb Gm Bb F |
+| Coro | 4 5 6m 3m 4 5 | Eb F Gm Dm Eb F |
+| Verso 2 | 1 6m 5m 4m 4 1 6m 5m 4m 4 | Bb Gm Fm Ebm Eb Bb Gm Fm Ebm Eb |
+| Puente 1 | 1 6m 4 5 1 6m 4 5 | Bb Gm Eb F Bb Gm Eb F |
+| Solo | 2m 5 6m 5/7 1 2m 5 | Cm F Gm F/A Bb Cm F |
+| Puente 2 | 6m 5/7 1 2m 4 5 6m 5/7 1 2m 4 5 | Gm F/A Bb Cm Eb F Gm F/A Bb Cm Eb F |
+| Coro (final) | 4 5 6m 3m 4 5 | Eb F Gm Dm Eb F |
+| Instrumental | 4 5 6m 3m | Eb F Gm Dm |
+| Instrumental (última parte) | 2m 5 6m 5 | Cm F Gm F |
+
+Recorrido: Intro · Verso 1 · Pre-coro · Coro · Verso 2 · Pre-coro · Coro · Puente 1 · Coro · Solo · Puente 2 · Coro (final) · Instrumental · Instrumental (última parte) · Coro.
+
+#### Vida nueva (Dom 27) — grados de Darío, 2026-09-21 · tono original **B**
+
+Bethel Music / Zahriya Zachary, *Back to Life* en español (*Homecoming Español*): MultiTracks lista B, 72.5 bpm, 4/4; la cifra de *Back to Life* en Cifra Club también está en B. **Interpretación:** el verso dictado "I – V – I - III/IV" se cargó como **I – V – I/3 – IV** (B F# B/D# E), la lectura habitual de esa línea de bajo; la cifra muestra B F# E B en los versos. Puente 2 ("Si el enemigo me ataca") en tres partes: I ×4 compases (×3), I vi IV (×4), I vi V.
+
+| Sección | Grados (1=I, m=menor, /n=bajo) | En B |
+|---|---|---|
+| Coro | 4 1 5 6m 4 1 5 6m 4 1 5 6m 4 5 1 | E B F# G#m E B F# G#m E B F# G#m E F# B |
+| Verso 1 | 1 5 1/3 4 | B F# B/D# E |
+| Verso 2 | 1 5 1/3 4 | B F# B/D# E |
+| Verso 3 | 1 5 1/3 4 | B F# B/D# E |
+| Puente | 4 1 5 6m | E B F# G#m |
+| Puente (última vuelta) | 4 1 5 | E B F# |
+| Puente 2 · Si el enemigo… ×3 | 1 1 1 1 | B B B B |
+| Puente 2 (b) ×4 | 1 6m 4 | B G#m E |
+| Puente 2 (cierre) | 1 6m 5 | B G#m F# |
+| Coro (final) | 4 1 5 6m 4 1 5 6m 4 1 5 6m 4 5 1 | E B F# G#m E B F# G#m E B F# G#m E F# B |
+
+Recorrido: Coro · Verso 1 · Verso 2 · Coro · Verso 3 · Puente · Puente (última vuelta) · Coro · Puente 2 · Si el enemigo… ×3 · Puente 2 (b) ×4 · Puente 2 (cierre) · Coro (final).
+
+#### De gracia en gracia (Dom 27) — grados de Darío, 2026-09-21 · tono original **B**
+
+Hillsong en Español, *Grace to Grace*: la cifra de Cifra Club (Hillsong UNITED) está en B (`B F# G#m E` = I V vi IV, igual al Intro) y lacuerda coincide; la versión en inglés de Hillsong Worship circula en C/F. **Interpretación:** el "VI" del Coro se cargó como **vi** (G#m). Sin tempo confirmado.
+
+| Sección | Grados (1=I, m=menor, /n=bajo) | En B |
+|---|---|---|
+| Intro | 1 5 6m 4 1 5 6m 4 | B F# G#m E B F# G#m E |
+| Verso 1 | 1 5 6m 4 1 5 6m 4 1 5 6m 4 1 5 6m | B F# G#m E B F# G#m E B F# G#m E B F# G#m |
+| Pre-coro | 4 5 4 5 3m 4 6m 5 | E F# E F# D#m E G#m F# |
+| Coro | 1 5 6m 4 1 5 6m 4 5 6m 4 5 | B F# G#m E B F# G#m E F# G#m E F# |
+| Interludio | 1 5 6m 4 | B F# G#m E |
+| Verso 2 | 1 5 6m 4 1 5 6m 4 1 5 6m 4 1 5 6m | B F# G#m E B F# G#m E B F# G#m E B F# G#m |
+| Puente | 4 6m 1 5 4 6m 1 5 4 5 6m 4 1 5 | E G#m B F# E G#m B F# E F# G#m E B F# |
+
+Recorrido: Intro · Verso 1 · Pre-coro · Coro · Interludio · Verso 2 · Pre-coro · Coro · Puente · Coro · Puente.
 
 #### Júbilo (Dom 27) — grados de Darío, 2026-09-21
 

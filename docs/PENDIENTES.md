@@ -5,12 +5,13 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
 
 **Última actualización:** 2026-09-21
 **Sitio publicado:** https://grado-uno-app.web.app (worship en `/`, Grado Uno en `/grado-uno/`)
-**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 25 de 28 validadas. **Vie 4 y Dom 13 completos; Vie 18 7/7 con chart y video.**
+**Fuente de verdad de versiones:** playlist Spotify "Secuencia A" + links de Darío — 27 de 28 validadas. **Vie 4 y Dom 13 completos; **Vie 18 7/7 con chart y video; Dom 27 6/7 con chart (grados de Darío), sin videos.**
 
 ## Lo que Darío me debe (bloquea contenido)
 
-1. **Versión de las 3 que siguen sin confirmar** (Dom 27): Eres libre ·
-   Adiós al ayer · Clamo a Dios.
+1. **Versión sin confirmar** (Dom 27): sólo *Clamo a Dios*. (*Eres libre* salió
+   del setlist: el slot 2 es ahora *Glorioso Día (Remix)*; *Adiós al ayer* quedó
+   como Elevation Español / ELEVATION RHYTHM.)
 2. **Revisar musicalmente los charts borrador** (extracción web, no PDF): Dom 13
    → Nadie, Quién Más, Canta al Señor; **Vie 18 → las siete cargadas el
    2026-09-17** (Señor eres fiel, En el nombre de Jesús, Clamo a Cristo, Cómo no
@@ -23,7 +24,8 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    *Dios de avivamiento* omite los coros repetidos (se cargó tal cual; decime
    dónde vuelve el coro y lo agrego).
 3. **Videos que faltan:** *Canta al Señor* (Dom 13), Vie 4 salvo *Digno de
-   alabar* (6) y las 7 del Dom 27. Dom 13 y Vie 18 completos. **Dos videos de
+   alabar* (6) y las 7 del Dom 27 (si querés, para Glorioso Día encontré el
+   video en vivo de Josué Ávila `RPJCH28_AYw`; lo cargo cuando confirmes). Dom 13 y Vie 18 completos. **Dos videos de
    Vie 18 para que confirmes** (cargados tal cual, verificados por título):
    *En el nombre de Jesús* → "In Jesus Name" de **Israel Houghton** (el
    original en inglés, no la versión de Ingrid Rosario); *Agnus Dei* → **Passion
@@ -31,7 +33,8 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    Michael W. Smith (misma canción; el tono de Passion puede diferir).
 4. **Acordes** (pegados, `.txt` o **PDF de chart oficial**, como el de *Todo es
    posible*, o **chart en números** como el de *Lavado*) de todo lo que sigue
-   `pending`: 6 del Dom 27 (Júbilo ya está, dictada en grados el 2026-09-21). **Vie 4, Dom 13 y Vie 18 completos (21/21 con
+   `pending`: sólo *Clamo a Dios* (Dom 27). Las otras 6 del Dom 27 se cargaron
+   desde tus grados el 2026-09-21. **Vie 4, Dom 13 y Vie 18 completos (21/21 con
    chart).**
    Sólo se cargan acordes; la letra nunca. Con la versión ya confirmada para 17, puedo
    intentar buscar los charts con precisión si preferís.
@@ -55,6 +58,21 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
    cifra en Cifra Club: *A Jesús seguiré*, *Creeré*, *Lavado* (si conocés otra
    URL, la verifico). Las 6 sin versión confirmada se enlazan cuando confirmes
    el artista.
+
+9. **Dom 27 en grados — lecturas a confirmar** (cargadas el 2026-09-21, cada
+   una es un cambio de una letra):
+   - *Glorioso Día*: "VI" del Coro/Instrumental → **vi** (Bm); "III" → **iii**
+     (F#m). Recorrido completo (cuántos versos/coros) no dictado.
+   - *Adiós al ayer*: "II" → **ii** (Bbm); "VI" → **vi** (Fm); tomé **"Otra
+     vez…" como el Coro** que se repite al final.
+   - *Es Él*: Verso 2 "VI" → **vi** (Gm), con **Fm** y **Ebm** tal como
+     marcaste; "V/3" = "V/VII" = **F/A**. Instrumental "repite varias veces"
+     quedó como indicación, sin número.
+   - *Vida nueva*: verso "I – V – I - III/IV" → **I V I/3 IV** (B F# B/D# E).
+   - *De gracia en gracia*: "VI" del Coro → **vi** (G#m).
+   - Tonos: Glorioso Día en D y De gracia en gracia en B vienen de fuentes
+     secundarias (Chordify/Scribd y cifras web); Adiós al ayer (Ab), Es Él (Bb)
+     y Vida nueva (B) están confirmados por MultiTracks/Tunebat/Cifra Club.
 
 ## Backlog técnico (mío, no bloquea publicar)
 

@@ -805,22 +805,105 @@ export const setlists = [
           { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["D"], ["Em"], ["D/F#"], ["G"]] }
         ]
       }),
-      song("eres-libre", "Eres libre", "G"),
-      song("adios-al-ayer", "Adiós al ayer", "F"),
-      song("clamo-a-dios", "Clamo a Dios", "D"),
-      song("es-el", "Es Él", "A", {
-        artist: "Felipe S. Santos, Marcos Brunet",
-        chartUrl: "https://www.cifraclub.com/felipe-s-santos/es-el-part-marcos-brunet/"
+      // Glorioso Día (Remix): grados dictados por Darío (2026-09-21) sobre el tono
+      // original D (Josué Ávila, Glorious Day · Remix; 114 bpm). Reemplaza a
+      // "Eres libre" en el slot 2 según la numeración de Darío.
+      song("glorioso-dia", "Glorioso Día (Remix)", "D", {
+        artist: "Josué Ávila (Glorious Day · Remix)",
+        sourceKey: "D",
+        tempoBpm: 114,
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["G"], ["A"], ["Bm"]] },
+          { type: "verse", label: "Verso", repeats: 1, measures: [["G"], ["A"], ["Bm"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["G"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["Bm"], ["G"], ["A"]] },
+          { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["G"], ["A"], ["Bm"], ["D"], ["G"], ["A"], ["Bm"], ["F#m"], ["G"]] }
+        ]
       }),
-      song("vida-nueva", "Vida nueva", "A", {
+      // Adiós al ayer: grados dictados por Darío (2026-09-21) sobre el tono original
+      // Ab (Elevation Español / ELEVATION RHYTHM, "Algo Nuevo Viene", 150 bpm según
+      // MultiTracks; la cifra de Cifra Club está en formas de G).
+      song("adios-al-ayer", "Adiós al ayer", "Ab", {
+        artist: "Elevation Español, ELEVATION RHYTHM",
+        sourceKey: "Ab",
+        tempoBpm: 150,
+        chartUrl: "https://www.cifraclub.com/elevation-rhythm/adios-al-ayer/",
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["Ab"], ["Db"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["Ab"], ["Db"], ["Ab"], ["Db"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Ab"], ["Db"], ["Ab"], ["Db"]] },
+          { type: "prechorus", label: "He decidido…", repeats: 1, measures: [["Ab"], ["Bbm"], ["Ab"], ["Bbm"], ["Ab"], ["Bbm"], ["Fm"], ["Eb"], ["Db"]] },
+          { type: "chorus", label: "Otra vez…", repeats: 1, measures: [["Db"], ["Eb"], ["Fm"], ["Db"], ["Db"], ["Eb"], ["Fm"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["Ab"], ["Bbm"], ["Cm"], ["Eb"], ["Ab"], ["Bbm"], ["Fm"], ["Eb"]] },
+          { type: "chorus", label: "Otra vez…", repeats: 1, measures: [["Db"], ["Eb"], ["Fm"], ["Db"], ["Db"], ["Eb"], ["Fm"]] }
+        ]
+      }),
+      song("clamo-a-dios", "Clamo a Dios", "D"),
+      // Es Él: grados dictados por Darío (2026-09-21) sobre el tono original Bb.
+      song("es-el", "Es Él", "Bb", {
+        artist: "Felipe S. Santos, Marcos Brunet",
+        chartUrl: "https://www.cifraclub.com/felipe-s-santos/es-el-part-marcos-brunet/",
+        sourceKey: "Bb",
+        tempoBpm: 143,
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["Bb"], ["Gm"], ["Eb"], ["Bb"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["Eb"], ["Gm"], ["Bb"], ["F"], ["Eb"], ["Gm"], ["Bb"], ["F"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Bb"], ["Gm"], ["Fm"], ["Ebm"], ["Eb"], ["Bb"], ["Gm"], ["Fm"], ["Ebm"], ["Eb"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["Eb"], ["Gm"], ["Bb"], ["F"], ["Eb"], ["Gm"], ["Bb"], ["F"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "bridge", label: "Puente 1", repeats: 1, measures: [["Bb"], ["Gm"], ["Eb"], ["F"], ["Bb"], ["Gm"], ["Eb"], ["F"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "instrumental", label: "Solo", repeats: 1, measures: [["Cm"], ["F"], ["Gm"], ["F/A"], ["Bb"], ["Cm"], ["F"]] },
+          { type: "bridge", label: "Puente 2", repeats: 1, measures: [["Gm"], ["F/A"], ["Bb"], ["Cm"], ["Eb"], ["F"], ["Gm"], ["F/A"], ["Bb"], ["Cm"], ["Eb"], ["F"]] },
+          { type: "chorus", label: "Coro (final)", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"]], cue: "repite varias veces · vale la pena" },
+          { type: "instrumental", label: "Instrumental (última parte)", repeats: 1, measures: [["Cm"], ["F"], ["Gm"], ["F"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] }
+        ]
+      }),
+      // Vida nueva: grados dictados por Darío (2026-09-21) sobre el tono original B.
+      song("vida-nueva", "Vida nueva", "B", {
         artist: "Bethel Music, Zahriya Zachary",
         // Cifra Club sólo tiene cifra del original en inglés (Back To Life); mismos acordes.
-        chartUrl: "https://www.cifraclub.com/bethel-music/back-to-life-feat-zahriya-zachary/"
+        chartUrl: "https://www.cifraclub.com/bethel-music/back-to-life-feat-zahriya-zachary/",
+        sourceKey: "B",
+        tempoBpm: 73,
+        sections: [
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
+          { type: "verse", label: "Verso 3", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"]], cue: "seguido del verso" },
+          { type: "bridge", label: "Puente (última vuelta)", repeats: 1, measures: [["E"], ["B"], ["F#"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
+          { type: "bridge", label: "Puente 2 · Si el enemigo…", repeats: 3, measures: [["B"], ["B"], ["B"], ["B"]] },
+          { type: "bridge", label: "Puente 2 (b)", repeats: 4, measures: [["B"], ["G#m"], ["E"]] },
+          { type: "bridge", label: "Puente 2 (cierre)", repeats: 1, measures: [["B"], ["G#m"], ["F#"]] },
+          { type: "chorus", label: "Coro (final)", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] }
+        ]
       }),
-      song("de-gracia-en-gracia", "De gracia en gracia", "Eb", {
+      // De gracia en gracia: grados dictados por Darío (2026-09-21) sobre el tono original B.
+      song("de-gracia-en-gracia", "De gracia en gracia", "B", {
         artist: "Hillsong en Español",
         // La cifra está publicada bajo Hillsong UNITED (la de "en Español" no existe).
-        chartUrl: "https://www.cifraclub.com/hillsong-united/de-gracia-en-gracia/"
+        chartUrl: "https://www.cifraclub.com/hillsong-united/de-gracia-en-gracia/",
+        sourceKey: "B",
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["E"], ["F#"], ["E"], ["F#"], ["D#m"], ["E"], ["G#m"], ["F#"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
+          { type: "interlude", label: "Interludio", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["E"], ["F#"], ["E"], ["F#"], ["D#m"], ["E"], ["G#m"], ["F#"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] }
+        ]
       })
     ]
   }
