@@ -454,6 +454,6 @@ Notas: en *Señor eres fiel* la cifra decía "Em" pero la armonía es E mixolidi
 |--:|---|:-:|---|:-:|
 | 1 | Mover tu corazón | Eb | *Mover Tu Corazón* — UPPERROOM feat. Toma Tu Lugar | ✅ acordes cargados |
 
-- **Tono original Eb, 64 BPM** — fuente de acordes: Worship Together (https://www.worshiptogether.com/es/canciones/mover-tu-corazon-upperroom-y-tomatulugar/#SongChords), aportada por Darío el 2026-09-30. Secciones cargadas en Eb (fuente = tono asignado, sin transponer): Intro, Verso 1, Verso 2, Coro, Puente, Espontáneo, Outro.
+- **Tono original Eb, 64 BPM** — fuente de acordes: Worship Together (https://www.worshiptogether.com/es/canciones/mover-tu-corazon-upperroom-y-tomatulugar/#SongChords), aportada por Darío el 2026-09-30. Secciones cargadas en Eb (fuente = tono asignado, sin transponer). **Recorrido según la letra (Darío, 2026-09-30):** Intro · Verso 1 · Coro · Verso 2 · Coro ×2 · Puente ×4 · Coro ×2 · Puente ×3. El 2º coro ("Mover tu corazón y perderla…") reusa los acordes del Coro (misma fuente).
 - **Letra:** no se copia al fuente (política del repo). Se aporta localmente en la app; enlace de referencia en `lyricsUrl` (Worship Together #SongLyrics).
 - `chartUrl` queda null: el campo sólo admite páginas de Cifra Club; la fuente real es Worship Together (en el comentario del código y acá).

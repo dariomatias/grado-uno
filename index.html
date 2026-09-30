@@ -982,14 +982,19 @@ export const setlists = [
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/mover-tu-corazon-upperroom-y-tomatulugar/#SongLyrics",
         youtubeUrl: "https://www.youtube.com/watch?v=36udEk2LxuA",
         youtubeVideoId: "36udEk2LxuA",
+        // Recorrido según la letra (aportada por Darío 2026-09-30):
+        // Intro · Verso 1 · Coro · Verso 2 · Coro ×2 · Puente ×4 · Coro ×2 · Puente ×3.
+        // Acordes en Eb de Worship Together; el 2º coro ("Mover tu corazón y perderla…")
+        // reusa los acordes del Coro (misma fuente).
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7", "Bbsus"]] },
           { type: "verse", label: "Verso 1", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
           { type: "chorus", label: "Coro", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] },
-          { type: "instrumental", label: "Espontáneo", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] },
-          { type: "outro", label: "Outro", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] }
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
+          { type: "bridge", label: "Puente", repeats: 4, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] },
+          { type: "chorus", label: "Coro", repeats: 2, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
+          { type: "bridge", label: "Puente", repeats: 3, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] }
         ]
       })
     ]
