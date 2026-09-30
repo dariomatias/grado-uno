@@ -11,8 +11,8 @@ test("normalizeText ignores accents and case", () => {
 });
 
 test("catalog lists every song once, alphabetically, with its appearances", () => {
-  assert.equal(catalog.length, 28);
-  assert.equal(catalog.reduce((n, it) => n + it.appearances.length, 0), 28);
+  assert.equal(catalog.length, 29);
+  assert.equal(catalog.reduce((n, it) => n + it.appearances.length, 0), 29);
   const titles = catalog.map((it) => it.title);
   assert.deepEqual(titles, [...titles].sort((a, b) => a.localeCompare(b, "es", { sensitivity: "base" })));
   const jubilo = catalog.find((it) => it.id === "jubilo");
@@ -36,13 +36,13 @@ test("search matches title or artist without accents or case", () => {
   assert.deepEqual(filterCatalog(catalog, { query: "JÚBILO" }).map((it) => it.title), ["Júbilo"]);
   assert.ok(filterCatalog(catalog, { query: "elevation" }).length >= 3);
   assert.equal(filterCatalog(catalog, { query: "zzz" }).length, 0);
-  assert.equal(filterCatalog(catalog, {}).length, 28);
+  assert.equal(filterCatalog(catalog, {}).length, 29);
 });
 
 test("filters by key, setlist and chart availability, combined", () => {
   assert.equal(filterCatalog(catalog, { setlistId: "2026-09-27" }).length, 7);
   assert.deepEqual(filterCatalog(catalog, { status: "pending" }).map((it) => it.title), ["Clamo a Dios"]);
-  assert.equal(filterCatalog(catalog, { status: "chart" }).length, 27);
+  assert.equal(filterCatalog(catalog, { status: "chart" }).length, 28);
   const inD = filterCatalog(catalog, { key: "D" });
   assert.ok(inD.every((it) => it.appearances.some((a) => a.assignedKey === "D")));
   assert.ok(inD.some((it) => it.title === "Júbilo"));

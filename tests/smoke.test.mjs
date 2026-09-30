@@ -50,7 +50,8 @@ test("measure rows (2/4/8 bars per line, never flowing) with a list fallback are
   assert.doesNotMatch(html, /\.bar:nth-child\(4n\)/);
   assert.match(html, /\.measures \{ display: flex; flex-wrap: nowrap;/);
   assert.match(html, /setAttribute\("aria-label", "Compases por línea"\)/);
-  assert.match(html, /chunkMeasures\(section\.measures, perLine\)/);
+  assert.match(html, /repeatedPatternSpans\(section\.measures\)/);
+  assert.match(html, /chunkMeasures\(slice, perLine\)/);
   assert.match(html, /chartLayout: "grid"/);
   assert.match(html, /Vista: grilla/);
   assert.match(html, /Vista: lista/);

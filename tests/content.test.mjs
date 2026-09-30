@@ -26,12 +26,15 @@ const expected = [
   ["2026-09-27", [
     ["Júbilo", "D"], ["Glorioso Día (Remix)", "D"], ["Adiós al ayer", "Ab"], ["Clamo a Dios", "D"],
     ["Es Él", "Bb"], ["Vida nueva", "B"], ["De gracia en gracia", "B"]
+  ]],
+  ["ensayo-general", [
+    ["Mover tu corazón", "Eb"]
   ]]
 ];
 
-test("four setlists with 28 appearances in order and key", () => {
-  assert.equal(setlists.length, 4);
-  assert.equal(setlists.flatMap((item) => item.songs).length, 28);
+test("setlists in order and key (4 reuniones + Ensayo general)", () => {
+  assert.equal(setlists.length, 5);
+  assert.equal(setlists.flatMap((item) => item.songs).length, 29);
   assert.deepEqual(
     setlists.map((item) => [item.id, item.songs.map((s) => [s.title, s.assignedKey])]),
     expected
@@ -39,7 +42,7 @@ test("four setlists with 28 appearances in order and key", () => {
 });
 
 test("short labels are exact", () => {
-  assert.deepEqual(setlists.map((s) => s.shortLabel), ["Vie 4", "Dom 13", "Vie 18", "Dom 27"]);
+  assert.deepEqual(setlists.map((s) => s.shortLabel), ["Vie 4", "Dom 13", "Vie 18", "Dom 27", "Ensayo"]);
 });
 
 test("validateSetlists reports no errors", () => {
@@ -448,5 +451,21 @@ test("No Hay Otro Nombre: Cifra Club chart (Hillsong Worship, G) — full verses
 
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
-  assert.equal(allAppearanceKeys().length, 28);
+  assert.equal(allAppearanceKeys().length, 29);
+});
+
+test("Ensayo general is a general reunion, exempt from the 7-song rule, with Mover tu corazón (confirmed, original key Eb)", () => {
+  const ensayo = setlists.find((s) => s.id === "ensayo-general");
+  assert.ok(ensayo, "ensayo-general reunion must exist");
+  assert.equal(ensayo.general, true);
+  assert.equal(ensayo.date, null);
+  assert.equal(ensayo.songs.length, 1);
+  const song = ensayo.songs[0];
+  assert.equal(song.id, "mover-tu-corazon");
+  assert.equal(song.title, "Mover tu corazón");
+  assert.equal(song.assignedKey, "Eb");
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.ok(song.sections.length > 0, "chords loaded (Eb)");
+  // exenta de la regla de 7: no debe generar error de validación
+  assert.deepEqual(validateSetlists([ensayo]), []);
 });

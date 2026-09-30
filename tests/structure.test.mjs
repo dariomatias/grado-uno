@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { songStructure, structureSummary, chunkMeasures, BARS_PER_LINE_OPTIONS } = await extractInlineModule(indexHtmlUrl, "structure-module");
+const { songStructure, structureSummary, chunkMeasures, repeatedPatternSpans, BARS_PER_LINE_OPTIONS } = await extractInlineModule(indexHtmlUrl, "structure-module");
 const { setlists } = await extractInlineModule(indexHtmlUrl, "content-module");
 
 const song = (title) => setlists.flatMap((s) => s.songs).find((s) => s.title === title);
@@ -92,6 +92,39 @@ test("Jehová: band structure — four identical verses in one block, one Coro (
     "Puente ×4", "Coro ×2", "Puente (final) ×2", "Outro"
   ]);
   assert.equal(structureSummary(s.typeSummary), "Intro · 4 versos · Coro · Interludio · 2 puentes · Outro");
+});
+
+test("repeatedPatternSpans collapses a loop inside a verse and keeps the tail", () => {
+  const g = ["G"], c = ["C"], d = ["D"];
+  // Sol Do Re ×3, luego Sol, Re Re
+  const spans = repeatedPatternSpans([g, c, d, g, c, d, g, c, d, g, d, d]);
+  assert.deepEqual(spans, [
+    { start: 0, length: 3, repeats: 3 },
+    { start: 9, length: 1, repeats: 1 },
+    { start: 10, length: 1, repeats: 2 }
+  ]);
+});
+
+test("repeatedPatternSpans prefers the shorter loop when both cover the same bars", () => {
+  const a = ["A"], b = ["B"];
+  assert.deepEqual(repeatedPatternSpans([a, b, a, b, a, b, a, b]), [
+    { start: 0, length: 2, repeats: 4 }
+  ]);
+});
+
+test("repeatedPatternSpans leaves a verse without a loop as one span", () => {
+  assert.deepEqual(repeatedPatternSpans([["G"], ["C"], ["G"], ["D"]]), [
+    { start: 0, length: 4, repeats: 1 }
+  ]);
+  assert.deepEqual(repeatedPatternSpans([]), []);
+});
+
+test("repeatedPatternSpans matches whole bars, including several chords in one bar", () => {
+  const turn = [["G", "D"], ["C"]];
+  assert.deepEqual(repeatedPatternSpans([...turn, ...turn, ["D"]]), [
+    { start: 0, length: 2, repeats: 2 },
+    { start: 4, length: 1, repeats: 1 }
+  ]);
 });
 
 test("chunkMeasures cuts a section into rows of 2/4/8 bars; never 6+2", () => {

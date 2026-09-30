@@ -447,3 +447,13 @@ cifra es la de Michael W. Smith. Ambos cargados tal cual.
 Notas: en *Señor eres fiel* la cifra decía "Em" pero la armonía es E mixolidio
 (E · B/E · D/E · A/E); se trató como E. "C7M" (Cifra Club) = Cmaj7: alias
 `7M→maj7` agregado a las digitaciones.
+
+## Ensayo general (reunión especial, sin fecha)
+
+| # | Canción | Tono | Versión | Estado |
+|--:|---|:-:|---|:-:|
+| 1 | Mover tu corazón | Eb | *Mover Tu Corazón* — UPPERROOM feat. Toma Tu Lugar | ✅ acordes cargados |
+
+- **Tono original Eb, 64 BPM** — fuente de acordes: Worship Together (https://www.worshiptogether.com/es/canciones/mover-tu-corazon-upperroom-y-tomatulugar/#SongChords), aportada por Darío el 2026-09-30. Secciones cargadas en Eb (fuente = tono asignado, sin transponer): Intro, Verso 1, Verso 2, Coro, Puente, Espontáneo, Outro.
+- **Letra:** no se copia al fuente (política del repo). Se aporta localmente en la app; enlace de referencia en `lyricsUrl` (Worship Together #SongLyrics).
+- `chartUrl` queda null: el campo sólo admite páginas de Cifra Club; la fuente real es Worship Together (en el comentario del código y acá).

@@ -138,6 +138,11 @@
       .section { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
       .section .slabel { color: var(--gold-strong); font-weight: 700; margin-bottom: 8px; display: flex; gap: 8px; align-items: baseline; }
       .section .repeats { color: var(--muted); font-size: .85rem; }
+      /* Vuelta repetida dentro de la sección: los compases una vez y el ×N al lado. */
+      .pattern { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+      .slabel + .pattern { margin-top: 0; }
+      .pattern-body { flex: 1; min-width: 0; }
+      .pattern .repeats { color: var(--gold-strong); font-size: 1.05rem; font-weight: 700; white-space: nowrap; }
       /* Indicación de arreglo por sección (p. ej. "entra acústica"), dato de Darío */
       .section .cue {
         margin-left: auto; font-size: .8rem; font-weight: 600;
@@ -350,6 +355,8 @@ export const setlists = [
         artist: "Bethel Music, Dante Bowe (Anything Is Possible · Live)",
         // Única cifra en Cifra Club: está bajo un artista mal escrito ("Bettel Music").
         chartUrl: "https://www.cifraclub.com/bettel-music/anything-is-possible/",
+        youtubeUrl: "https://www.youtube.com/watch?v=b23h_tNF8RE",
+        youtubeVideoId: "b23h_tNF8RE",
         sourceKey: "Bb",
         tempoBpm: 122,
         beatsPerMeasure: 4,
@@ -371,6 +378,8 @@ export const setlists = [
       song("a-jesus-seguire", "A Jesús seguiré", "G", {
         artist: "TWICE, Job González",
         sourceKey: "G",
+        youtubeUrl: "https://www.youtube.com/watch?v=e7ynpRCzaaQ",
+        youtubeVideoId: "e7ynpRCzaaQ",
         beatsPerMeasure: 4,
         // Chart en G aportado por Darío (PDF, 2026-09-07); sin transposición.
         // Tres acordes (G, D, A). Sin BPM en la fuente. Sólo acordes.
@@ -395,6 +404,8 @@ export const setlists = [
       song("creere", "Creeré", "A", {
         artist: "Bethel Music, Jonathan David Helser, Melissa Helser",
         sourceKey: "Bb",
+        youtubeUrl: "https://www.youtube.com/watch?v=mg4fCJJ8SUE",
+        youtubeVideoId: "mg4fCJJ8SUE",
         tempoBpm: 72,
         beatsPerMeasure: 4,
         // Chart oficial de Bethel Music (CCLI 7176941, adaptación al español;
@@ -419,6 +430,8 @@ export const setlists = [
       song("santo-una-cosa", "Santo una cosa", "A", {
         artist: "Toma Tu Lugar, Lucas Conslie",
         chartUrl: "https://www.cifraclub.com/toma-tu-lugar/santo-una-cosa/",
+        youtubeUrl: "https://www.youtube.com/watch?v=qmeLZNbLBQY",
+        youtubeVideoId: "qmeLZNbLBQY",
         sourceKey: "G",
         beatsPerMeasure: 4,
         // Chart Cifra Club (TOMATULUGAR) aportado por Darío el 2026-09-08, en G;
@@ -434,6 +447,8 @@ export const setlists = [
       song("al-que-esta-sentado", "Al que está sentado", "A", {
         artist: "Marco Barrientos, Marcos Brunet",
         chartUrl: "https://www.cifraclub.com/marcos-brunet/al-que-esta-sentado-en-el-trono/",
+        youtubeUrl: "https://www.youtube.com/watch?v=Xn_K7Fy-jFM",
+        youtubeVideoId: "Xn_K7Fy-jFM",
         sourceKey: "A",
         beatsPerMeasure: 4,
         // Chart Cifra Club (Marcos Brunet) aportado por Darío el 2026-09-08, en A
@@ -476,6 +491,8 @@ export const setlists = [
       song("dios-de-avivamiento", "Dios de avivamiento", "C", {
         artist: "Bethel Music, Brian Johnson, Jenn Johnson (God of Revival · Live)",
         chartUrl: "https://www.cifraclub.com/bethel-music/dios-de-avivamiento/",
+        youtubeUrl: "https://www.youtube.com/watch?v=VFWF9rSAWF8",
+        youtubeVideoId: "VFWF9rSAWF8",
         sourceKey: "C",
         beatsPerMeasure: 4,
         // Chart Cifra Club (Bethel Music) aportado por Darío el 2026-09-08, en C
@@ -595,6 +612,8 @@ export const setlists = [
       song("canta-al-senor", "Canta al Señor", "G", {
         artist: "Ingrid Rosario",
         chartUrl: "https://www.cifraclub.com/ingrid-rosario/cante-al-seor/",
+        youtubeUrl: "https://www.youtube.com/watch?v=FL1dbBVvhzU",
+        youtubeVideoId: "FL1dbBVvhzU",
         sourceKey: "A",
         beatsPerMeasure: 4,
         // BORRADOR: chart de Cifra Club ("Cante Al Señor", Ingrid Rosario) leído
@@ -816,6 +835,8 @@ export const setlists = [
         artist: "Miel San Marcos, Maverick City Musica, Josh Morales, Luis Morales Jr.",
         sourceKey: "D",
         chartUrl: "https://www.cifraclub.com/miel-san-marcos/jubilo-part-maverick-city-musica/",
+        youtubeUrl: "https://www.youtube.com/watch?v=zPf1Rvjixxc",
+        youtubeVideoId: "zPf1Rvjixxc",
         sections: [
           { type: "verse", label: "Verso 1", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
           { type: "verse", label: "Verso 2", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
@@ -831,6 +852,8 @@ export const setlists = [
       song("glorioso-dia", "Glorioso Día (Remix)", "D", {
         artist: "Josué Ávila (Glorious Day · Remix)",
         sourceKey: "D",
+        youtubeUrl: "https://www.youtube.com/watch?v=bhPdS_ZUKg8",
+        youtubeVideoId: "bhPdS_ZUKg8",
         tempoBpm: 114,
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["G"], ["A"], ["Bm"]] },
@@ -846,6 +869,8 @@ export const setlists = [
       song("adios-al-ayer", "Adiós al ayer", "Ab", {
         artist: "Elevation Español, ELEVATION RHYTHM",
         sourceKey: "Ab",
+        youtubeUrl: "https://www.youtube.com/watch?v=CQb8HhAn1LU",
+        youtubeVideoId: "CQb8HhAn1LU",
         tempoBpm: 150,
         chartUrl: "https://www.cifraclub.com/elevation-rhythm/adios-al-ayer/",
         sections: [
@@ -858,11 +883,17 @@ export const setlists = [
           { type: "chorus", label: "Otra vez…", repeats: 1, measures: [["Db"], ["Eb"], ["Fm"], ["Db"], ["Db"], ["Eb"], ["Fm"]] }
         ]
       }),
-      song("clamo-a-dios", "Clamo a Dios", "D"),
+      song("clamo-a-dios", "Clamo a Dios", "D", {
+        artist: "Elevation Español",
+        youtubeUrl: "https://www.youtube.com/watch?v=kbQxsft9i94",
+        youtubeVideoId: "kbQxsft9i94"
+      }),
       // Es Él: grados dictados por Darío (2026-09-21) sobre el tono original Bb.
       song("es-el", "Es Él", "Bb", {
         artist: "Felipe S. Santos, Marcos Brunet",
         chartUrl: "https://www.cifraclub.com/felipe-s-santos/es-el-part-marcos-brunet/",
+        youtubeUrl: "https://www.youtube.com/watch?v=GmKYb7nl8rM",
+        youtubeVideoId: "GmKYb7nl8rM",
         sourceKey: "Bb",
         tempoBpm: 143,
         sections: [
@@ -888,6 +919,8 @@ export const setlists = [
         artist: "Bethel Music, Zahriya Zachary",
         // Cifra Club sólo tiene cifra del original en inglés (Back To Life); mismos acordes.
         chartUrl: "https://www.cifraclub.com/bethel-music/back-to-life-feat-zahriya-zachary/",
+        youtubeUrl: "https://www.youtube.com/watch?v=UY-oasBj1vU",
+        youtubeVideoId: "UY-oasBj1vU",
         sourceKey: "B",
         tempoBpm: 73,
         sections: [
@@ -910,6 +943,8 @@ export const setlists = [
         artist: "Hillsong en Español",
         // La cifra está publicada bajo Hillsong UNITED (la de "en Español" no existe).
         chartUrl: "https://www.cifraclub.com/hillsong-united/de-gracia-en-gracia/",
+        youtubeUrl: "https://www.youtube.com/watch?v=sq3mrz_C92s",
+        youtubeVideoId: "sq3mrz_C92s",
         sourceKey: "B",
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"]] },
@@ -923,6 +958,36 @@ export const setlists = [
           { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] },
           { type: "chorus", label: "Coro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
           { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] }
+        ]
+      })
+    ]
+  },
+  {
+    // Reunión especial (no es una fecha de servicio): repertorio de ensayo.
+    // Exenta de la regla de 7 canciones (ver validateSetlists) y sin fecha.
+    id: "ensayo-general",
+    label: "Ensayo general",
+    shortLabel: "Ensayo",
+    date: null,
+    general: true,
+    songs: [
+      song("mover-tu-corazon", "Mover tu corazón", "Eb", {
+        // UPPERROOM feat. Toma Tu Lugar. Tono original Eb, 64 BPM.
+        // Acordes: worshiptogether.com/es/canciones/mover-tu-corazon-upperroom-y-tomatulugar/#SongChords
+        // Letra: se aporta localmente en la app (no se copia al fuente); enlace en lyricsUrl.
+        artist: "UPPERROOM, Toma Tu Lugar",
+        sourceKey: "Eb",
+        tempoBpm: 64,
+        beatsPerMeasure: 4,
+        lyricsUrl: "https://www.worshiptogether.com/es/canciones/mover-tu-corazon-upperroom-y-tomatulugar/#SongLyrics",
+        sections: [
+          { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7", "Bbsus"]] },
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] },
+          { type: "instrumental", label: "Espontáneo", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] },
+          { type: "outro", label: "Outro", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] }
         ]
       })
     ]
@@ -963,7 +1028,7 @@ export const appearanceKey = (setlistId, songId) => `${setlistId}:${songId}`;
 export function validateSetlists(items) {
   const errors = [];
   for (const setlist of items) {
-    if (setlist.songs.length !== 7) errors.push(`${setlist.id}: expected 7 songs`);
+    if (!setlist.general && setlist.songs.length !== 7) errors.push(`${setlist.id}: expected 7 songs`);
     const ids = new Set();
     for (const s of setlist.songs) {
       if (ids.has(s.id)) errors.push(`${setlist.id}: duplicate ${s.id}`);
@@ -1109,10 +1174,10 @@ export function initialState() {
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-export function selectSetlist(state, index) {
+export function selectSetlist(state, index, maxIndex = 3) {
   return {
     ...state,
-    activeSetlistIndex: clamp(index, 0, 3),
+    activeSetlistIndex: clamp(index, 0, maxIndex),
     selectedSongIndex: 0,
     home: false,
     metronomeRunning: false
@@ -1124,18 +1189,18 @@ export function setHomeFilters(state, patch) {
   return { ...state, homeFilters: { ...(state.homeFilters ?? {}), ...patch } };
 }
 
-export function selectSong(state, index) {
+export function selectSong(state, index, maxIndex = 6) {
   return {
     ...state,
-    selectedSongIndex: clamp(index, 0, 6),
+    selectedSongIndex: clamp(index, 0, maxIndex),
     metronomeRunning: false
   };
 }
 
-export function moveSong(state, delta) {
+export function moveSong(state, delta, maxIndex = 6) {
   return {
     ...state,
-    selectedSongIndex: clamp(state.selectedSongIndex + delta, 0, 6),
+    selectedSongIndex: clamp(state.selectedSongIndex + delta, 0, maxIndex),
     metronomeRunning: false
   };
 }
@@ -1508,6 +1573,53 @@ export function structureSummary(typeSummary, labels = SECTION_TYPE_LABELS) {
   }).join(" · ");
 }
 
+function measuresEqual(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+/** Agrupa vueltas idénticas y consecutivas dentro de una sección.
+ *  Sol Do Re Sol Do Re Sol Do Re Sol Re Re → (Sol Do Re)×3, Sol, Re×2.
+ *  Si dos patrones cubren los mismos compases, gana el más corto. */
+export function repeatedPatternSpans(measures) {
+  const spans = [];
+  let i = 0;
+  while (i < measures.length) {
+    let bestLen = 1;
+    let bestTimes = 1;
+    let bestCover = 1;
+    const maxLen = Math.floor((measures.length - i) / 2);
+    for (let len = 1; len <= maxLen; len++) {
+      let times = 1;
+      while (i + (times + 1) * len <= measures.length) {
+        let same = true;
+        for (let k = 0; k < len; k++) {
+          if (!measuresEqual(measures[i + k], measures[i + times * len + k])) { same = false; break; }
+        }
+        if (!same) break;
+        times++;
+      }
+      const cover = times * len;
+      if (times >= 2 && (cover > bestCover || (cover === bestCover && len < bestLen))) {
+        bestLen = len;
+        bestTimes = times;
+        bestCover = cover;
+      }
+    }
+    if (bestTimes >= 2) {
+      spans.push({ start: i, length: bestLen, repeats: bestTimes });
+      i += bestCover;
+    } else {
+      const last = spans.at(-1);
+      if (last && last.repeats === 1 && last.start + last.length === i) last.length += 1;
+      else spans.push({ start: i, length: 1, repeats: 1 });
+      i += 1;
+    }
+  }
+  return spans;
+}
+
 /** Corta los compases de una sección en filas de `perLine` (2, 4 u 8). La
  *  última fila puede quedar incompleta; nunca se reparte "6 y 2". */
 export const BARS_PER_LINE_OPTIONS = [2, 4, 8];
@@ -1741,7 +1853,7 @@ function renderTabs() {
 }
 
 function activateTab(i) {
-  state = i === 0 ? { ...state, home: true } : selectSetlist(state, i - 1);
+  state = i === 0 ? { ...state, home: true } : selectSetlist(state, i - 1, setlists.length - 1);
   renderTabs();
   renderList();
 }
@@ -2006,7 +2118,7 @@ function openStageAt(setlistIndex, songIndex, opener, fromHome) {
   scrollBySetlist[fromHome ? "home" : state.activeSetlistIndex] = window.scrollY;
   lastOpenerButton = opener ?? null;
   returnToHome = Boolean(fromHome);
-  state = { ...selectSong(selectSetlist(state, setlistIndex), songIndex), view: "stage" };
+  state = { ...selectSong(selectSetlist(state, setlistIndex, setlists.length - 1), songIndex, setlists[setlistIndex].songs.length - 1), view: "stage" };
   renderStage();
   el.setlistView.hidden = true;
   el.stageView.hidden = false;
@@ -2297,54 +2409,79 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
 
   const grid = (state.chartLayout ?? "grid") === "grid";
   const perLine = stageBarsPerLine;
-  const rows = chunkMeasures(section.measures, perLine);
-  let measures = null; // contenedor de la fila en curso
-  section.measures.forEach((measure, mi) => {
-    if (mi % perLine === 0) {
-      measures = document.createElement("div");
-      measures.className = grid ? "bars" : "measures";
-      measures.style.setProperty("--per-line", String(perLine));
-      measures.setAttribute("role", "group");
-      measures.setAttribute("aria-label", `Línea ${Math.floor(mi / perLine) + 1} de ${rows.length}`);
-      li.appendChild(measures);
-    }
-    const m = document.createElement("div");
-    m.className = grid ? "bar" : "measure";
-    // En la grilla cada compás reparte su ancho entre sus acordes: 1 = todo el
-    // compás, 2 = mitad y mitad, 3–4 = por tiempo.
-    if (grid) m.style.gridTemplateColumns = `repeat(${measure.length}, minmax(0, 1fr))`;
-    measure.forEach((shape, ci) => {
-      const real = sounding.measures[mi]?.[ci] ?? shape;
-      const degree = chordToDegree(real, keyRoot);
-      // Cada acorde es un botón: tap/clic muestra cómo digitarlo (sin hover).
-      // Texto = forma a digitar; subíndice = grado del acorde real en el tono.
-      const c = document.createElement("button");
-      c.type = "button";
-      c.className = "chord";
-      c.textContent = shape;
-      if (degree) {
-        const sub = document.createElement("sub");
-        sub.className = "deg";
-        sub.textContent = degree;
-        c.appendChild(sub);
+  const soundingMeasures = sounding.measures ?? section.measures;
+
+  function appendRows(parent, slice, soundSlice, fill) {
+    const rows = chunkMeasures(slice, perLine);
+    let measures = null;
+    slice.forEach((measure, mi) => {
+      if (mi % perLine === 0) {
+        measures = document.createElement("div");
+        measures.className = grid ? "bars" : "measures";
+        measures.style.setProperty("--per-line", String(perLine));
+        measures.setAttribute("role", "group");
+        measures.setAttribute("aria-label", `Línea ${Math.floor(mi / perLine) + 1} de ${rows.length}`);
+        parent.appendChild(measures);
       }
-      const suena = shape !== real ? `, suena ${real}` : "";
-      c.setAttribute("aria-label", `Acorde ${shape}${degree ? `, grado ${degree}` : ""}${suena}: ver cómo tocarlo`);
-      c.setAttribute("aria-haspopup", "dialog");
-      c.setAttribute("aria-expanded", "false");
-      attachChordPopover(c, real);
-      m.appendChild(c);
+      const m = document.createElement("div");
+      m.className = grid ? "bar" : "measure";
+      // En la grilla cada compás reparte su ancho entre sus acordes: 1 = todo el
+      // compás, 2 = mitad y mitad, 3–4 = por tiempo.
+      if (grid) m.style.gridTemplateColumns = `repeat(${measure.length}, minmax(0, 1fr))`;
+      measure.forEach((shape, ci) => {
+        const real = soundSlice[mi]?.[ci] ?? shape;
+        const degree = chordToDegree(real, keyRoot);
+        // Cada acorde es un botón: tap/clic muestra cómo digitarlo (sin hover).
+        // Texto = forma a digitar; subíndice = grado del acorde real en el tono.
+        const c = document.createElement("button");
+        c.type = "button";
+        c.className = "chord";
+        c.textContent = shape;
+        if (degree) {
+          const sub = document.createElement("sub");
+          sub.className = "deg";
+          sub.textContent = degree;
+          c.appendChild(sub);
+        }
+        const suena = shape !== real ? `, suena ${real}` : "";
+        c.setAttribute("aria-label", `Acorde ${shape}${degree ? `, grado ${degree}` : ""}${suena}: ver cómo tocarlo`);
+        c.setAttribute("aria-haspopup", "dialog");
+        c.setAttribute("aria-expanded", "false");
+        attachChordPopover(c, real);
+        m.appendChild(c);
+      });
+      measures.appendChild(m);
     });
-    measures.appendChild(m);
-  });
-  // La última fila incompleta mantiene el ancho de columna: en la grilla lo da
-  // el grid de N columnas; en la lista, se rellena con celdas vacías.
-  if (!grid && measures && section.measures.length % perLine) {
-    for (let k = section.measures.length % perLine; k < perLine; k++) {
-      const filler = document.createElement("div");
-      filler.className = "measure filler";
-      filler.setAttribute("aria-hidden", "true");
-      measures.appendChild(filler);
+    // La última fila incompleta mantiene el ancho de columna: en la grilla lo da
+    // el grid de N columnas; en la lista, se rellena con celdas vacías.
+    if (fill && !grid && measures && slice.length % perLine) {
+      for (let k = slice.length % perLine; k < perLine; k++) {
+        const filler = document.createElement("div");
+        filler.className = "measure filler";
+        filler.setAttribute("aria-hidden", "true");
+        measures.appendChild(filler);
+      }
+    }
+  }
+
+  for (const span of repeatedPatternSpans(section.measures)) {
+    const slice = section.measures.slice(span.start, span.start + span.length);
+    const soundSlice = soundingMeasures.slice(span.start, span.start + span.length);
+    if (span.repeats > 1) {
+      const pattern = document.createElement("div");
+      pattern.className = "pattern";
+      pattern.setAttribute("role", "group");
+      pattern.setAttribute("aria-label", `${slice.map((m) => m.join(" ")).join(", ")}, ${span.repeats} veces`);
+      const body = document.createElement("div");
+      body.className = "pattern-body";
+      appendRows(body, slice, soundSlice, false);
+      const badge = document.createElement("span");
+      badge.className = "repeats";
+      badge.textContent = `× ${span.repeats}`;
+      pattern.append(body, badge);
+      li.appendChild(pattern);
+    } else {
+      appendRows(li, slice, soundSlice, true);
     }
   }
   return li;
@@ -2402,7 +2539,7 @@ function applyTranspose(song, semitones) {
 function stepSong(delta) {
   stopMetronome();
   destroyVideo();
-  state = moveSong(state, delta);
+  state = moveSong(state, delta, activeSetlist().songs.length - 1);
   renderStage();
   window.scrollTo(0, 0);
 }

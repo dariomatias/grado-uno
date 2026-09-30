@@ -199,3 +199,7 @@ esta es la respuesta. Se actualiza a medida que se resuelven ítems.
   capo automáticamente** (la menor cejilla que lleva a C/D/E/G/A) y el popover
   muestra la forma que se digita con ese capo y qué acorde suena. Si se
   transpone el tema, la sugerencia se recalcula.
+
+## Ensayo general (2026-09-30)
+
+- **Mover tu corazón** (UPPERROOM & Toma Tu Lugar) agregada a la **reunión nueva "Ensayo general"** (sin fecha, exenta de la regla de 7). **Acordes cargados** en tono original **Eb** (64 BPM), fuente Worship Together (2026-09-30) → `sourceStatus: confirmed`. Letra: aportada localmente en la app (no en el fuente), enlace en `lyricsUrl`. Nada pendiente salvo revisar musicalmente el recorrido si hace falta.
