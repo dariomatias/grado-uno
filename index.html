@@ -95,9 +95,18 @@
       }
       .badge .k { color: var(--gold-strong); font-weight: 700; }
       .card .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-      .card .appearances { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+      .card .appearances, .card .assign { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
       button.badge { cursor: pointer; color: inherit; font: inherit; font-size: .85rem; min-height: 36px; }
       button.badge[disabled] { cursor: default; opacity: .6; }
+      .chip {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px;
+        padding: 2px 4px 2px 10px; font-size: .85rem; min-height: 36px;
+      }
+      .chip.quiet { padding-right: 10px; color: var(--muted); }
+      .chip button {
+        min-height: 28px; min-width: 28px; padding: 0 6px; border-radius: 999px;
+      }
 
       /* Home: índice de todas las canciones con búsqueda y filtros */
       .home-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
@@ -245,7 +254,7 @@
     <a class="skip-link" href="#mainContent">Saltar al contenido</a>
     <header class="app">
       <h1>Setlist de Worship</h1>
-      <p>Home con todas las canciones · cuatro reuniones · acordes transponibles · letras locales</p>
+      <p>Lista general · por fecha · acordes transponibles · letras locales</p>
     </header>
 
     <main id="mainContent">
@@ -344,11 +353,11 @@ const SENTADO_TAG = [["Bm", "A/C#"], ["D", "E"]];
 // "Digno de alabar" = Worthy Of It All (CeCe Winans, chart en D = asignado).
 const WORTHY_CORO_B = [["D"], ["A"], ["D/F#", "G"], ["Bm", "A"], ["D"]];
 
-export const setlists = [
+const meetings = [
   {
     id: "2026-09-04",
-    label: "Viernes 4",
-    shortLabel: "Vie 4",
+    label: "04/09/2026",
+    shortLabel: "04/09/2026",
     date: "2026-09-04",
     songs: [
       song("todo-es-posible", "Todo es posible", "D", {
@@ -489,31 +498,30 @@ export const setlists = [
         ]
       }),
       song("dios-de-avivamiento", "Dios de avivamiento", "C", {
-        artist: "Bethel Music, Brian Johnson, Jenn Johnson (God of Revival · Live)",
+        artist: "Bethel Music, Brian Johnson, Phil Wickham",
         chartUrl: "https://www.cifraclub.com/bethel-music/dios-de-avivamiento/",
         youtubeUrl: "https://www.youtube.com/watch?v=VFWF9rSAWF8",
         youtubeVideoId: "VFWF9rSAWF8",
         sourceKey: "C",
         beatsPerMeasure: 4,
-        // Chart Cifra Club (Bethel Music) aportado por Darío el 2026-09-08, en C
-        // = asignado, sin transposición. El chart omite coros repetidos; se carga
-        // tal cual. Sin BPM. Sólo acordes.
+        // God Of Revival, Cifra Club, PDF del 2026-10-08. Acordes escritos en C
+        // (C4 = Csus4). El encabezado dice Bb en forma de A con capo 1, pero las
+        // letras no son formas de A: se guarda la cifra impresa. El 04/09 suena
+        // en C; el 09/10 en Bb. El PDF no trae etiquetas de sección. Sólo acordes.
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["F", "C"], ["Am"], ["G"], ["F", "C"], ["Am"], ["G"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["F"], ["Am"], ["C", "G"], ["F"], ["Am"], ["C"], ["G"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["F"], ["G", "Am"], ["G/B", "C"], ["G"], ["F"], ["G", "Am"], ["G/B", "C"], ["G"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["F", "C"], ["Am"], ["G"], ["F", "C", "Am"], ["G"], ["F"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["C"], ["Am"], ["G"], ["C"], ["Am"], ["G"]] },
-          { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["F", "G", "Am"], ["G/B", "C", "G"], ["F", "G", "Am"], ["G/B", "C", "G"]] },
-          { type: "prechorus", label: "Pre-coro final", repeats: 1, measures: [["F"], ["Am"], ["C", "G"], ["F"], ["Am"], ["C"], ["G"], ["C"]] }
+          { type: "verse", label: "Verso 1", repeats: 1, measures: [["C4", "C"], ["Am"], ["G"], ["C4", "C"], ["Am"], ["G"]] },
+          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["F"], ["Am"], ["C"], ["G"], ["F"], ["Am"], ["C"], ["G"]] },
+          { type: "chorus", label: "Coro", repeats: 1, measures: [["F", "G/B"], ["Am"], ["G/B", "C", "G"], ["F", "G/B", "Am"], ["G/B", "C", "G"]] },
+          { type: "verse", label: "Verso 2", repeats: 1, measures: [["C4", "C"], ["Am"], ["G"], ["F", "C"], ["Am"], ["G"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["C"], ["Am"], ["G"], ["C"], ["Am"], ["G"]] }
         ]
       })
     ]
   },
   {
     id: "2026-09-13",
-    label: "Domingo 13",
-    shortLabel: "Dom 13",
+    label: "13/09/2026",
+    shortLabel: "13/09/2026",
     date: "2026-09-13",
     songs: [
       song("jehova", "Jehová", "E", {
@@ -600,6 +608,10 @@ export const setlists = [
         lyricsUrl: "https://www.worshiptogether.com/es/canciones/quien-mas-gateway-worship-espanol/",
         tempoBpm: 68,
         beatsPerMeasure: 4,
+        dates: [
+          { id: "2026-09-13", key: "G" },
+          { id: "2026-10-09", key: "G" }
+        ],
         // BORRADOR normalizado a G desde worshiptogether (Ab). Revisar con Darío.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["G"]] },
@@ -679,8 +691,8 @@ export const setlists = [
   },
   {
     id: "2026-09-18",
-    label: "Viernes 18",
-    shortLabel: "Vie 18",
+    label: "18/09/2026",
+    shortLabel: "18/09/2026",
     date: "2026-09-18",
     songs: [
       song("senor-eres-fiel", "Señor eres fiel", "C", {
@@ -823,8 +835,8 @@ export const setlists = [
   },
   {
     id: "2026-09-27",
-    label: "Domingo 27",
-    shortLabel: "Dom 27",
+    label: "27/09/2026",
+    shortLabel: "27/09/2026",
     date: "2026-09-27",
     songs: [
       // Júbilo: grados dictados por Darío (2026-09-21) sobre el tono original D
@@ -963,6 +975,25 @@ export const setlists = [
     ]
   },
   {
+    id: "2026-10-09",
+    label: "09/10/2026",
+    shortLabel: "09/10/2026",
+    date: "2026-10-09",
+    // Mismas canciones, tono de esta fecha. El chart queda en la nota en que está escrito.
+    lineup: [
+      { id: "praise", key: "C", title: "Alabar" },
+      { id: "toda-lengua-y-toda-nacion", key: "G" },
+      { id: "lavado", key: "Bb" },
+      { id: "amor-es-como-fuego", key: "Bb" },
+      { id: "quien-mas", key: "G" },
+      { id: "quiero-conocer-a-jesus", key: "G" },
+      { id: "el-nombre-de-jesus", key: "C" },
+      { id: "dios-de-avivamiento", key: "Bb" },
+      { id: "worthy-of-it-all", key: "D" }
+    ],
+    songs: []
+  },
+  {
     // Reunión especial (no es una fecha de servicio): repertorio de ensayo.
     // Exenta de la regla de 7 canciones (ver validateSetlists) y sin fecha.
     id: "ensayo-general",
@@ -1002,9 +1033,10 @@ export const setlists = [
 ];
 
 /**
- * Fábrica de canción con estado inicial "pending": sin fuente confirmada, sin
- * acordes inventados y sin letra precargada. Las fuentes confirmadas se
- * completan en la fase de investigación de contenido.
+ * Fábrica de canción. La canción es el objeto: letra (`lyrics`), acordes en la
+ * nota en que está escrita (`sections`) y etiquetas de fecha (`dates`, ids de
+ * reunión). `dates` vacío = sólo en la lista general. Varios ids = la misma
+ * canción en varias fechas. La letra no se precarga en el fuente.
  */
 function song(id, title, assignedKey, overrides = {}) {
   const base = {
@@ -1014,6 +1046,8 @@ function song(id, title, assignedKey, overrides = {}) {
     assignedKey,
     sourceKey: null,
     sourceStatus: "pending",
+    lyrics: null,
+    dates: [],
     lyricsUrl: null,
     chartUrl: null, // enlace externo a la cifra/tablatura (Cifra Club); no se extrae contenido
     youtubeUrl: null,
@@ -1027,15 +1061,347 @@ function song(id, title, assignedKey, overrides = {}) {
   const merged = { ...base, ...overrides };
   // Una fuente con acordes capturados se considera confirmada.
   if (merged.sections.length > 0) merged.sourceStatus = "confirmed";
+  if (!Array.isArray(merged.dates)) merged.dates = [];
   return merged;
 }
+
+// Praise / Alabar (Elevation Worship). Chart dictado en C el 2026-10-08.
+// Dos o tres acordes sobre el mismo verso comparten el compás.
+const PRAISE_CHORUS = [["Am", "F", "C"], ["G"]];
+const PRAISE_QUIET = [["Am"], ["F"], ["C", "G"]];
+const PRAISE_PART_A = [["C"], ["F2", "C"], ["G/B"], ["F2", "C"]];
+
+const praise = song("praise", "Praise", "C", {
+  artist: "Elevation Worship, Brandon Lake, Chris Brown, Chandler Moore",
+  sourceKey: "C",
+  chartUrl: "https://www.cifraclub.com/elevation-worship/praise-feat-brandon-lake-chris-brown-chandler-moore/",
+  dates: [{ id: "2026-10-09", key: "C", title: "Alabar" }],
+  sections: [
+    { type: "tag", label: "Refrão", repeats: 1, measures: [["C"]] },
+    { type: "verse", label: "First Part", repeats: 1, measures: PRAISE_PART_A },
+    { type: "verse", label: "Second Part", repeats: 1, measures: [["C"], ["F2", "C"], ["G/B"], ["F", "C"]] },
+    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: [["G"], ["F"]] },
+    { type: "chorus", label: "Chorus 1", repeats: 2, measures: PRAISE_CHORUS },
+    { type: "verse", label: "Third Part", repeats: 1, measures: [["C", "F2"], ["G", "C"], ["G/B", "F2"], ["C"]] },
+    { type: "verse", label: "Fourth Part", repeats: 1, measures: PRAISE_PART_A },
+    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: [["G"], ["F"]] },
+    { type: "chorus", label: "Chorus 1", repeats: 2, measures: PRAISE_CHORUS },
+    { type: "tag", label: "I won't be quiet", repeats: 1, measures: PRAISE_QUIET },
+    { type: "chorus", label: "Chorus 1", repeats: 1, measures: PRAISE_CHORUS },
+    { type: "interlude", label: "Interlude", repeats: 1, measures: [["G"], ["C"]] },
+    { type: "bridge", label: "Bridge", repeats: 2, measures: [["C"], ["Dm"], ["Am", "F"]] },
+    { type: "chorus", label: "Chorus", repeats: 4, measures: PRAISE_CHORUS },
+    { type: "tag", label: "Chorus 2", repeats: 3, measures: PRAISE_QUIET },
+    { type: "chorus", label: "Chorus 2", repeats: 1, measures: PRAISE_CHORUS },
+    { type: "outro", label: "Final", repeats: 2, measures: PRAISE_CHORUS }
+  ]
+});
+
+// Amor Como Fuego (Hillsong UNITED). Cifra Club, PDF del 2026-10-08, escrita en E.
+// El viernes 9 suena en Bb. Un acorde por compás; los que comparten verso van juntos.
+const FUEGO_VERSO = [["E"], ["C#m"], ["B"], ["A", "E"]];
+const FUEGO_CORO = [["E", "B"], ["C#m"], ["A", "E"], ["E", "B"], ["C#m"], ["A", "E"]];
+
+const amorEsComoFuego = song("amor-es-como-fuego", "Amor es como fuego", "E", {
+  artist: "Hillsong UNITED",
+  sourceKey: "E",
+  chartUrl: "https://www.cifraclub.com/hillsong-united/amor-como-fuego/",
+  youtubeUrl: "https://www.youtube.com/watch?v=FwGftfqZ1NQ",
+  youtubeVideoId: "FwGftfqZ1NQ",
+  dates: [{ id: "2026-10-09", key: "Bb" }],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: [["E"], ["C#m"], ["B"], ["A"], ["E"]] },
+    { type: "verse", label: "First Part", repeats: 1, measures: FUEGO_VERSO },
+    { type: "verse", label: "Second Part", repeats: 1, measures: FUEGO_VERSO },
+    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: [["C#m"], ["A", "E", "B"], ["C#m"], ["A", "E"], ["B", "E"]] },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: FUEGO_CORO },
+    { type: "verse", label: "Third Part", repeats: 1, measures: FUEGO_VERSO }
+  ]
+});
+
+// Encuéntrame Otra Vez (Elevation Worship). Cifra Club, PDF del 2026-10-08, escrita en D.
+// Queda en el repertorio, sin fecha de reunión. ( A Bm G ) es el giro instrumental de la cifra.
+const AQUI_VERSO = [["A", "Bm", "G"], ["A", "Bm", "G"], ["A", "Bm", "G"], ["A", "Bm", "G"]];
+const AQUI_CORO = [["D", "A"], ["Bm", "G"], ["D", "A"], ["Bm", "G"]];
+const AQUI_GIRO = [["A", "Bm", "G"]];
+
+const encuentremeOtraVez = song("encuentreme-otra-vez", "Encuéntrame otra vez", "D", {
+  artist: "Elevation Worship",
+  sourceKey: "D",
+  chartUrl: "https://www.cifraclub.com/elevation-worship/encuentrame-otra-vez/",
+  youtubeUrl: "https://www.youtube.com/watch?v=J9UG-tbdLKw",
+  youtubeVideoId: "J9UG-tbdLKw",
+  dates: [],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: AQUI_GIRO },
+    { type: "verse", label: "Primera Parte", repeats: 1, measures: AQUI_VERSO },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: AQUI_CORO },
+    { type: "verse", label: "Second Part", repeats: 1, measures: AQUI_VERSO },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: AQUI_CORO },
+    { type: "interlude", label: "A Bm G", repeats: 1, measures: AQUI_GIRO },
+    { type: "bridge", label: "Bridge", repeats: 1, measures: [["D", "A/C#"], ["Bm"], ["A", "G"], ["D", "A/C#"], ["Bm"], ["A", "G"]] },
+    { type: "interlude", label: "A Bm G", repeats: 1, measures: AQUI_GIRO },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: AQUI_CORO }
+  ]
+});
+
+function asDateTags(raw, meetingId) {
+  if (raw.dates.length) {
+    return raw.dates.map((d) => (typeof d === "string" ? { id: d, key: raw.assignedKey } : { ...d }));
+  }
+  return meetingId ? [{ id: meetingId, key: raw.assignedKey }] : [];
+}
+
+/** Una canción, varias fechas. Cada etiqueta guarda el tono de esa reunión. */
+function indexSongs(meetingList, extras = []) {
+  const byId = new Map();
+  const list = [];
+  const add = (raw, tags) => {
+    const existing = byId.get(raw.id);
+    if (!existing) {
+      const next = { ...raw, chartKey: raw.assignedKey, dates: tags.map((t) => ({ ...t })) };
+      byId.set(raw.id, next);
+      list.push(next);
+      return;
+    }
+    for (const tag of tags) {
+      if (!existing.dates.some((d) => d.id === tag.id)) existing.dates.push({ ...tag });
+    }
+  };
+  for (const meeting of meetingList) {
+    for (const raw of meeting.songs) add(raw, asDateTags(raw, meeting.id));
+  }
+  for (const extra of extras) {
+    if (byId.has(extra.id)) throw new Error(`duplicate song ${extra.id}`);
+    add(extra, asDateTags(extra, null));
+  }
+  return { byId, list };
+}
+
+function appear(song, meetingId, slot = {}) {
+  const tag = song.dates.find((d) => d.id === meetingId) ?? {};
+  const key = slot.key ?? tag.key ?? song.chartKey;
+  return {
+    ...song,
+    canonicalTitle: song.title,
+    title: slot.title ?? tag.title ?? song.title,
+    assignedKey: key,
+    chartKey: song.chartKey
+  };
+}
+
+// Quiero conocer a Jesús (Yeshua) / Nuestro Dios. Cifra Club, Generación 12,
+// PDF del 2026-10-08, escrita en G. Las tablaturas no se copian: sólo los acordes.
+// Bm6- está escrito así en la cifra.
+const JESUS_INTRO = [["C", "D", "Em", "Bm6-"]];
+const JESUS_VERSO = [
+  ["C", "D"], ["Em", "Bm6-"], ["C"], ["D"], ["Em", "Bm6-"],
+  ["C"], ["D", "Em"], ["Bm"], ["C"], ["D", "Em"], ["Bm"]
+];
+const JESUS_PRE = [["C", "D"], ["Em", "Bm6-"], ["C", "D"], ["Em", "Bm6-"]];
+const JESUS_CORO = [
+  ["C", "D"], ["Em", "Bm"], ["C", "D"], ["Em", "Bm"],
+  ["C", "D"], ["Em", "Bm"], ["C", "D"], ["Em", "Bm"],
+  ["C"], ["D", "Em", "Bm"]
+];
+const JESUS_YESHUA = ["C", "D", "Em", "Bm"];
+
+const quieroConocerAJesus = song("quiero-conocer-a-jesus", "Quiero conocer a Jesús", "G", {
+  artist: "Generación 12",
+  sourceKey: "G",
+  chartUrl: "https://www.cifraclub.com/generacion-12/quiero-conocer-a-jesus-yeshua-nuestro-dios-part-sofia-mancipe/",
+  dates: [{ id: "2026-10-09", key: "G" }],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 2, measures: JESUS_INTRO },
+    { type: "instrumental", label: "Fingerpicking - Intro", repeats: 1, measures: JESUS_INTRO },
+    { type: "instrumental", label: "Solo - Intro", repeats: 1, measures: JESUS_INTRO },
+    { type: "verse", label: "Primera parte", repeats: 1, measures: JESUS_VERSO },
+    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: JESUS_PRE },
+    { type: "verse", label: "First Part", repeats: 1, measures: JESUS_VERSO },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: JESUS_CORO },
+    { type: "interlude", label: "Interlude", repeats: 1, measures: [JESUS_YESHUA] },
+    { type: "instrumental", label: "Tab - Solo", repeats: 1, measures: [JESUS_YESHUA] },
+    {
+      type: "bridge",
+      label: "Bridge",
+      repeats: 1,
+      measures: [
+        ...Array.from({ length: 14 }, () => ["C", "D", "Em", "Bm"]),
+        ["C", "D", "Em"], ["Bm"], ["C7M"], ["D", "Em", "Bm"]
+      ]
+    },
+    { type: "chorus", label: "Chorus", repeats: 4, measures: [["C", "Em"], ["G", "Bm7"]] },
+    {
+      type: "outro",
+      label: "Ending",
+      repeats: 1,
+      measures: [...Array.from({ length: 8 }, () => [["C", "D", "Em"], ["D/F#", "G"]]).flat(), ["G"]]
+    }
+  ]
+});
+
+// Toda Lengua Y Toda Nación (Marcos Brunet, part. TOMATULUGAR, Jan Earle).
+// Cifra Club, PDF del 2026-10-08, 130 bpm. Letras en formas de G.
+// Encabezado: Key A (in the shape of G), capo 2.º traste. Las formas impresas
+// son de G y el capo 2 coincide (suena A). Se guardan las letras escritas;
+// no se fija capo: en el escenario restaría esas formas. El Intro es sólo
+// tablatura. Acordes de una misma línea comparten el compás. Sólo acordes.
+const LENGUA_PRIMERA = [
+  ["C9"], ["Am7", "G"], ["G4", "G"], ["C7M"], ["Am7"], ["G"], ["G4", "G"]
+];
+const LENGUA_PRIMERA_2 = [
+  ["Am7", "D/F#", "G"], ["G4", "G"], ["C7M"], ["Am7"], ["G"], ["G4", "G"]
+];
+const LENGUA_PRE = [
+  ["Em7"], ["D/F#", "G/B", "C7M"], ["Em7"], ["D/F#", "G/B", "C7M"], ["D"]
+];
+const LENGUA_CORO = [
+  ["C9"], ["Am7", "D/F#"], ["G"],
+  ["C9"], ["Am7", "D/F#"], ["G"]
+];
+const LENGUA_CORO_FINAL = [
+  ...LENGUA_CORO,
+  ["C9"], ["Am7", "D/F#"], ["G"],
+  ["C9"], ["Am7", "D/F#"], ["G"],
+  ["C9"], ["Am7", "D/F#"], ["G"]
+];
+const LENGUA_PUENTE = [["Em7", "D/F#", "G"], ["G/B", "C9"]];
+const LENGUA_INTER = [
+  ["G", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G"],
+  ["D/F#"],
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G"],
+  ["D/F#"],
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G"],
+  ["D/F#"],
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G"],
+  ["D/F#"]
+];
+const LENGUA_SEGUNDA = [
+  ["Em7", "D/F#", "G", "G/B"],
+  ["C9", "G/B", "G", "D/F#"],
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G", "D/F#"]
+];
+const LENGUA_FINAL = [
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G", "D/F#"],
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G", "D/F#"],
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G", "D/F#"],
+  ["Em7", "D/F#", "G"],
+  ["G/B", "C9", "G/B", "G", "D/F#", "G"]
+];
+
+const todaLenguaYTodaNacion = song("toda-lengua-y-toda-nacion", "Toda lengua y toda nación", "G", {
+  artist: "Marcos Brunet",
+  sourceKey: "G",
+  chartUrl: "https://www.cifraclub.com/marcos-brunet/toda-lengua-y-toda-nacion/",
+  tempoBpm: 130,
+  dates: [{ id: "2026-10-09", key: "G" }],
+  sections: [
+    { type: "verse", label: "First Part", repeats: 1, measures: LENGUA_PRIMERA },
+    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: LENGUA_PRE },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: LENGUA_CORO },
+    { type: "bridge", label: "Bridge", repeats: 1, measures: LENGUA_PUENTE },
+    { type: "verse", label: "First Part", repeats: 1, measures: LENGUA_PRIMERA_2 },
+    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: LENGUA_PRE },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: LENGUA_CORO },
+    { type: "interlude", label: "Interlúdio 1", repeats: 1, measures: LENGUA_INTER },
+    { type: "verse", label: "Second Part", repeats: 1, measures: [...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA] },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: LENGUA_CORO_FINAL },
+    { type: "verse", label: "Second Part", repeats: 1, measures: LENGUA_SEGUNDA },
+    { type: "outro", label: "Ending", repeats: 1, measures: LENGUA_FINAL }
+  ]
+});
+
+// Rey de Reyes (Hillsong UNITED). Cifra Club, PDF del 2026-10-08, escrita en D.
+// Repertorio general: sin fecha de reunión. Sólo acordes.
+const REY_CORO = [["D", "G"], ["Bm", "D/A", "A"], ["D", "G"], ["Bm", "G", "A", "D"]];
+
+const reyDeReyes = song("rey-de-reyes", "Rey de Reyes", "D", {
+  artist: "Hillsong UNITED",
+  sourceKey: "D",
+  dates: [],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: [["D"]] },
+    {
+      type: "verse", label: "Verso 1", repeats: 1,
+      measures: [["D/F#", "G"], ["A", "D"], ["D/F#", "G"], ["A", "D"], ["D/F#", "G", "A"], ["D"], ["D/F#", "G"], ["A", "D"]]
+    },
+    { type: "chorus", label: "Coro", repeats: 1, measures: REY_CORO },
+    {
+      type: "verse", label: "Verso 2", repeats: 1,
+      measures: [["D/F#", "G", "A"], ["D"], ["D/F#", "G", "A"], ["D"], ["D/F#", "G", "A"], ["D"], ["D/F#", "G"], ["A", "D"]]
+    },
+    { type: "chorus", label: "Coro", repeats: 1, measures: REY_CORO },
+    {
+      type: "bridge", label: "Puente", repeats: 1,
+      measures: [["Bm", "G", "A"], ["D"], ["Bm", "G"], ["A", "D"], ["Bm", "G", "A"], ["D"], ["Bm", "G", "A"], ["D"]]
+    },
+    {
+      type: "verse", label: "Verso 3", repeats: 1,
+      measures: [["D/F#", "G"], ["A", "D"], ["D/F#", "G"], ["A", "D"], ["D/F#", "G"], ["A", "D"], ["D/F#", "G", "A"], ["D"]]
+    },
+    { type: "chorus", label: "Coro", repeats: 1, measures: [...REY_CORO, ["D/F#", "G", "A", "D"]] }
+  ]
+});
+
+// Digno de Adorar (Worthy of It All), CCINT MUSIC. Cifra Club, PDF del 2026-10-08,
+// escrita en D. El encabezado dice Key: D y coincide con las letras. No es el
+// chart de CeCe Winans. El PDF sólo imprime [Chorus]; el bloque anterior queda
+// como Verso y el posterior, sin encabezado, como Bridge. Acordes de una misma
+// línea comparten el compás. La afinación no se copia. Sólo acordes.
+const dignoDeAdorar = song("worthy-of-it-all", "Digno de Adorar (Worthy of It All)", "D", {
+  artist: "CCINT MUSIC",
+  sourceKey: "D",
+  chartUrl: "https://www.cifraclub.com/ccint-music/digno-de-adorar-worthy-of-it-all/",
+  dates: [{ id: "2026-10-09", key: "D" }],
+  sections: [
+    { type: "verse", label: "Verso", repeats: 1, measures: [["G", "A", "G", "A/F#"], ["G", "A", "Bm"], ["G", "A", "D"]] },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A"], ["G"], ["A", "D"]] },
+    { type: "bridge", label: "Bridge", repeats: 1, measures: [["D"], ["A"], ["Bm"], ["G"], ["D", "A", "G", "A", "D"]] }
+  ]
+});
+
+const indexedSongs = indexSongs(meetings, [praise, amorEsComoFuego, encuentremeOtraVez, quieroConocerAJesus, todaLenguaYTodaNacion, reyDeReyes, dignoDeAdorar]);
+
+for (const meeting of meetings) {
+  for (const slot of meeting.lineup ?? []) {
+    const song = indexedSongs.byId.get(slot.id);
+    if (!song) throw new Error(`lineup missing ${slot.id}`);
+    if (!song.dates.some((d) => d.id === meeting.id)) {
+      song.dates.push({ id: meeting.id, key: slot.key, title: slot.title });
+    }
+  }
+}
+
+export const songs = indexedSongs.list;
+
+export const setlists = meetings.map((meeting) => {
+  if (meeting.lineup) {
+    return {
+      ...meeting,
+      songs: meeting.lineup.map((slot) => appear(indexedSongs.byId.get(slot.id), meeting.id, slot))
+    };
+  }
+  return {
+    ...meeting,
+    songs: meeting.songs.map((raw) => appear(indexedSongs.byId.get(raw.id), meeting.id))
+  };
+});
 
 export const appearanceKey = (setlistId, songId) => `${setlistId}:${songId}`;
 
 export function validateSetlists(items) {
   const errors = [];
   for (const setlist of items) {
-    if (!setlist.general && setlist.songs.length !== 7) errors.push(`${setlist.id}: expected 7 songs`);
+    // El largo lo define el lineup de esa fecha. Ensayo queda afuera.
+    if (!setlist.general && setlist.songs.length < 1) errors.push(`${setlist.id}: empty lineup`);
     const ids = new Set();
     for (const s of setlist.songs) {
       if (ids.has(s.id)) errors.push(`${setlist.id}: duplicate ${s.id}`);
@@ -1171,10 +1537,11 @@ export function initialState() {
     capoOverrides: {},
     lineOverrides: {}, // compases por línea elegidos en sesión, por aparición
     chartLayout: "grid", // "grid" = grilla de compases (4 por fila) · "flow" = recuadros
+    chordLabel: "note", // "note" = nota y grado en subíndice · "degree" = grado y nota en subíndice
     accidentalMode: "sharp",
     simplify: "none", // "none" | "basic" | "minimal" — ver simplify-module
     home: true, // true = pestaña Home (índice de todas las canciones); false = una reunión
-    homeFilters: { query: "", key: "", setlistId: "", status: "" },
+    homeFilters: { query: "", key: "", setlistId: "", status: "", group: "" },
     metronomeRunning: false
   };
 }
@@ -1221,6 +1588,19 @@ export function setTranspose(state, setlistId, songId, semitones) {
       [key]: clamp(Math.trunc(semitones), -11, 11)
     }
   };
+}
+
+/** Semitonos guardados por aparición (`fecha:canción`). Sólo enteros entre −11 y 11. */
+export function parseKeyOverrides(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const out = {};
+  for (const [key, value] of Object.entries(raw)) {
+    if (!/^[^:]+:[^:]+$/.test(key)) continue;
+    const n = typeof value === "number" ? value : Number(value);
+    if (!Number.isInteger(n) || n < -11 || n > 11 || n === 0) continue;
+    out[key] = n;
+  }
+  return out;
 }
 
 /** Compases por línea por aparición (2, 4 u 8). `null` vuelve al dato de la canción. */
@@ -1691,16 +2071,19 @@ export function normalizeText(text) {
   return String(text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
-export function buildCatalog(setlists) {
+export function buildCatalog(setlists, librarySongs = []) {
   const byId = new Map();
   setlists.forEach((sl, setlistIndex) => {
     sl.songs.forEach((song, songIndex) => {
+      const title = song.canonicalTitle ?? song.title;
       const entry = byId.get(song.id) ?? {
-        id: song.id, title: song.title, artist: song.artist,
+        id: song.id, title, artist: song.artist, aliases: [],
         hasChart: song.sections.length > 0,
+        assignedKey: song.chartKey ?? song.assignedKey,
         chartUrl: song.chartUrl, lyricsUrl: song.lyricsUrl, youtubeUrl: song.youtubeUrl,
         appearances: []
       };
+      if (song.title && song.title !== title && !entry.aliases.includes(song.title)) entry.aliases.push(song.title);
       entry.hasChart = entry.hasChart || song.sections.length > 0;
       entry.appearances.push({
         setlistIndex, setlistId: sl.id, label: sl.shortLabel, date: sl.date, songIndex, assignedKey: song.assignedKey
@@ -1708,22 +2091,103 @@ export function buildCatalog(setlists) {
       byId.set(song.id, entry);
     });
   });
+  for (const song of librarySongs) {
+    if (byId.has(song.id)) continue;
+    byId.set(song.id, {
+      id: song.id, title: song.title, artist: song.artist,
+      hasChart: song.sections.length > 0,
+      assignedKey: song.assignedKey,
+      chartUrl: song.chartUrl, lyricsUrl: song.lyricsUrl, youtubeUrl: song.youtubeUrl,
+      appearances: []
+    });
+  }
   return [...byId.values()].sort((a, b) => a.title.localeCompare(b.title, "es", { sensitivity: "base" }));
 }
 
 export function catalogKeys(items) {
-  const keys = new Set(items.flatMap((it) => it.appearances.map((a) => a.assignedKey)));
+  const keys = new Set();
+  for (const it of items) {
+    if (it.appearances.length === 0 && it.assignedKey) keys.add(it.assignedKey);
+    for (const a of it.appearances) keys.add(a.assignedKey);
+  }
   return [...keys].sort((a, b) => KEY_ORDER.indexOf(a) - KEY_ORDER.indexOf(b));
 }
 
-export function filterCatalog(items, { query = "", key = "", setlistId = "", status = "" } = {}) {
+export function filterCatalog(items, { query = "", key = "", setlistId = "", status = "", group = "" } = {}) {
   const q = normalizeText(query);
+  const inKey = (it) => it.appearances.some((a) => a.assignedKey === key) || (it.appearances.length === 0 && it.assignedKey === key);
   return items.filter((it) =>
-    (!q || normalizeText(it.title).includes(q) || normalizeText(it.artist).includes(q)) &&
-    (!key || it.appearances.some((a) => a.assignedKey === key)) &&
+    (!q || normalizeText(it.title).includes(q) || normalizeText(it.artist).includes(q) || (it.aliases ?? []).some((a) => normalizeText(a).includes(q))) &&
+    (!key || inKey(it)) &&
     (!setlistId || it.appearances.some((a) => a.setlistId === setlistId)) &&
-    (!status || (status === "chart" ? it.hasChart : !it.hasChart))
+    (!status || (status === "chart" ? it.hasChart : !it.hasChart)) &&
+    (!group || (it.groups ?? []).includes(group))
   );
+}
+
+// Fechas y grupos editables desde Home. Una canción puede estar en varias
+// reuniones. Los grupos son A, B y C, aparte de las fechas. Sin `dateIds` en
+// la edición se conservan las fechas del repertorio.
+export const GROUPS = ["A", "B", "C"];
+
+export function normalizeGroups(groups) {
+  const set = new Set(Array.isArray(groups) ? groups : []);
+  return GROUPS.filter((g) => set.has(g));
+}
+
+export function dateIdsOf(setlists, songId) {
+  return setlists.filter((sl) => sl.songs.some((s) => s.id === songId)).map((sl) => sl.id);
+}
+
+export function assignedDateIds(setlists, songId, assignment) {
+  if (assignment && Array.isArray(assignment.dateIds)) {
+    const known = new Set(setlists.map((sl) => sl.id));
+    return assignment.dateIds.filter((id) => known.has(id));
+  }
+  return dateIdsOf(setlists, songId);
+}
+
+export function withDate(dateIds, setlistId) {
+  return dateIds.includes(setlistId) ? dateIds : [...dateIds, setlistId];
+}
+
+export function withoutDate(dateIds, setlistId) {
+  return dateIds.filter((id) => id !== setlistId);
+}
+
+export function withGroup(groups, group) {
+  return normalizeGroups([...(groups ?? []), group]);
+}
+
+export function withoutGroup(groups, group) {
+  return normalizeGroups(groups).filter((g) => g !== group);
+}
+
+/** Aplica ediciones locales sobre las reuniones, sin mutar las listas de origen. */
+export function applyDateAssignments(setlists, songs, assignments = {}) {
+  return setlists.map((sl) => {
+    const songsOut = [];
+    const seen = new Set();
+    for (const song of sl.songs) {
+      const ids = assignedDateIds(setlists, song.id, assignments[song.id]);
+      if (!ids.includes(sl.id) || seen.has(song.id)) continue;
+      songsOut.push(song);
+      seen.add(song.id);
+    }
+    for (const song of songs) {
+      if (seen.has(song.id)) continue;
+      const ids = assignedDateIds(setlists, song.id, assignments[song.id]);
+      if (!ids.includes(sl.id)) continue;
+      songsOut.push({
+        ...song,
+        canonicalTitle: song.canonicalTitle ?? song.title,
+        title: song.title,
+        assignedKey: song.chartKey ?? song.assignedKey
+      });
+      seen.add(song.id);
+    }
+    return { ...sl, songs: songsOut };
+  });
 }
 /* catalog-module:end */
 
@@ -1754,7 +2218,9 @@ let scrollBySetlist = {};
 let lastOpenerButton = null;
 let returnToHome = false; // el escenario vuelve al Home si se abrió desde ahí
 let homeControls = null;
-const catalog = buildCatalog(setlists);
+let liveSetlists = setlists;
+let liveCatalog = buildCatalog(setlists, songs.filter((s) => s.dates.length === 0));
+let librarySongId = null;
 let dialogTargetKey = null;
 let metronome = null;
 /** Capo vigente en el escenario (manual o sugerido) y tono real que suena;
@@ -1806,35 +2272,206 @@ const lyricsStore = (() => {
   };
 })();
 
+const KEYS_STORAGE_KEY = "worship-setlist:keys:v1";
+
+function readKeyOverrides() {
+  try {
+    const raw = localStorage.getItem(KEYS_STORAGE_KEY);
+    return parseKeyOverrides(raw ? JSON.parse(raw) : {});
+  } catch {
+    return {};
+  }
+}
+
+function writeKeyOverrides(transpositions) {
+  try {
+    localStorage.setItem(KEYS_STORAGE_KEY, JSON.stringify(parseKeyOverrides(transpositions)));
+  } catch { /* la tonalidad sigue en esta sesión */ }
+}
+
+state = { ...state, transpositions: { ...state.transpositions, ...readKeyOverrides() } };
+const assignmentStore = (() => {
+  let memory = {};
+  try {
+    const raw = localStorage.getItem(ASSIGNMENTS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") memory = parsed;
+    }
+  } catch { /* la sesión sigue sin las ediciones guardadas */ }
+  const flush = () => {
+    try { localStorage.setItem(ASSIGNMENTS_STORAGE_KEY, JSON.stringify(memory)); } catch { /* ignore */ }
+  };
+  return {
+    get: (songId) => memory[songId],
+    all: () => memory,
+    save(songId, dateIds, groups) {
+      memory = { ...memory, [songId]: { dateIds: [...dateIds], groups: normalizeGroups(groups) } };
+      flush();
+    }
+  };
+})();
+
+function groupsOf(songId) {
+  return normalizeGroups(assignmentStore.get(songId)?.groups);
+}
+
+function datesOf(songId) {
+  return assignedDateIds(setlists, songId, assignmentStore.get(songId));
+}
+
+function rebuildLive() {
+  liveSetlists = applyDateAssignments(setlists, songs, assignmentStore.all());
+  const placed = new Set(liveSetlists.flatMap((sl) => sl.songs.map((s) => s.id)));
+  liveCatalog = buildCatalog(liveSetlists, songs.filter((s) => !placed.has(s.id))).map((item) => ({
+    ...item,
+    groups: groupsOf(item.id)
+  }));
+  const max = Math.max(0, (liveSetlists[state.activeSetlistIndex]?.songs.length ?? 1) - 1);
+  if (state.selectedSongIndex > max) state = { ...state, selectedSongIndex: max };
+}
+
+function chip(text, removeLabel, onRemove) {
+  const span = document.createElement("span");
+  span.className = "chip";
+  span.append(document.createTextNode(text));
+  if (onRemove) {
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "×";
+    remove.setAttribute("aria-label", removeLabel);
+    remove.addEventListener("click", onRemove);
+    span.appendChild(remove);
+  }
+  return span;
+}
+
+function addSelect(ariaLabel, placeholder, options, onPick) {
+  const select = document.createElement("select");
+  select.setAttribute("aria-label", ariaLabel);
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = placeholder;
+  select.appendChild(blank);
+  for (const [value, text] of options) {
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = text;
+    select.appendChild(opt);
+  }
+  select.addEventListener("change", () => {
+    if (!select.value) return;
+    onPick(select.value);
+  });
+  return select;
+}
+
+function renderSongAssignments(parent, item) {
+  const dateIds = datesOf(item.id);
+  const groups = item.groups ?? groupsOf(item.id);
+
+  const dates = document.createElement("div");
+  dates.className = "assign";
+  const dateLabel = document.createElement("span");
+  dateLabel.className = "hint";
+  dateLabel.textContent = dateIds.length > 1 ? "Fechas:" : "Fecha:";
+  dates.appendChild(dateLabel);
+  if (dateIds.length === 0) {
+    const empty = document.createElement("span");
+    empty.className = "chip quiet";
+    empty.textContent = "Sin fecha";
+    dates.appendChild(empty);
+  }
+  for (const id of dateIds) {
+    const meeting = setlists.find((sl) => sl.id === id);
+    const label = meeting?.shortLabel ?? id;
+    dates.appendChild(chip(label, `Quitar la fecha ${label} de ${item.title}`, () => {
+      editSong(item.id, withoutDate(dateIds, id), groups);
+    }));
+  }
+  const freeDates = setlists.filter((sl) => !dateIds.includes(sl.id));
+  if (freeDates.length) {
+    dates.appendChild(addSelect("Agregar fecha", "Agregar fecha", freeDates.map((sl) => [sl.id, sl.shortLabel]), (id) => {
+      editSong(item.id, withDate(dateIds, id), groups);
+    }));
+  }
+  parent.appendChild(dates);
+
+  const groupRow = document.createElement("div");
+  groupRow.className = "assign";
+  const groupLabel = document.createElement("span");
+  groupLabel.className = "hint";
+  groupLabel.textContent = "Grupos:";
+  groupRow.appendChild(groupLabel);
+  for (const group of groups) {
+    groupRow.appendChild(chip(group, `Quitar el grupo ${group} de ${item.title}`, () => {
+      editSong(item.id, dateIds, withoutGroup(groups, group));
+    }));
+  }
+  const freeGroups = GROUPS.filter((g) => !groups.includes(g));
+  if (freeGroups.length) {
+    groupRow.appendChild(addSelect("Agregar grupo", "Agregar grupo", freeGroups.map((g) => [g, g]), (group) => {
+      editSong(item.id, dateIds, withGroup(groups, group));
+    }));
+  }
+  parent.appendChild(groupRow);
+}
+
 function announce(message) {
   el.status.textContent = message;
 }
 
+function editSong(songId, dateIds, groups) {
+  assignmentStore.save(songId, dateIds, groups);
+  rebuildLive();
+  renderList();
+  announce("Canción actualizada");
+}
+
 function activeSetlist() {
-  return setlists[state.activeSetlistIndex];
+  return liveSetlists[state.activeSetlistIndex];
 }
 function selectedSong() {
+  if (librarySongId) return songs.find((s) => s.id === librarySongId);
   return activeSetlist().songs[state.selectedSongIndex];
 }
+function contextSetlistId() {
+  return librarySongId ? "general" : activeSetlist().id;
+}
 function keyFor(song) {
-  return appearanceKey(activeSetlist().id, song.id);
+  return appearanceKey(contextSetlistId(), song.id);
 }
 function transposeFor(song) {
   return state.transpositions[keyFor(song)] ?? 0;
 }
+function chartSemis(song) {
+  if (!song.chartKey || song.chartKey === song.assignedKey) return 0;
+  return semitoneDistance(song.chartKey, song.assignedKey);
+}
+function chordSpelling(song, sessionSemis) {
+  if (sessionSemis === 0 && FLAT_KEYS.has(song.assignedKey)) return "flat";
+  return state.accidentalMode;
+}
 function currentKey(song) {
-  const semis = transposeFor(song);
-  const idx = keyToPitchClass(song.assignedKey);
-  if (idx === null) return song.assignedKey;
+  return playedLabel(song.assignedKey, transposeFor(song));
+}
+
+function keyName(assignedKey, semis) {
+  const idx = keyToPitchClass(assignedKey);
+  if (idx === null) return assignedKey;
   const table = state.accidentalMode === "flat"
     ? ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
     : CHROMATIC;
   return table[((idx + semis) % 12 + 12) % 12];
 }
 
+function playedLabel(assignedKey, semis) {
+  return semis ? keyName(assignedKey, semis) : assignedKey;
+}
+
 /* ---- Render: pestañas (Home + una por reunión) ---- */
 function tabDefs() {
-  return [{ id: "home", label: "Home", home: true }, ...setlists.map((sl, index) => ({ id: sl.id, label: sl.shortLabel, index }))];
+  return [{ id: "home", label: "Home", home: true }, ...liveSetlists.map((sl, index) => ({ id: sl.id, label: sl.shortLabel, index }))];
 }
 
 function renderTabs() {
@@ -1860,7 +2497,7 @@ function renderTabs() {
 }
 
 function activateTab(i) {
-  state = i === 0 ? { ...state, home: true } : selectSetlist(state, i - 1, setlists.length - 1);
+  state = i === 0 ? { ...state, home: true } : selectSetlist(state, i - 1, liveSetlists.length - 1);
   renderTabs();
   renderList();
 }
@@ -1913,12 +2550,14 @@ function ensureHomeControls() {
     return select;
   };
   const keySelect = makeSelect("homeKey", "Filtrar por tono",
-    [["", "Tono: todos"], ...catalogKeys(catalog).map((k) => [k, `Tono: ${k}`])]);
+    [["", "Tono: todos"], ...catalogKeys(liveCatalog).map((k) => [k, `Tono: ${k}`])]);
   const setlistSelect = makeSelect("homeSetlist", "Filtrar por reunión",
-    [["", "Reunión: todas"], ...setlists.map((sl) => [sl.id, `Reunión: ${sl.shortLabel}`])]);
+    [["", "Reunión: todas"], ...liveSetlists.map((sl) => [sl.id, `Reunión: ${sl.shortLabel}`])]);
   const statusSelect = makeSelect("homeStatus", "Filtrar por partitura",
     [["", "Partitura: todas"], ["chart", "Con partitura"], ["pending", "Sin partitura"]]);
-  for (const [select, field] of [[keySelect, "key"], [setlistSelect, "setlistId"], [statusSelect, "status"]]) {
+  const groupSelect = makeSelect("homeGroup", "Filtrar por grupo",
+    [["", "Grupo: todos"], ...GROUPS.map((g) => [g, `Grupo ${g}`])]);
+  for (const [select, field] of [[keySelect, "key"], [setlistSelect, "setlistId"], [statusSelect, "status"], [groupSelect, "group"]]) {
     select.addEventListener("change", () => {
       state = setHomeFilters(state, { [field]: select.value });
       renderHomeCards();
@@ -1929,7 +2568,7 @@ function ensureHomeControls() {
   clear.type = "button";
   clear.textContent = "Limpiar";
   clear.addEventListener("click", () => {
-    state = setHomeFilters(state, { query: "", key: "", setlistId: "", status: "" });
+    state = setHomeFilters(state, { query: "", key: "", setlistId: "", status: "", group: "" });
     renderHome();
     search.focus();
   });
@@ -1939,9 +2578,9 @@ function ensureHomeControls() {
   count.id = "homeCount";
   count.setAttribute("aria-live", "polite");
 
-  wrap.append(search, keySelect, setlistSelect, statusSelect, clear, count);
+  wrap.append(search, keySelect, setlistSelect, groupSelect, statusSelect, clear, count);
   el.cards.parentElement.insertBefore(wrap, el.cards);
-  homeControls = { wrap, search, keySelect, setlistSelect, statusSelect, count };
+  homeControls = { wrap, search, keySelect, setlistSelect, statusSelect, groupSelect, count };
   return homeControls;
 }
 
@@ -1953,14 +2592,15 @@ function renderHome() {
   c.keySelect.value = f.key ?? "";
   c.setlistSelect.value = f.setlistId ?? "";
   c.statusSelect.value = f.status ?? "";
+  c.groupSelect.value = f.group ?? "";
   renderHomeCards();
 }
 
 function renderHomeCards() {
   const c = ensureHomeControls();
   const filters = state.homeFilters ?? {};
-  const items = filterCatalog(catalog, filters);
-  c.count.textContent = `${items.length} de ${catalog.length} canciones`;
+  const items = filterCatalog(liveCatalog, filters);
+  c.count.textContent = `${items.length} de ${liveCatalog.length} canciones`;
   el.cards.innerHTML = "";
   if (items.length === 0) {
     const li = document.createElement("li");
@@ -1988,27 +2628,12 @@ function renderHomeCards() {
 
     const keys = document.createElement("div");
     keys.className = "keys";
-    const uniqueKeys = [...new Set(item.appearances.map((a) => a.assignedKey))];
+    const uniqueKeys = item.appearances.length
+      ? [...new Set(item.appearances.map((a) => playedLabel(a.assignedKey, state.transpositions[`${a.setlistId}:${item.id}`] ?? 0)))]
+      : [playedLabel(item.assignedKey, state.transpositions[`general:${item.id}`] ?? 0)];
     keys.innerHTML = uniqueKeys.map((k) => `<span class="badge">Tono <span class="k">${k}</span></span>`).join("");
     li.appendChild(keys);
-
-    const apps = document.createElement("div");
-    apps.className = "appearances";
-    const lbl = document.createElement("span");
-    lbl.className = "hint";
-    lbl.textContent = item.appearances.length > 1 ? "Reuniones:" : "Reunión:";
-    apps.appendChild(lbl);
-    for (const a of item.appearances) {
-      const chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "badge";
-      chip.textContent = a.label;
-      chip.setAttribute("aria-label", `Abrir ${item.title} en la reunión ${a.label}`);
-      if (!item.hasChart) chip.disabled = true;
-      else chip.addEventListener("click", () => openStageAt(a.setlistIndex, a.songIndex, chip, true));
-      apps.appendChild(chip);
-    }
-    li.appendChild(apps);
+    renderSongAssignments(li, item);
 
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -2018,13 +2643,16 @@ function renderHomeCards() {
     if (!item.hasChart) {
       openBtn.textContent = "Partitura no disponible";
       openBtn.disabled = true;
+    } else if (!main) {
+      openBtn.textContent = "Abrir partitura";
+      openBtn.addEventListener("click", () => openLibrarySong(item.id, openBtn));
     } else {
       openBtn.textContent = "Abrir partitura";
       openBtn.addEventListener("click", () => openStageAt(main.setlistIndex, main.songIndex, openBtn, true));
     }
     actions.appendChild(openBtn);
 
-    const lyricKey = appearanceKey(main.setlistId, item.id);
+    const lyricKey = main ? appearanceKey(main.setlistId, item.id) : appearanceKey("general", item.id);
     const lyricBtn = document.createElement("button");
     lyricBtn.type = "button";
     lyricBtn.textContent = lyricsStore.has(lyricKey) ? "Editar letra" : "Agregar letra";
@@ -2064,10 +2692,23 @@ function renderSetlist() {
     const keys = document.createElement("div");
     keys.className = "keys";
     const semis = transposeFor(song);
+    const played = playedLabel(song.assignedKey, semis);
     keys.innerHTML =
-      `<span class="badge">Tono <span class="k">${song.assignedKey}</span></span>` +
-      (semis !== 0 ? `<span class="badge">Sesión <span class="k">${currentKey(song)}</span></span>` : "");
+      `<span class="badge">Tono <span class="k">${played}</span></span>` +
+      (semis !== 0 ? `<span class="badge">Escrita <span class="k">${song.assignedKey}</span></span>` : "");
     li.appendChild(keys);
+    const groups = groupsOf(song.id);
+    if (groups.length) {
+      const groupRow = document.createElement("div");
+      groupRow.className = "assign";
+      for (const group of groups) {
+        const span = document.createElement("span");
+        span.className = "chip quiet";
+        span.textContent = `Grupo ${group}`;
+        groupRow.appendChild(span);
+      }
+      li.appendChild(groupRow);
+    }
 
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -2120,12 +2761,26 @@ function openStage(index, opener) {
   openStageAt(state.activeSetlistIndex, index, opener, false);
 }
 
+/** Abre una canción de la lista general que todavía no tiene fecha. */
+function openLibrarySong(songId, opener) {
+  scrollBySetlist.home = window.scrollY;
+  lastOpenerButton = opener ?? null;
+  returnToHome = true;
+  librarySongId = songId;
+  state = { ...state, view: "stage", metronomeRunning: false };
+  renderStage();
+  el.setlistView.hidden = true;
+  el.stageView.hidden = false;
+  window.scrollTo(0, 0);
+}
+
 /** Abre el escenario en una aparición concreta (desde una reunión o desde el Home). */
 function openStageAt(setlistIndex, songIndex, opener, fromHome) {
+  librarySongId = null;
   scrollBySetlist[fromHome ? "home" : state.activeSetlistIndex] = window.scrollY;
   lastOpenerButton = opener ?? null;
   returnToHome = Boolean(fromHome);
-  state = { ...selectSong(selectSetlist(state, setlistIndex, setlists.length - 1), songIndex, setlists[setlistIndex].songs.length - 1), view: "stage" };
+  state = { ...selectSong(selectSetlist(state, setlistIndex, liveSetlists.length - 1), songIndex, liveSetlists[setlistIndex].songs.length - 1), view: "stage" };
   renderStage();
   el.setlistView.hidden = true;
   el.stageView.hidden = false;
@@ -2138,6 +2793,7 @@ function backToSetlist() {
   hideChordPopover();
   void exitStageFullscreen(); // el listado vive fuera de #stageView
   state = { ...state, view: "setlist", home: returnToHome };
+  librarySongId = null;
   el.stageView.hidden = true;
   el.setlistView.hidden = false;
   renderTabs();
@@ -2148,8 +2804,10 @@ function backToSetlist() {
 
 function renderStage() {
   const song = selectedSong();
-  const sl = activeSetlist();
+  const inLibrary = Boolean(librarySongId);
+  const sl = inLibrary ? { id: "general", songs: [song] } : activeSetlist();
   const semis = transposeFor(song);
+  const chordSemis = semis + chartSemis(song);
   hideChordPopover();
   el.stageView.innerHTML = "";
 
@@ -2158,7 +2816,7 @@ function renderStage() {
   const back = button("Volver al setlist", () => backToSetlist());
   const pos = document.createElement("span");
   pos.className = "position";
-  pos.textContent = `${state.selectedSongIndex + 1} de ${sl.songs.length}`;
+  pos.textContent = inLibrary ? "Lista general" : `${state.selectedSongIndex + 1} de ${sl.songs.length}`;
   const fs = button("Pantalla completa", toggleFullscreen);
   fs.id = "fullscreenBtn";
   // Alternar grilla de compases / recuadros sin salir del escenario.
@@ -2169,6 +2827,17 @@ function renderStage() {
     isGrid ? "Cambiar a vista de lista" : "Cambiar a vista de grilla de compases"
   );
   layoutBtn.setAttribute("aria-pressed", String(isGrid));
+  const degreeFirst = (state.chordLabel ?? "note") === "degree";
+  const labelMode = button(
+    degreeFirst ? "Grado · nota" : "Nota · grado",
+    () => {
+      state = { ...state, chordLabel: degreeFirst ? "note" : "degree" };
+      renderStage();
+      announce(degreeFirst ? "Nota con el grado en subíndice" : "Grado con la nota en subíndice");
+    },
+    degreeFirst ? "Mostrar la nota y el grado como subíndice" : "Mostrar el grado y la nota como subíndice"
+  );
+  labelMode.setAttribute("aria-pressed", String(degreeFirst));
   const simplifySelect = document.createElement("select");
   simplifySelect.setAttribute("aria-label", "Simplificar acordes");
   for (const level of SIMPLIFY_LEVELS) {
@@ -2183,7 +2852,7 @@ function renderStage() {
     renderStage();
     announce(`Acordes ${SIMPLIFY_LABELS[simplifySelect.value].toLowerCase()}`);
   });
-  toolbar.append(back, pos, layoutBtn, simplifySelect, fs);
+  toolbar.append(back, pos, layoutBtn, labelMode, simplifySelect, fs);
   el.stageView.appendChild(toolbar);
 
   const h2 = document.createElement("h2");
@@ -2226,7 +2895,7 @@ function renderStage() {
   // digitan; el grado (subíndice) es siempre el del tono real, invariante al capo.
   // Acordes transpuestos y, si se pidió, simplificados (menos acordes de paso).
   const transposed = simplifySections(
-    song.sections.length ? transposeSections(song.sections, semis, state.accidentalMode) : [],
+    song.sections.length ? transposeSections(song.sections, chordSemis, chordSpelling(song, semis)) : [],
     state.simplify ?? "none"
   );
   const soundingChords = [...new Set(transposed.flatMap((s) => s.measures.flat()))];
@@ -2234,7 +2903,7 @@ function renderStage() {
   const suggestion = suggestCapo(stageKeyRoot, transposeChord, soundingChords);
   // Capo del arreglo de la banda (dato de la canción), válido sólo en el tono
   // original: si se transpone, el capo fijo dejaría de tener sentido.
-  const arrangementCapo = semis === 0 && song.capo != null ? song.capo : null;
+  const arrangementCapo = chordSemis === 0 && song.capo != null ? song.capo : null;
   const autoCapo = arrangementCapo ?? suggestion.capo;
   const autoRoot = shapeForCapo(stageKeyRoot, autoCapo, transposeChord);
   const override = state.capoOverrides?.[keyFor(song)];
@@ -2259,7 +2928,7 @@ function renderStage() {
   capoSelect.value = manualCapo ? String(override) : "auto";
   capoSelect.addEventListener("change", () => {
     const v = capoSelect.value;
-    state = setCapo(state, activeSetlist().id, song.id, v === "auto" ? null : Number(v));
+    state = setCapo(state, contextSetlistId(), song.id, v === "auto" ? null : Number(v));
     renderStage();
     announce(v === "auto" ? "Capo automático" : Number(v) ? `Capo ${v}: la partitura muestra las formas` : "Sin capo");
   });
@@ -2294,7 +2963,7 @@ function renderStage() {
   }
   lineSelect.addEventListener("change", () => {
     const n = Number(lineSelect.value);
-    state = setBarsPerLine(state, activeSetlist().id, song.id, n === (song.barsPerLine ?? 4) ? null : n);
+    state = setBarsPerLine(state, contextSetlistId(), song.id, n === (song.barsPerLine ?? 4) ? null : n);
     renderStage();
     announce(`${n} compases por línea`);
   });
@@ -2341,9 +3010,9 @@ function renderStage() {
   const nav = document.createElement("div");
   nav.className = "nav-row";
   const prev = button("← Anterior", () => stepSong(-1));
-  prev.disabled = state.selectedSongIndex === 0;
+  prev.disabled = inLibrary || state.selectedSongIndex === 0;
   const next = button("Siguiente →", () => stepSong(1));
-  next.disabled = state.selectedSongIndex === sl.songs.length - 1;
+  next.disabled = inLibrary || state.selectedSongIndex === sl.songs.length - 1;
   nav.append(prev, next);
   el.stageView.appendChild(nav);
 }
@@ -2438,20 +3107,28 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
       measure.forEach((shape, ci) => {
         const real = soundSlice[mi]?.[ci] ?? shape;
         const degree = chordToDegree(real, keyRoot);
-        // Cada acorde es un botón: tap/clic muestra cómo digitarlo (sin hover).
-        // Texto = forma a digitar; subíndice = grado del acorde real en el tono.
+        const degreeFirst = (state.chordLabel ?? "note") === "degree" && Boolean(degree);
+        // Cada acorde es un botón: tap/clic muestra cómo digitarlo.
+        // Por defecto el texto es la nota (forma a digitar) y el subíndice el grado.
+        // El toggle invierte: grado grande, nota en el subíndice.
         const c = document.createElement("button");
         c.type = "button";
         c.className = "chord";
-        c.textContent = shape;
-        if (degree) {
+        c.textContent = degreeFirst ? degree : shape;
+        const subText = degreeFirst ? shape : degree;
+        if (subText) {
           const sub = document.createElement("sub");
           sub.className = "deg";
-          sub.textContent = degree;
+          sub.textContent = subText;
           c.appendChild(sub);
         }
         const suena = shape !== real ? `, suena ${real}` : "";
-        c.setAttribute("aria-label", `Acorde ${shape}${degree ? `, grado ${degree}` : ""}${suena}: ver cómo tocarlo`);
+        c.setAttribute(
+          "aria-label",
+          degreeFirst
+            ? `Grado ${degree}, nota ${shape}${suena}: ver cómo tocarlo`
+            : `Acorde ${shape}${degree ? `, grado ${degree}` : ""}${suena}: ver cómo tocarlo`
+        );
         c.setAttribute("aria-haspopup", "dialog");
         c.setAttribute("aria-expanded", "false");
         attachChordPopover(c, real);
@@ -2538,7 +3215,8 @@ function accidentalSelect() {
 }
 
 function applyTranspose(song, semitones) {
-  state = setTranspose(state, activeSetlist().id, song.id, semitones);
+  state = setTranspose(state, contextSetlistId(), song.id, semitones);
+  writeKeyOverrides(state.transpositions);
   renderStage();
   announce(`Tonalidad actual: ${currentKey(song)}`);
 }
@@ -2556,7 +3234,9 @@ function renderLyricsPanel(song) {
   const panel = document.createElement("div");
   panel.className = "panel";
   const key = keyFor(song);
-  const text = lyricsStore.get(key);
+  const stored = lyricsStore.get(key);
+  const bundled = typeof song.lyrics === "string" && song.lyrics.trim() ? song.lyrics : null;
+  const text = stored ?? bundled;
   const h3 = document.createElement("h3");
   h3.textContent = "Letra";
   panel.appendChild(h3);
@@ -3143,6 +3823,7 @@ function button(label, onClick, ariaLabel) {
 window.addEventListener("pagehide", stopMetronome);
 
 /* ---- Boot ---- */
+rebuildLive();
 renderTabs();
 renderList();
     </script>

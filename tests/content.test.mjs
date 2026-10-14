@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { setlists, appearanceKey, validateSetlists, allAppearanceKeys } =
+const { setlists, songs, appearanceKey, validateSetlists, allAppearanceKeys } =
   await extractInlineModule(indexHtmlUrl, "content-module");
 const { transposeSections, semitoneDistance, degreesToSections, transposeChord } =
   await extractInlineModule(indexHtmlUrl, "transposer-module");
@@ -27,14 +27,19 @@ const expected = [
     ["Júbilo", "D"], ["Glorioso Día (Remix)", "D"], ["Adiós al ayer", "Ab"], ["Clamo a Dios", "D"],
     ["Es Él", "Bb"], ["Vida nueva", "B"], ["De gracia en gracia", "B"]
   ]],
+  ["2026-10-09", [
+    ["Alabar", "C"], ["Toda lengua y toda nación", "G"], ["Lavado", "Bb"], ["Amor es como fuego", "Bb"],
+    ["Quién Más", "G"], ["Quiero conocer a Jesús", "G"], ["El Nombre de Jesús", "C"],
+    ["Dios de avivamiento", "Bb"], ["Digno de Adorar (Worthy of It All)", "D"]
+  ]],
   ["ensayo-general", [
     ["Mover tu corazón", "Eb"]
   ]]
 ];
 
-test("setlists in order and key (4 reuniones + Ensayo general)", () => {
-  assert.equal(setlists.length, 5);
-  assert.equal(setlists.flatMap((item) => item.songs).length, 29);
+test("setlists in order and key (septiembre, octubre y Ensayo general)", () => {
+  assert.equal(setlists.length, 6);
+  assert.equal(setlists.flatMap((item) => item.songs).length, 38);
   assert.deepEqual(
     setlists.map((item) => [item.id, item.songs.map((s) => [s.title, s.assignedKey])]),
     expected
@@ -42,7 +47,10 @@ test("setlists in order and key (4 reuniones + Ensayo general)", () => {
 });
 
 test("short labels are exact", () => {
-  assert.deepEqual(setlists.map((s) => s.shortLabel), ["Vie 4", "Dom 13", "Vie 18", "Dom 27", "Ensayo"]);
+  assert.deepEqual(setlists.map((s) => s.shortLabel), [
+    "04/09/2026", "13/09/2026", "18/09/2026",
+    "27/09/2026", "09/10/2026", "Ensayo"
+  ]);
 });
 
 test("validateSetlists reports no errors", () => {
@@ -65,6 +73,8 @@ test("pending songs have no invented chords and no preloaded lyrics", () => {
         assert.equal(s.sections.length, 0, `${s.id}: pending song must not carry chords`);
       }
       assert.ok(!("lyricsText" in s), `${s.id}: must not carry lyricsText`);
+      assert.equal(s.lyrics, null, `${s.id}: lyrics stay empty until pasted in the app`);
+      assert.ok(s.dates.some((d) => d.id === sl.id), `${s.id}: date tag must include ${sl.id}`);
     }
   }
 });
@@ -394,17 +404,23 @@ test("Digno de alabar: Worthy Of It All chart in D stored as-is", () => {
   assert.deepEqual([...chords].sort(), ["A", "Bm", "D", "D/A#", "D/F#", "Em", "F#m/C#", "G"]);
 });
 
-test("Dios de avivamiento: Bethel chart in C stored as-is, five open chords", () => {
+test("Dios de avivamiento: God Of Revival PDF chart stored in C", () => {
   const song = setlists[0].songs[6];
   assert.equal(song.title, "Dios de avivamiento");
+  assert.equal(song.artist, "Bethel Music, Brian Johnson, Phil Wickham");
   assert.equal(song.sourceKey, "C");
   assert.equal(song.assignedKey, "C");
   assert.equal(song.sourceStatus, "confirmed");
-  assert.deepEqual(song.sections.map((s) => s.label), [
-    "Verso 1", "Pre-coro", "Coro", "Verso 2", "Puente", "Instrumental", "Pre-coro final"
+  assert.deepEqual(song.sections.map((s) => [s.label, s.measures]), [
+    ["Verso 1", [["C4", "C"], ["Am"], ["G"], ["C4", "C"], ["Am"], ["G"]]],
+    ["Pre-coro", [["F"], ["Am"], ["C"], ["G"], ["F"], ["Am"], ["C"], ["G"]]],
+    ["Coro", [["F", "G/B"], ["Am"], ["G/B", "C", "G"], ["F", "G/B", "Am"], ["G/B", "C", "G"]]],
+    ["Verso 2", [["C4", "C"], ["Am"], ["G"], ["F", "C"], ["Am"], ["G"]]],
+    ["Puente", [["C"], ["Am"], ["G"], ["C"], ["Am"], ["G"]]]
   ]);
-  const chords = new Set(song.sections.flatMap((s) => s.measures.flat()));
-  assert.deepEqual([...chords].sort(), ["Am", "C", "F", "G", "G/B"]);
+  const friday = setlists.find((sl) => sl.id === "2026-10-09").songs.find((s) => s.id === "dios-de-avivamiento");
+  assert.equal(friday.assignedKey, "Bb");
+  assert.equal(friday.chartKey, "C");
 });
 
 test("section cues (arrangement notes), when present, are short non-empty strings", () => {
@@ -421,13 +437,14 @@ test("section cues (arrangement notes), when present, are short non-empty string
 });
 
 test("chartUrl, when present, is a Cifra Club song page and unique per song", () => {
-  const seen = new Set();
+  const seen = new Map();
   for (const sl of setlists) {
     for (const s of sl.songs) {
       if (s.chartUrl === null) continue;
       assert.match(s.chartUrl, /^https:\/\/www\.cifraclub\.com\/[a-z0-9-]+\/[a-z0-9-]+\/$/, `${s.id}: bad chartUrl`);
-      assert.ok(!seen.has(s.chartUrl), `${s.id}: duplicate chartUrl`);
-      seen.add(s.chartUrl);
+      const owner = seen.get(s.chartUrl);
+      assert.ok(owner === undefined || owner === s.id, `${s.id}: duplicate chartUrl`);
+      seen.set(s.chartUrl, s.id);
     }
   }
 });
@@ -449,9 +466,155 @@ test("No Hay Otro Nombre: Cifra Club chart (Hillsong Worship, G) — full verses
   assert.deepEqual([...chords].sort(), ["Am", "Bm", "C", "D", "D/F#", "Em", "G", "G/B"]);
 });
 
+test("Amor es como fuego is charted and plays in Bb on 9 de octubre", () => {
+  const fuego = songs.find((s) => s.id === "amor-es-como-fuego");
+  assert.equal(fuego.chartKey, "E");
+  assert.equal(fuego.sourceKey, "E");
+  assert.equal(fuego.artist, "Hillsong UNITED");
+  assert.equal(fuego.chartUrl, "https://www.cifraclub.com/hillsong-united/amor-como-fuego/");
+  assert.equal(fuego.youtubeUrl, "https://www.youtube.com/watch?v=FwGftfqZ1NQ");
+  assert.equal(fuego.youtubeVideoId, "FwGftfqZ1NQ");
+  assert.equal(fuego.lyrics, null);
+  assert.equal(fuego.sourceStatus, "confirmed");
+  assert.deepEqual(fuego.sections.find((s) => s.label === "First Part").measures, [["E"], ["C#m"], ["B"], ["A", "E"]]);
+  assert.deepEqual(fuego.sections.find((s) => s.label === "Pre-Chorus").measures, [["C#m"], ["A", "E", "B"], ["C#m"], ["A", "E"], ["B", "E"]]);
+  assert.deepEqual(fuego.sections.find((s) => s.label === "Chorus").measures, [["E", "B"], ["C#m"], ["A", "E"], ["E", "B"], ["C#m"], ["A", "E"]]);
+
+  const oct = setlists.find((sl) => sl.id === "2026-10-09").songs;
+  assert.equal(oct.find((s) => s.id === "amor-es-como-fuego").assignedKey, "Bb");
+});
+
+test("Encuéntrame otra vez stays charted in D and on no setlist", () => {
+  const otra = songs.find((s) => s.id === "encuentreme-otra-vez");
+  assert.equal(otra.title, "Encuéntrame otra vez");
+  assert.equal(otra.chartKey, "D");
+  assert.equal(otra.sourceKey, "D");
+  assert.equal(otra.artist, "Elevation Worship");
+  assert.equal(otra.chartUrl, "https://www.cifraclub.com/elevation-worship/encuentrame-otra-vez/");
+  assert.equal(otra.youtubeUrl, "https://www.youtube.com/watch?v=J9UG-tbdLKw");
+  assert.equal(otra.youtubeVideoId, "J9UG-tbdLKw");
+  assert.equal(otra.lyrics, null);
+  assert.equal(otra.sourceStatus, "confirmed");
+  assert.deepEqual(otra.dates, []);
+  assert.deepEqual(otra.sections.find((s) => s.label === "Chorus").measures, [["D", "A"], ["Bm", "G"], ["D", "A"], ["Bm", "G"]]);
+  assert.deepEqual(otra.sections.find((s) => s.label === "Bridge").measures, [["D", "A/C#"], ["Bm"], ["A", "G"], ["D", "A/C#"], ["Bm"], ["A", "G"]]);
+  assert.equal(setlists.some((sl) => sl.songs.some((s) => s.id === "encuentreme-otra-vez")), false);
+});
+
+test("Rey de Reyes is charted in D and on no setlist", () => {
+  const rey = songs.find((s) => s.id === "rey-de-reyes");
+  assert.equal(rey.title, "Rey de Reyes");
+  assert.equal(rey.artist, "Hillsong UNITED");
+  assert.equal(rey.chartKey, "D");
+  assert.equal(rey.sourceKey, "D");
+  assert.equal(rey.chartUrl, null);
+  assert.equal(rey.lyrics, null);
+  assert.equal(rey.sourceStatus, "confirmed");
+  assert.deepEqual(rey.dates, []);
+  assert.deepEqual(rey.sections.find((s) => s.label === "Intro").measures, [["D"]]);
+  assert.deepEqual(rey.sections.find((s) => s.label === "Coro").measures, [["D", "G"], ["Bm", "D/A", "A"], ["D", "G"], ["Bm", "G", "A", "D"]]);
+  assert.deepEqual(rey.sections.find((s) => s.label === "Puente").measures.at(-1), ["D"]);
+  assert.deepEqual(rey.sections.at(-1).measures.at(-1), ["D/F#", "G", "A", "D"]);
+  assert.equal(setlists.some((sl) => sl.songs.some((s) => s.id === "rey-de-reyes")), false);
+});
+
+test("Digno de Adorar (Worthy of It All) is the CCINT chart in D on 09/10", () => {
+  const song = songs.find((s) => s.id === "worthy-of-it-all");
+  assert.equal(song.title, "Digno de Adorar (Worthy of It All)");
+  assert.equal(song.artist, "CCINT MUSIC");
+  assert.equal(song.chartKey, "D");
+  assert.equal(song.sourceKey, "D");
+  assert.equal(song.chartUrl, "https://www.cifraclub.com/ccint-music/digno-de-adorar-worthy-of-it-all/");
+  assert.equal(song.youtubeUrl, null);
+  assert.equal(song.capo, null);
+  assert.equal(song.lyrics, null);
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.notEqual(song.id, "digno-de-alabar");
+  assert.deepEqual(song.dates, [{ id: "2026-10-09", key: "D" }]);
+  assert.deepEqual(song.sections.find((s) => s.label === "Verso").measures, [["G", "A", "G", "A/F#"], ["G", "A", "Bm"], ["G", "A", "D"]]);
+  assert.deepEqual(song.sections.find((s) => s.label === "Chorus").measures, [["D"], ["A"], ["G"], ["A", "D"]]);
+  assert.deepEqual(song.sections.find((s) => s.label === "Bridge").measures, [["D"], ["A"], ["Bm"], ["G"], ["D", "A", "G", "A", "D"]]);
+  const oct = setlists.find((sl) => sl.id === "2026-10-09").songs;
+  assert.equal(oct.at(-1).id, "worthy-of-it-all");
+  assert.equal(oct.at(-1).assignedKey, "D");
+  assert.equal(oct.at(-1).chartKey, "D");
+  const cece = songs.find((s) => s.id === "digno-de-alabar");
+  assert.equal(cece.chartUrl, "https://www.cifraclub.com/cece-winans/worthy-of-it-all/");
+  assert.deepEqual(cece.dates.map((d) => d.id), ["2026-09-04"]);
+});
+
+test("Quiero conocer a Jesús is charted in G for 09/10/2026", () => {
+  const song = songs.find((s) => s.id === "quiero-conocer-a-jesus");
+  assert.equal(song.title, "Quiero conocer a Jesús");
+  assert.equal(song.artist, "Generación 12");
+  assert.equal(song.chartUrl, "https://www.cifraclub.com/generacion-12/quiero-conocer-a-jesus-yeshua-nuestro-dios-part-sofia-mancipe/");
+  assert.equal(song.chartKey, "G");
+  assert.equal(song.lyrics, null);
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.deepEqual(song.dates, [{ id: "2026-10-09", key: "G" }]);
+  assert.deepEqual(song.sections.find((s) => s.label === "Intro").measures, [["C", "D", "Em", "Bm6-"]]);
+  assert.deepEqual(song.sections.find((s) => s.label === "Pre-Chorus").measures, [["C", "D"], ["Em", "Bm6-"], ["C", "D"], ["Em", "Bm6-"]]);
+  assert.equal(song.sections.find((s) => s.label === "Bridge").measures.length, 18);
+  assert.deepEqual(song.sections.at(-1).measures.at(-1), ["G"]);
+  const oct = setlists.find((sl) => sl.id === "2026-10-09").songs;
+  assert.equal(oct[5].id, "quiero-conocer-a-jesus");
+  assert.equal(oct[5].assignedKey, "G");
+});
+
+test("Toda lengua y toda nación replaces Adiós al ayer on 09/10 and is charted in G", () => {
+  const song = songs.find((s) => s.id === "toda-lengua-y-toda-nacion");
+  assert.equal(song.title, "Toda lengua y toda nación");
+  assert.equal(song.artist, "Marcos Brunet");
+  assert.equal(song.chartKey, "G");
+  assert.equal(song.sourceKey, "G");
+  assert.equal(song.chartUrl, "https://www.cifraclub.com/marcos-brunet/toda-lengua-y-toda-nacion/");
+  assert.equal(song.youtubeUrl, null);
+  assert.equal(song.capo, null);
+  assert.equal(song.lyrics, null);
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.deepEqual(song.dates, [{ id: "2026-10-09", key: "G" }]);
+  assert.deepEqual(song.sections.find((s) => s.label === "First Part").measures.slice(0, 2), [["C9"], ["Am7", "G"]]);
+  assert.deepEqual(song.sections.find((s) => s.label === "Bridge").measures, [["Em7", "D/F#", "G"], ["G/B", "C9"]]);
+  assert.deepEqual(song.sections.at(-1).measures.at(-1), ["G/B", "C9", "G/B", "G", "D/F#", "G"]);
+  assert.deepEqual(song.sections.map((s) => s.label), [
+    "First Part", "Pre-Chorus", "Chorus", "Bridge", "First Part", "Pre-Chorus",
+    "Chorus", "Interlúdio 1", "Second Part", "Chorus", "Second Part", "Ending"
+  ]);
+
+  const oct = setlists.find((sl) => sl.id === "2026-10-09").songs;
+  assert.equal(oct[1].id, "toda-lengua-y-toda-nacion");
+  assert.equal(oct[1].assignedKey, "G");
+  assert.equal(oct.some((s) => s.id === "adios-al-ayer"), false);
+  const sept = setlists.find((sl) => sl.id === "2026-09-27").songs.find((s) => s.id === "adios-al-ayer");
+  assert.equal(sept.title, "Adiós al ayer");
+  assert.equal(sept.assignedKey, "Ab");
+  assert.deepEqual(sept.dates.map((d) => d.id), ["2026-09-27"]);
+});
+
+test("Praise is charted in C and plays as Alabar on 9 de octubre", () => {
+  assert.equal(songs.length, 36);
+  const praise = songs.find((s) => s.id === "praise");
+  assert.equal(praise.title, "Praise");
+  assert.equal(praise.chartKey, "C");
+  assert.equal(praise.assignedKey, "C");
+  assert.equal(praise.chartUrl, "https://www.cifraclub.com/elevation-worship/praise-feat-brandon-lake-chris-brown-chandler-moore/");
+  assert.deepEqual(praise.dates, [{ id: "2026-10-09", key: "C", title: "Alabar" }]);
+  assert.equal(praise.lyrics, null);
+  const oct = setlists.find((sl) => sl.id === "2026-10-09").songs[0];
+  assert.equal(oct.id, "praise");
+  assert.equal(oct.title, "Alabar");
+  assert.equal(oct.assignedKey, "C");
+  assert.equal(oct.chartKey, "C");
+  assert.deepEqual(oct.sections.find((s) => s.label === "Chorus 1").measures, [["Am", "F", "C"], ["G"]]);
+  assert.deepEqual(oct.sections.find((s) => s.label === "Third Part").measures, [["C", "F2"], ["G", "C"], ["G/B", "F2"], ["C"]]);
+  assert.deepEqual(oct.sections.find((s) => s.label === "I won't be quiet").measures, [["Am"], ["F"], ["C", "G"]]);
+  assert.deepEqual(oct.sections.find((s) => s.label === "Bridge").measures, [["C"], ["Dm"], ["Am", "F"]]);
+  assert.deepEqual(oct.sections.at(-1).measures, [["Am", "F", "C"], ["G"]]);
+});
+
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
-  assert.equal(allAppearanceKeys().length, 29);
+  assert.equal(allAppearanceKeys().length, 38);
 });
 
 test("Ensayo general is a general reunion, exempt from the 7-song rule, with Mover tu corazón (confirmed, original key Eb)", () => {

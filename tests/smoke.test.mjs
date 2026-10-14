@@ -18,9 +18,12 @@ test("index has semantic landmarks and a skip link", () => {
   assert.match(html, /<main/);
 });
 
-test("date tablist is present with four tabs", () => {
+test("date tablist is present with the service dates", () => {
   assert.match(html, /role="tablist"/);
-  for (const label of ["Vie 4", "Dom 13", "Vie 18", "Dom 27"]) {
+  for (const label of [
+    "04/09/2026", "13/09/2026", "18/09/2026",
+    "27/09/2026", "09/10/2026"
+  ]) {
     assert.ok(html.includes(label), `missing tab label: ${label}`);
   }
 });
@@ -73,8 +76,9 @@ test("Home index with search and filters is wired", () => {
   assert.match(html, /catalog-module:start/);
   assert.match(html, /label: "Home", home: true/);
   assert.match(html, /placeholder = "Buscar por título o artista"/);
-  for (const id of ["homeSearch", "homeKey", "homeSetlist", "homeStatus", "homeCount"]) assert.ok(html.includes(`"${id}"`), id);
-  assert.match(html, /openStageAt\(/);
+  for (const id of ["homeSearch", "homeKey", "homeSetlist", "homeStatus", "homeGroup", "homeCount"]) assert.ok(html.includes(`"${id}"`), id);
+  assert.match(html, /worship-setlist:keys:v1/);
+  assert.match(html, /writeKeyOverrides\(state\.transpositions\)/);
 });
 
 test("chord simplification selector is wired", () => {
@@ -91,6 +95,8 @@ test("section arrangement cues are wired", () => {
 test("degree subscripts and manual capo are wired", () => {
   assert.match(html, /chordToDegree/);
   assert.match(html, /sub\.deg/);
+  assert.match(html, /chordLabel: "note"/);
+  assert.match(html, /Mostrar el grado y la nota como subíndice/);
   assert.match(html, /setAttribute\("aria-label", "Capo"\)/);
   assert.match(html, /Capo automático/);
   assert.match(html, /capoOverrides/);

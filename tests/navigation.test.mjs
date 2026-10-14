@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { initialState, selectSetlist, selectSong, moveSong, setTranspose, setCapo, setHomeFilters, setBarsPerLine } =
+const { initialState, selectSetlist, selectSong, moveSong, setTranspose, setCapo, setHomeFilters, setBarsPerLine, parseKeyOverrides } =
   await extractInlineModule(indexHtmlUrl, "navigation-module");
 
 test("setCapo is per-appearance, clamped 0..11, and null restores automatic", () => {
@@ -30,10 +30,11 @@ test("initialState shape", () => {
     capoOverrides: {},
     lineOverrides: {},
     chartLayout: "grid",
+    chordLabel: "note",
     accidentalMode: "sharp",
     simplify: "none",
     home: true,
-    homeFilters: { query: "", key: "", setlistId: "", status: "" },
+    homeFilters: { query: "", key: "", setlistId: "", status: "", group: "" },
     metronomeRunning: false
   });
 });
@@ -68,6 +69,22 @@ test("setTranspose is per-appearance and clamped to ±11", () => {
   assert.equal(setTranspose(s, "x", "y", -50).transpositions["x:y"], -11);
 });
 
+test("saved playing keys ignore empty, zero and out-of-range values", () => {
+  assert.deepEqual(parseKeyOverrides({
+    "2026-10-09:praise": 2,
+    "2026-09-27:praise": -3,
+    "2026-10-09:lavado": 0,
+    "bad": 1,
+    "2026-10-09:too": 12,
+    "2026-10-09:low": -12,
+    "2026-10-09:nan": "x"
+  }), {
+    "2026-10-09:praise": 2,
+    "2026-09-27:praise": -3
+  });
+  assert.deepEqual(parseKeyOverrides(null), {});
+});
+
 test("state updates are immutable", () => {
   const base = initialState();
   const next = moveSong(base, 1);
@@ -81,7 +98,7 @@ test("Home: selecting a setlist leaves Home; setHomeFilters merges and keeps the
   const s1 = selectSetlist(s0, 2);
   assert.equal(s1.home, false);
   const s2 = setHomeFilters({ ...s1, home: true }, { query: "jub", key: "D" });
-  assert.deepEqual(s2.homeFilters, { query: "jub", key: "D", setlistId: "", status: "" });
+  assert.deepEqual(s2.homeFilters, { query: "jub", key: "D", setlistId: "", status: "", group: "" });
   assert.equal(s2.activeSetlistIndex, 2);
   assert.deepEqual(setHomeFilters(s2, { query: "" }).homeFilters.key, "D");
 });
