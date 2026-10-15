@@ -32,14 +32,17 @@ const expected = [
     ["Quién Más", "G"], ["Quiero conocer a Jesús", "G"], ["El Nombre de Jesús", "C"],
     ["Dios de avivamiento", "Bb"], ["Digno de Adorar (Worthy of It All)", "D"]
   ]],
+  ["2026-10-16", [
+    ["Confía en Dios (Trust In God)", "C"], ["Ruido!", "Eb"], ["En tu mover", "G"]
+  ]],
   ["ensayo-general", [
     ["Mover tu corazón", "Eb"]
   ]]
 ];
 
 test("setlists in order and key (septiembre, octubre y Ensayo general)", () => {
-  assert.equal(setlists.length, 6);
-  assert.equal(setlists.flatMap((item) => item.songs).length, 38);
+  assert.equal(setlists.length, 7);
+  assert.equal(setlists.flatMap((item) => item.songs).length, 41);
   assert.deepEqual(
     setlists.map((item) => [item.id, item.songs.map((s) => [s.title, s.assignedKey])]),
     expected
@@ -49,7 +52,7 @@ test("setlists in order and key (septiembre, octubre y Ensayo general)", () => {
 test("short labels are exact", () => {
   assert.deepEqual(setlists.map((s) => s.shortLabel), [
     "04/09/2026", "13/09/2026", "18/09/2026",
-    "27/09/2026", "09/10/2026", "Ensayo"
+    "27/09/2026", "09/10/2026", "16/10/2026", "Ensayo"
   ]);
 });
 
@@ -592,7 +595,7 @@ test("Toda lengua y toda nación replaces Adiós al ayer on 09/10 and is charted
 });
 
 test("Praise is charted in C and plays as Alabar on 9 de octubre", () => {
-  assert.equal(songs.length, 36);
+  assert.equal(songs.length, 39);
   const praise = songs.find((s) => s.id === "praise");
   assert.equal(praise.title, "Praise");
   assert.equal(praise.chartKey, "C");
@@ -612,9 +615,33 @@ test("Praise is charted in C and plays as Alabar on 9 de octubre", () => {
   assert.deepEqual(oct.sections.at(-1).measures, [["Am", "F", "C"], ["G"]]);
 });
 
+test("Viernes 16/10: Confía, Ruido y En tu mover quedan en la nota del PDF", () => {
+  const friday = setlists.find((sl) => sl.id === "2026-10-16");
+  assert.deepEqual(friday.songs.map((s) => [s.id, s.assignedKey, s.chartKey]), [
+    ["confia-en-dios", "C", "C"],
+    ["ruido", "Eb", "Eb"],
+    ["en-tu-mover", "G", "G"]
+  ]);
+  const confia = friday.songs[0];
+  assert.equal(confia.chartUrl, "https://www.cifraclub.com/elevation-worship/confia-en-dios-trust-in-god-original/");
+  assert.deepEqual(confia.sections.map((s) => s.label), ["Intro", "First Part", "Chorus", "Second Part", "Chorus", "Interludio", "Puente"]);
+  assert.deepEqual(confia.sections[0].measures, [["C", "Am", "F", "Dm", "F"], ["C", "Am", "F", "Dm", "F"]]);
+  assert.equal(confia.sections[4].repeats, 2);
+  const ruido = friday.songs[1];
+  assert.equal(ruido.chartUrl, "https://www.cifraclub.com/elevation-worship/ruido/");
+  assert.deepEqual(ruido.sections.map((s) => s.label), ["Intro", "First Part", "Chorus", "Second Part", "Chorus", "Puente", "Chorus 2"]);
+  assert.deepEqual(ruido.sections[0].measures, [["Eb"], ["Ab", "Eb/G", "Eb"]]);
+  assert.equal(ruido.sections.at(-1).measures.at(-1)[0], "Ab");
+  const mover = friday.songs[2];
+  assert.equal(mover.chartUrl, null);
+  assert.equal(mover.artist, "Nemuel");
+  assert.deepEqual(mover.sections[3].measures.at(-1), ["G", "D", "Daj7/F#"]);
+  assert.deepEqual(mover.sections.at(-1).measures, [["G"], ["D"], ["Bm"], ["G", "A", "G"]]);
+});
+
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
-  assert.equal(allAppearanceKeys().length, 38);
+  assert.equal(allAppearanceKeys().length, 41);
 });
 
 test("Ensayo general is a general reunion, exempt from the 7-song rule, with Mover tu corazón (confirmed, original key Eb)", () => {

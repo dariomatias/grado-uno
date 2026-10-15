@@ -46,6 +46,7 @@
       button:disabled { opacity: .45; cursor: not-allowed; }
       button.primary { background: var(--gold); color: #14161b; border-color: var(--gold); font-weight: 700; }
       :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+      [hidden] { display: none !important; }
       header.app {
         padding: 14px 16px; border-bottom: 1px solid var(--border);
         display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
@@ -75,15 +76,29 @@
       /* Setlist cards */
       .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
       @media (min-width: 1100px) { .cards { grid-template-columns: 1fr 1fr; } }
+      .cards.setlist { grid-template-columns: 1fr; }
       .card {
         background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
         padding: 14px; display: flex; flex-direction: column; gap: 8px;
       }
       .card.selected { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
-      .card .row1 { display: flex; align-items: baseline; gap: 10px; }
+      .card .row1 { display: flex; align-items: center; gap: 10px; }
       .card .num {
         font-variant-numeric: tabular-nums; color: var(--gold-strong); font-weight: 700;
         min-width: 1.5em;
+      }
+      .card .move { margin-left: auto; cursor: grab; touch-action: none; }
+      .card .move:active { cursor: grabbing; }
+      .cards.setlist > .card { transition: transform 180ms ease; }
+      .card.lifting {
+        position: fixed; z-index: 50; margin: 0; pointer-events: none;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+        transform: scale(1.02);
+        transition: none;
+      }
+      .card.placeholder {
+        border-style: dashed; background: transparent; box-shadow: none;
+        pointer-events: none;
       }
       .card .title { font-size: 1.05rem; font-weight: 600; }
       .card .meta { color: var(--muted); font-size: .85rem; }
@@ -994,6 +1009,19 @@ const meetings = [
     songs: []
   },
   {
+    // Ensayo del viernes 16/10/2026. Las cifras quedan en la nota impresa.
+    id: "2026-10-16",
+    label: "16/10/2026",
+    shortLabel: "16/10/2026",
+    date: "2026-10-16",
+    lineup: [
+      { id: "confia-en-dios", key: "C" },
+      { id: "ruido", key: "Eb" },
+      { id: "en-tu-mover", key: "G" }
+    ],
+    songs: []
+  },
+  {
     // Reunión especial (no es una fecha de servicio): repertorio de ensayo.
     // Exenta de la regla de 7 canciones (ver validateSetlists) y sin fecha.
     id: "ensayo-general",
@@ -1368,7 +1396,100 @@ const dignoDeAdorar = song("worthy-of-it-all", "Digno de Adorar (Worthy of It Al
   ]
 });
 
-const indexedSongs = indexSongs(meetings, [praise, amorEsComoFuego, encuentremeOtraVez, quieroConocerAJesus, todaLenguaYTodaNacion, reyDeReyes, dignoDeAdorar]);
+// Confía en Dios (Trust In God) Original. Cifra Club, Elevation Worship,
+// PDF del 2026-10-14, escrita en C. Key: C, sin capo. Acordes de una misma
+// línea comparten el compás. La afinación no se copia. Sólo acordes.
+const CONFIA_RITMO = [["C", "Am", "F", "Dm", "F"]];
+const CONFIA_ESTROFA = [["C"], ["Am"], ["F"], ["C/E", "Dm"], ["C"], ["Am"], ["F"], ["C/E", "Dm"]];
+const CONFIA_CORO = [["C"], ["Am"], ["F"], ["Dm", "F"]];
+
+const confiaEnDios = song("confia-en-dios", "Confía en Dios (Trust In God)", "C", {
+  artist: "Elevation Worship",
+  sourceKey: "C",
+  chartUrl: "https://www.cifraclub.com/elevation-worship/confia-en-dios-trust-in-god-original/",
+  dates: [{ id: "2026-10-16", key: "C" }],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: [...CONFIA_RITMO, ...CONFIA_RITMO] },
+    { type: "verse", label: "First Part", repeats: 1, measures: CONFIA_ESTROFA },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: CONFIA_CORO },
+    { type: "verse", label: "Second Part", repeats: 1, measures: CONFIA_ESTROFA },
+    { type: "chorus", label: "Chorus", repeats: 2, measures: CONFIA_CORO },
+    { type: "interlude", label: "Interludio", repeats: 1, measures: CONFIA_RITMO },
+    { type: "bridge", label: "Puente", repeats: 1, measures: [["C"], ["Am"], ["F"], ["Dm"], ["F"]] }
+  ]
+});
+
+// Ruido! Cifra Club, Elevation Worship, PDF del 2026-10-14, escrita en Eb.
+// Key: Eb, sin capo. El paréntesis (Ab Eb/G Eb) repite el cierre del coro
+// y no se duplica. Líneas de letra sin acorde no agregan compás.
+const RUIDO_CORO = [["Eb"], ["Bb", "Ab", "Eb"], ["Bb", "Ab", "Eb"], ["Cm", "Bb"], ["Ab", "Eb"], ["Ab", "Eb/G", "Eb"]];
+const RUIDO_CORO_2 = [
+  ["Eb"], ["Bb", "Ab", "Eb"], ["Bb", "Ab", "Eb"], ["Cm", "Bb"], ["Ab", "Eb"],
+  ["Cm", "Bb"], ["Ab", "Eb"], ["Cm", "Bb"], ["Ab", "Eb"], ["Ab", "Eb/G", "Eb"]
+];
+
+const ruido = song("ruido", "Ruido!", "Eb", {
+  artist: "Elevation Worship, Chris Brown, Steven Furtick, Brandon Lake",
+  sourceKey: "Eb",
+  chartUrl: "https://www.cifraclub.com/elevation-worship/ruido/",
+  dates: [{ id: "2026-10-16", key: "Eb" }],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["Ab", "Eb/G", "Eb"]] },
+    {
+      type: "verse", label: "First Part", repeats: 1,
+      measures: [["Eb", "Eb", "Eb"], ["Cm"], ["Bb", "Ab"], ["Eb/G", "Eb"], ["Eb"], ["Cm"], ["Bb", "Ab", "Eb/G"], ["Eb", "Ab", "Eb/G", "Eb"]]
+    },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: RUIDO_CORO },
+    {
+      type: "verse", label: "Second Part", repeats: 1,
+      measures: [["Eb"], ["Cm"], ["Bb"], ["Ab", "Eb/G", "Eb"], ["Ab"], ["Bb", "Cm"], ["Bb"], ["Ab", "Eb/G", "Eb"]]
+    },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: RUIDO_CORO },
+    {
+      type: "bridge", label: "Puente", repeats: 1,
+      measures: [
+        ["Eb"], ["Ab", "Eb/G", "Eb", "Ab"], ["Eb/G", "Eb"], ["Ab", "Eb/G", "Eb", "Ab"], ["Eb/G", "Eb"],
+        ["Ab", "Eb/G", "Eb"], ["Ab", "Eb/G", "Eb"], ["Ab", "Eb/G", "Eb"], ["Cm", "Bb", "Ab"]
+      ]
+    },
+    { type: "chorus", label: "Chorus 2", repeats: 1, measures: RUIDO_CORO_2 }
+  ]
+});
+
+// En tu mover. PDF "Acordes por Nemuel" del 2026-10-14, sin tonalidad impresa.
+// Las letras están en G (G, D, Bm, A). Sin capo y sin enlace de Cifra Club.
+// El último compás del segundo verso está impreso Daj7/F#, no Dmaj7/F#.
+// La línea final, marcada con ~, no trae acorde. Sólo acordes.
+const MOVER_CORO = [["G"], ["D"], ["Bm"], ["G", "A"]];
+const MOVER_REY = [["Bm", "D", "G"], ["A", "Bm"], ["D", "G"], ["A"]];
+
+const enTuMover = song("en-tu-mover", "En tu mover", "G", {
+  artist: "Nemuel",
+  sourceKey: "G",
+  dates: [{ id: "2026-10-16", key: "G" }],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: [["G", "D/F#", "Bm", "G", "A"]] },
+    {
+      type: "verse", label: "Verse", repeats: 1,
+      measures: [["Bm"], ["G", "D"], ["Bm"], ["G", "D"], ["Bm"], ["G", "D"], ["Bm"], ["G", "D"]]
+    },
+    { type: "chorus", label: "Coro", repeats: 1, measures: MOVER_CORO },
+    {
+      type: "verse", label: "Verse", repeats: 1,
+      measures: [
+        ["Bm"], ["G", "D", "Dmaj7/F#"], ["Bm"], ["G", "D", "Dmaj7/F#"],
+        ["Bm"], ["G", "D", "Dmaj7/F#"], ["Bm"], ["G", "D", "Daj7/F#"]
+      ]
+    },
+    { type: "chorus", label: "Coro", repeats: 1, measures: MOVER_CORO },
+    { type: "chorus", label: "Coro 2", repeats: 2, measures: MOVER_REY },
+    { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["D/F#"], ["Bm"], ["G", "A"]] },
+    { type: "chorus", label: "Coro", repeats: 1, measures: MOVER_CORO },
+    { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["D"], ["Bm"], ["G", "A", "G"]] }
+  ]
+});
+
+const indexedSongs = indexSongs(meetings, [praise, amorEsComoFuego, encuentremeOtraVez, quieroConocerAJesus, todaLenguaYTodaNacion, reyDeReyes, dignoDeAdorar, confiaEnDios, ruido, enTuMover]);
 
 for (const meeting of meetings) {
   for (const slot of meeting.lineup ?? []) {
@@ -2189,6 +2310,45 @@ export function applyDateAssignments(setlists, songs, assignments = {}) {
     return { ...sl, songs: songsOut };
   });
 }
+
+/** Orden guardado por reunión: ids conocidos primero; el resto queda al final. */
+export function parseSongOrders(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const out = {};
+  for (const [id, value] of Object.entries(raw)) {
+    if (!id || !Array.isArray(value)) continue;
+    const ids = value.filter((songId) => typeof songId === "string" && songId.length > 0);
+    if (ids.length) out[id] = ids;
+  }
+  return out;
+}
+
+export function reorderIds(ids, fromIndex, toIndex) {
+  const next = Array.isArray(ids) ? ids.slice() : [];
+  if (!Number.isInteger(fromIndex) || !Number.isInteger(toIndex)) return next;
+  if (fromIndex < 0 || toIndex < 0 || fromIndex >= next.length || toIndex >= next.length || fromIndex === toIndex) return next;
+  const [item] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, item);
+  return next;
+}
+
+export function applySongOrder(songs, orderIds) {
+  const list = songs.slice();
+  if (!Array.isArray(orderIds) || orderIds.length === 0) return list;
+  const byId = new Map(list.map((song) => [song.id, song]));
+  const used = new Set();
+  const out = [];
+  for (const id of orderIds) {
+    const song = byId.get(id);
+    if (!song || used.has(id)) continue;
+    out.push(song);
+    used.add(id);
+  }
+  for (const song of list) {
+    if (!used.has(song.id)) out.push(song);
+  }
+  return out;
+}
 /* catalog-module:end */
 
 /* ============================================================
@@ -2320,8 +2480,26 @@ function datesOf(songId) {
   return assignedDateIds(setlists, songId, assignmentStore.get(songId));
 }
 
+const ORDER_STORAGE_KEY = "worship-setlist:order:v1";
+const orderStore = (() => {
+  let memory = {};
+  try { memory = parseSongOrders(JSON.parse(localStorage.getItem(ORDER_STORAGE_KEY) || "{}")); }
+  catch { memory = {}; }
+  const flush = () => {
+    try { localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(memory)); } catch { /* el orden sigue en esta sesión */ }
+  };
+  return {
+    get: (setlistId) => memory[setlistId] ?? null,
+    save(setlistId, ids) {
+      memory = { ...memory, [setlistId]: [...ids] };
+      flush();
+    }
+  };
+})();
+
 function rebuildLive() {
-  liveSetlists = applyDateAssignments(setlists, songs, assignmentStore.all());
+  liveSetlists = applyDateAssignments(setlists, songs, assignmentStore.all())
+    .map((sl) => ({ ...sl, songs: applySongOrder(sl.songs, orderStore.get(sl.id)) }));
   const placed = new Set(liveSetlists.flatMap((sl) => sl.songs.map((s) => s.id)));
   liveCatalog = buildCatalog(liveSetlists, songs.filter((s) => !placed.has(s.id))).map((item) => ({
     ...item,
@@ -2516,6 +2694,7 @@ function onTabKeydown(e, index, count) {
 
 /** Listado bajo las pestañas: Home (índice) o la reunión activa. */
 function renderList() {
+  el.cards.classList.toggle("setlist", !state.home);
   if (state.home) renderHome(); else renderSetlist();
 }
 
@@ -2667,6 +2846,137 @@ function renderHomeCards() {
   });
 }
 
+function commitListOrder(setlistId, ids, focusSongId) {
+  orderStore.save(setlistId, ids);
+  const selectedId = activeSetlist().songs[state.selectedSongIndex]?.id;
+  rebuildLive();
+  const sel = activeSetlist().songs.findIndex((s) => s.id === selectedId);
+  if (sel >= 0) state = { ...state, selectedSongIndex: sel };
+  renderList();
+  if (focusSongId) el.cards.querySelector(`li[data-song-id="${CSS.escape(focusSongId)}"] .move`)?.focus();
+  announce("Orden guardado");
+}
+
+function listSlots() {
+  return [...el.cards.children].filter((node) => node.classList.contains("card") && !node.classList.contains("lifting"));
+}
+
+function renumberSlots(lifted) {
+  let n = 1;
+  for (const item of el.cards.children) {
+    if (item.classList.contains("lifting")) continue;
+    const target = item.classList.contains("placeholder") ? lifted : item;
+    const num = target?.querySelector(".num");
+    if (num) num.textContent = String(n);
+    n += 1;
+  }
+}
+
+function animateShift(mutate) {
+  const nodes = [...el.cards.children].filter((node) => !node.classList.contains("lifting") && !node.classList.contains("placeholder"));
+  const first = new Map(nodes.map((node) => [node, node.getBoundingClientRect()]));
+  mutate();
+  for (const node of nodes) {
+    if (!node.isConnected) continue;
+    const dy = first.get(node).top - node.getBoundingClientRect().top;
+    if (!dy) continue;
+    node.style.transition = "none";
+    node.style.transform = `translateY(${dy}px)`;
+    node.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      node.style.transition = "";
+      node.style.transform = "";
+    });
+  }
+}
+
+function bindReorder(button, card) {
+  button.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0 || card.classList.contains("lifting")) return;
+    event.preventDefault();
+    button.focus();
+    const startIds = [...el.cards.querySelectorAll("li.card")].map((item) => item.dataset.songId);
+    const start = card.getBoundingClientRect();
+    const offsetX = event.clientX - start.left;
+    const offsetY = event.clientY - start.top;
+    const placeholder = document.createElement("li");
+    placeholder.className = "card placeholder";
+    placeholder.style.height = `${start.height}px`;
+    placeholder.dataset.songId = card.dataset.songId;
+    card.before(placeholder);
+    card.classList.add("lifting");
+    card.style.width = `${start.width}px`;
+    card.style.left = `${start.left}px`;
+    card.style.top = `${start.top}px`;
+    try { button.setPointerCapture(event.pointerId); } catch { /* el movimiento sigue por la ventana */ }
+
+    const follow = (x, y) => {
+      const maxX = Math.max(8, window.innerWidth - start.width - 8);
+      const maxY = Math.max(8, window.innerHeight - 72);
+      card.style.left = `${Math.min(Math.max(8, x), maxX)}px`;
+      card.style.top = `${Math.min(Math.max(8, y), maxY)}px`;
+    };
+    const moveGap = (clientY) => {
+      const slots = listSlots();
+      const from = slots.indexOf(placeholder);
+      let to = slots.length - 1;
+      for (let i = 0; i < slots.length; i++) {
+        if (slots[i] === placeholder) continue;
+        const rect = slots[i].getBoundingClientRect();
+        if (clientY < rect.top + rect.height / 2) { to = i; break; }
+      }
+      if (to === from) return;
+      animateShift(() => {
+        const next = listSlots();
+        const target = next[to];
+        if (!target || target === placeholder) return;
+        if (to > from) el.cards.insertBefore(placeholder, target.nextSibling);
+        else el.cards.insertBefore(placeholder, target);
+        renumberSlots(card);
+      });
+    };
+    const move = (ev) => {
+      follow(ev.clientX - offsetX, ev.clientY - offsetY);
+      moveGap(ev.clientY);
+    };
+    let ended = false;
+    const finish = () => {
+      if (ended) return;
+      ended = true;
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", finish);
+      window.removeEventListener("pointercancel", finish);
+      const gap = placeholder.getBoundingClientRect();
+      card.style.transition = "left 180ms ease, top 180ms ease";
+      follow(gap.left, gap.top);
+      const ids = listSlots().map((item) => item.dataset.songId);
+      window.setTimeout(() => {
+        card.classList.remove("lifting");
+        card.style.cssText = "";
+        if (placeholder.isConnected) placeholder.replaceWith(card);
+        if (ids.join("|") !== startIds.join("|")) {
+          commitListOrder(activeSetlist().id, ids, card.dataset.songId);
+        }
+      }, 180);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", finish);
+    window.addEventListener("pointercancel", finish);
+  });
+  button.addEventListener("keydown", (event) => {
+    const cards = [...el.cards.querySelectorAll("li.card")];
+    const fromIndex = cards.indexOf(card);
+    let to = fromIndex;
+    if (event.key === "ArrowUp") to = fromIndex - 1;
+    else if (event.key === "ArrowDown") to = fromIndex + 1;
+    else return;
+    event.preventDefault();
+    if (to < 0 || to >= cards.length || card.classList.contains("lifting")) return;
+    const ids = reorderIds(cards.map((item) => item.dataset.songId), fromIndex, to);
+    commitListOrder(activeSetlist().id, ids, card.dataset.songId);
+  });
+}
+
 /* ---- Render: setlist ---- */
 function renderSetlist() {
   if (homeControls) homeControls.wrap.hidden = true;
@@ -2675,13 +2985,23 @@ function renderSetlist() {
   sl.songs.forEach((song, index) => {
     const li = document.createElement("li");
     li.className = "card" + (index === state.selectedSongIndex ? " selected" : "");
+    li.dataset.songId = song.id;
 
     const row1 = document.createElement("div");
     row1.className = "row1";
-    row1.innerHTML =
-      `<span class="num">${index + 1}</span>` +
-      `<span class="title"></span>`;
-    row1.querySelector(".title").textContent = song.title;
+    const num = document.createElement("span");
+    num.className = "num";
+    num.textContent = String(index + 1);
+    const title = document.createElement("span");
+    title.className = "title";
+    title.textContent = song.title;
+    const move = document.createElement("button");
+    move.type = "button";
+    move.className = "move";
+    move.textContent = "Mover";
+    move.setAttribute("aria-label", `Mover ${song.title}, posición ${index + 1}`);
+    bindReorder(move, li);
+    row1.append(num, title, move);
     li.appendChild(row1);
 
     const meta = document.createElement("div");

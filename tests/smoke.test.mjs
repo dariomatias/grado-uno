@@ -22,7 +22,7 @@ test("date tablist is present with the service dates", () => {
   assert.match(html, /role="tablist"/);
   for (const label of [
     "04/09/2026", "13/09/2026", "18/09/2026",
-    "27/09/2026", "09/10/2026"
+    "27/09/2026", "09/10/2026", "16/10/2026"
   ]) {
     assert.ok(html.includes(label), `missing tab label: ${label}`);
   }
@@ -77,6 +77,9 @@ test("Home index with search and filters is wired", () => {
   assert.match(html, /label: "Home", home: true/);
   assert.match(html, /placeholder = "Buscar por título o artista"/);
   for (const id of ["homeSearch", "homeKey", "homeSetlist", "homeStatus", "homeGroup", "homeCount"]) assert.ok(html.includes(`"${id}"`), id);
+  assert.match(html, /worship-setlist:order:v1/);
+  assert.match(html, /className = "move"/);
+  assert.match(html, /classList.add\("lifting"\)/);
   assert.match(html, /worship-setlist:keys:v1/);
   assert.match(html, /writeKeyOverrides\(state\.transpositions\)/);
 });

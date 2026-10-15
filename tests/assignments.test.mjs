@@ -4,7 +4,7 @@ import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-modu
 
 const {
   GROUPS, normalizeGroups, dateIdsOf, assignedDateIds, withDate, withoutDate,
-  withGroup, withoutGroup, applyDateAssignments
+  withGroup, withoutGroup, applyDateAssignments, parseSongOrders, reorderIds, applySongOrder
 } = await extractInlineModule(indexHtmlUrl, "catalog-module");
 const { setlists, songs } = await extractInlineModule(indexHtmlUrl, "content-module");
 
@@ -50,4 +50,15 @@ test("an edited date list replaces the bundled dates", () => {
   const onlyFriday = applyDateAssignments(setlists, songs, { [id]: { dateIds: ["2026-10-09"], groups: [] } });
   assert.equal(onlyFriday.find((sl) => sl.id === "2026-09-13").songs.some((s) => s.id === id), false);
   assert.equal(onlyFriday.find((sl) => sl.id === "2026-10-09").songs.some((s) => s.id === id), true);
+});
+
+test("a saved order moves songs and keeps new ones at the end", () => {
+  const songs = [{ id: "a" }, { id: "b" }, { id: "c" }];
+  assert.deepEqual(reorderIds(["a", "b", "c"], 0, 2), ["b", "c", "a"]);
+  assert.deepEqual(reorderIds(["a", "b"], 1, 1), ["a", "b"]);
+  assert.deepEqual(applySongOrder(songs, ["c", "a"]).map((s) => s.id), ["c", "a", "b"]);
+  assert.deepEqual(applySongOrder(songs, null).map((s) => s.id), ["a", "b", "c"]);
+  assert.deepEqual(parseSongOrders({ "2026-10-16": ["ruido", "confia-en-dios"], bad: "x", empty: [] }), {
+    "2026-10-16": ["ruido", "confia-en-dios"]
+  });
 });
