@@ -18,11 +18,13 @@ test("index has semantic landmarks and a skip link", () => {
   assert.match(html, /<main/);
 });
 
-test("date tablist is present with the service dates", () => {
-  assert.match(html, /role="tablist"/);
+test("the date picker is a dropdown with the service dates", () => {
+  assert.match(html, /id="meetingSelect"/);
+  assert.match(html, /aria-label="Elegir fecha"/);
+  assert.doesNotMatch(html, /role="tablist"/);
   for (const label of [
     "04/09/2026", "13/09/2026", "18/09/2026",
-    "27/09/2026", "09/10/2026", "16/10/2026"
+    "27/09/2026", "09/10/2026", "18/10/2026"
   ]) {
     assert.ok(html.includes(label), `missing tab label: ${label}`);
   }
@@ -76,10 +78,11 @@ test("Home index with search and filters is wired", () => {
   assert.match(html, /catalog-module:start/);
   assert.match(html, /label: "Home", home: true/);
   assert.match(html, /placeholder = "Buscar por título o artista"/);
-  for (const id of ["homeSearch", "homeKey", "homeSetlist", "homeStatus", "homeGroup", "homeCount"]) assert.ok(html.includes(`"${id}"`), id);
+  for (const id of ["homeSearch", "homeKey", "homeMonth", "homeSetlist", "homeStatus", "homeGroup", "homeCount"]) assert.ok(html.includes(`"${id}"`), id);
   assert.match(html, /worship-setlist:order:v1/);
   assert.match(html, /className = "move"/);
   assert.match(html, /classList.add\("lifting"\)/);
+  assert.match(html, /const ASSIGNMENTS_STORAGE_KEY = "worship-setlist:assignments:v1"/);
   assert.match(html, /worship-setlist:keys:v1/);
   assert.match(html, /writeKeyOverrides\(state\.transpositions\)/);
 });

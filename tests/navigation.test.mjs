@@ -34,7 +34,7 @@ test("initialState shape", () => {
     accidentalMode: "sharp",
     simplify: "none",
     home: true,
-    homeFilters: { query: "", key: "", setlistId: "", status: "", group: "" },
+    homeFilters: { query: "", key: "", month: "", setlistId: "", status: "", group: "" },
     metronomeRunning: false
   });
 });
@@ -98,7 +98,7 @@ test("Home: selecting a setlist leaves Home; setHomeFilters merges and keeps the
   const s1 = selectSetlist(s0, 2);
   assert.equal(s1.home, false);
   const s2 = setHomeFilters({ ...s1, home: true }, { query: "jub", key: "D" });
-  assert.deepEqual(s2.homeFilters, { query: "jub", key: "D", setlistId: "", status: "", group: "" });
+  assert.deepEqual(s2.homeFilters, { query: "jub", key: "D", month: "", setlistId: "", status: "", group: "" });
   assert.equal(s2.activeSetlistIndex, 2);
   assert.deepEqual(setHomeFilters(s2, { query: "" }).homeFilters.key, "D");
 });

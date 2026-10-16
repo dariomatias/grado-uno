@@ -13,6 +13,16 @@ test("groups stay inside A, B and C, in that order", () => {
   assert.deepEqual(normalizeGroups(["C", "A", "Z", "A"]), ["A", "C"]);
   assert.deepEqual(withGroup(["C"], "A"), ["A", "C"]);
   assert.deepEqual(withoutGroup(["A", "B"], "A"), ["B"]);
+  assert.deepEqual(withGroup(["A"], "B"), ["A", "B"]);
+  assert.deepEqual(withGroup(["A", "B"], "C"), ["A", "B", "C"]);
+});
+
+test("songs can belong to more than one group", () => {
+  assert.deepEqual(songs.find((song) => song.id === "praise").groups, ["A"]);
+  assert.deepEqual(songs.find((song) => song.id === "confia-en-dios").groups, ["A", "B", "C"]);
+  assert.deepEqual(songs.find((song) => song.id === "primer-amor").groups, ["C"]);
+  assert.deepEqual(songs.find((song) => song.id === "nada-es-imposible").groups, ["B"]);
+  assert.ok(songs.every((song) => song.groups.length > 0 && song.groups.every((group) => ["A", "B", "C"].includes(group))));
 });
 
 test("a song can gain and lose dates without touching the bundled setlists", () => {

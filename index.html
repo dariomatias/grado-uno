@@ -62,16 +62,10 @@
       }
       #statusMessage:empty { display: none; }
 
-      /* Tabs */
-      [role="tablist"] { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-      [role="tab"] {
-        background: var(--panel); border: 1px solid var(--border); color: var(--muted);
-        padding: 10px 16px; border-radius: 999px; min-height: 44px;
+      .meeting-picker {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-weight: 600;
       }
-      [role="tab"][aria-selected="true"] {
-        background: var(--panel-2); color: var(--gold-strong); border-color: var(--gold);
-        font-weight: 700;
-      }
+      .meeting-picker select { min-width: min(100%, 280px); }
 
       /* Setlist cards */
       .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
@@ -111,6 +105,25 @@
       .badge .k { color: var(--gold-strong); font-weight: 700; }
       .card .actions { display: flex; gap: 8px; flex-wrap: wrap; }
       .card .appearances, .card .assign { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+      .menu { position: relative; }
+      .menu > summary {
+        position: relative; list-style: none; cursor: pointer; min-height: 44px; padding: 10px 36px 10px 14px;
+        border: 1px solid var(--border); border-radius: 10px; background: var(--panel-2);
+      }
+      .menu > summary::-webkit-details-marker { display: none; }
+      .menu > summary::after {
+        content: "▾"; position: absolute; right: 12px; top: 10px; color: var(--muted);
+      }
+      .menu[open] > summary { border-color: var(--gold); }
+      .menu .panel {
+        position: absolute; z-index: 30; left: 0; top: calc(100% + 4px);
+        min-width: 100%; max-height: 240px; overflow: auto;
+        background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+        padding: 6px; box-shadow: 0 12px 28px rgba(0, 0, 0, .35);
+      }
+      .menu .panel label {
+        display: flex; gap: 8px; align-items: center; min-height: 36px; padding: 4px 8px; cursor: pointer;
+      }
       button.badge { cursor: pointer; color: inherit; font: inherit; font-size: .85rem; min-height: 36px; }
       button.badge[disabled] { cursor: default; opacity: .6; }
       .chip {
@@ -274,8 +287,10 @@
 
     <main id="mainContent">
       <section id="setlistView" aria-label="Listado de canciones por reunión">
-        <div id="tablist" role="tablist" aria-label="Reuniones"></div>
-        <div id="tabpanel" role="tabpanel">
+        <label class="meeting-picker">Fecha
+          <select id="meetingSelect" aria-label="Elegir fecha"></select>
+        </label>
+        <div id="tabpanel">
           <ol class="cards" id="songCards"></ol>
         </div>
       </section>
@@ -368,7 +383,59 @@ const SENTADO_TAG = [["Bm", "A/C#"], ["D", "E"]];
 // "Digno de alabar" = Worthy Of It All (CeCe Winans, chart en D = asignado).
 const WORTHY_CORO_B = [["D"], ["A"], ["D/F#", "G"], ["Bm", "A"], ["D"]];
 
-const meetings = [
+function datedLabel(iso) {
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+function emptyDatedMeeting(iso) {
+  const label = datedLabel(iso);
+  return { id: iso, label, shortLabel: label, date: iso, lineup: [], songs: [] };
+}
+
+/** Octubre 2026: viernes, sábado y domingo son fechas elegibles, aunque no tengan canciones. */
+function insertOctoberWeekends(list) {
+  const extras = [];
+  for (let day = 1; day <= 31; day++) {
+    const weekday = new Date(Date.UTC(2026, 9, day)).getUTCDay();
+    if (weekday !== 0 && weekday !== 5 && weekday !== 6) continue;
+    const id = `2026-10-${String(day).padStart(2, "0")}`;
+    if (list.some((meeting) => meeting.id === id)) continue;
+    extras.push(emptyDatedMeeting(id));
+  }
+  const ensayo = list.filter((meeting) => meeting.general);
+  const dated = [...list.filter((meeting) => !meeting.general), ...extras]
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  return [...dated, ...ensayo];
+}
+
+const LINEUP_GROUPS = {
+  "2026-09-04": "A",
+  "2026-09-13": "A",
+  "2026-09-18": "A",
+  "2026-09-27": "A",
+  "2026-10-02": "B",
+  "2026-10-03": "A",
+  "2026-10-04": "C",
+  "2026-10-09": "A",
+  "2026-10-10": "C",
+  "2026-10-11": "B",
+  "2026-10-16": "B",
+  "2026-10-17": "C",
+  "2026-10-18": "A",
+  "2026-10-24": "C",
+  "2026-10-25": "B",
+  "2026-10-30": "B",
+  "2026-10-31": "C",
+  "ensayo-general": "A"
+};
+
+function assignLineupGroup(meeting) {
+  const group = LINEUP_GROUPS[meeting.id];
+  return group ? { ...meeting, group } : meeting;
+}
+
+const meetings = insertOctoberWeekends([
   {
     id: "2026-09-04",
     label: "04/09/2026",
@@ -376,6 +443,7 @@ const meetings = [
     date: "2026-09-04",
     songs: [
       song("todo-es-posible", "Todo es posible", "D", {
+        groups: ["A", "B", "C"],
         artist: "Bethel Music, Dante Bowe (Anything Is Possible · Live)",
         // Única cifra en Cifra Club: está bajo un artista mal escrito ("Bettel Music").
         chartUrl: "https://www.cifraclub.com/bettel-music/anything-is-possible/",
@@ -426,6 +494,7 @@ const meetings = [
         ]
       }),
       song("creere", "Creeré", "A", {
+        groups: ["A", "C"],
         artist: "Bethel Music, Jonathan David Helser, Melissa Helser",
         sourceKey: "Bb",
         youtubeUrl: "https://www.youtube.com/watch?v=mg4fCJJ8SUE",
@@ -522,7 +591,7 @@ const meetings = [
         // God Of Revival, Cifra Club, PDF del 2026-10-08. Acordes escritos en C
         // (C4 = Csus4). El encabezado dice Bb en forma de A con capo 1, pero las
         // letras no son formas de A: se guarda la cifra impresa. El 04/09 suena
-        // en C; el 09/10 en Bb. El PDF no trae etiquetas de sección. Sólo acordes.
+        // en C. El PDF no trae etiquetas de sección. Sólo acordes.
         sections: [
           { type: "verse", label: "Verso 1", repeats: 1, measures: [["C4", "C"], ["Am"], ["G"], ["C4", "C"], ["Am"], ["G"]] },
           { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["F"], ["Am"], ["C"], ["G"], ["F"], ["Am"], ["C"], ["G"]] },
@@ -596,6 +665,7 @@ const meetings = [
         ]
       }),
       song("nadie", "Nadie", "G", {
+        groups: ["A", "B"],
         artist: "Elevation Worship",
         sourceKey: "D",
         chartUrl: "https://www.cifraclub.com/elevation-worship/nadie/",
@@ -625,7 +695,7 @@ const meetings = [
         beatsPerMeasure: 4,
         dates: [
           { id: "2026-09-13", key: "G" },
-          { id: "2026-10-09", key: "G" }
+          { id: "2026-10-09", key: "F" }
         ],
         // BORRADOR normalizado a G desde worshiptogether (Ab). Revisar con Darío.
         sections: [
@@ -656,6 +726,7 @@ const meetings = [
         ]
       }),
       song("no-hay-otro-nombre", "No Hay Otro Nombre", "G", {
+        groups: ["A", "B"],
         artist: "Hillsong en Español",
         sourceKey: "G",
         chartUrl: "https://www.cifraclub.com/hillsong-worship/no-hay-otro-nombre/",
@@ -751,6 +822,7 @@ const meetings = [
         ]
       }),
       song("clamo-a-cristo", "Clamo a Cristo", "E", {
+        groups: ["A", "C"],
         artist: "Elevation Español",
         sourceKey: "F",
         youtubeUrl: "https://www.youtube.com/watch?v=KTxfFEB8gAI",
@@ -789,6 +861,7 @@ const meetings = [
         ]
       }),
       song("para-siempre-cristo", "Para siempre Cristo", "E", {
+        groups: ["A", "C"],
         artist: "Elevation Español (Siempre YHWH · Forever YHWH)",
         sourceKey: "A", // cifra en formas de G con capo 2 (suena A); el PDF decía "F#", inconsistente con capo 2
         tempoBpm: 142, // patrón de rasgueo de la cifra
@@ -828,6 +901,7 @@ const meetings = [
         ]
       }),
       song("alabare-al-senor", "Alabaré al Señor", "D", {
+        groups: ["A", "B"],
         artist: "Hillsong en Español",
         sourceKey: "C",
         youtubeUrl: "https://www.youtube.com/watch?v=bggLFqnXygs",
@@ -877,6 +951,7 @@ const meetings = [
       // original D (Josué Ávila, Glorious Day · Remix; 114 bpm). Reemplaza a
       // "Eres libre" en el slot 2 según la numeración de Darío.
       song("glorioso-dia", "Glorioso Día (Remix)", "D", {
+        groups: ["A", "B", "C"],
         artist: "Josué Ávila (Glorious Day · Remix)",
         sourceKey: "D",
         youtubeUrl: "https://www.youtube.com/watch?v=bhPdS_ZUKg8",
@@ -994,30 +1069,208 @@ const meetings = [
     label: "09/10/2026",
     shortLabel: "09/10/2026",
     date: "2026-10-09",
-    // Mismas canciones, tono de esta fecha. El chart queda en la nota en que está escrito.
+    // Grupo A. El chart queda en la nota en que está escrito.
     lineup: [
       { id: "praise", key: "C", title: "Alabar" },
-      { id: "toda-lengua-y-toda-nacion", key: "G" },
-      { id: "lavado", key: "Bb" },
+      { id: "toda-lengua-y-toda-nacion", key: "D" },
+      { id: "lavado", key: "D" },
       { id: "amor-es-como-fuego", key: "Bb" },
-      { id: "quien-mas", key: "G" },
-      { id: "quiero-conocer-a-jesus", key: "G" },
-      { id: "el-nombre-de-jesus", key: "C" },
-      { id: "dios-de-avivamiento", key: "Bb" },
-      { id: "worthy-of-it-all", key: "D" }
+      { id: "quien-mas", key: "F" },
+      { id: "quiero-conocer-a-jesus", key: "F", title: "Yeshua" },
+      { id: "el-nombre-de-jesus", key: "D" }
     ],
     songs: []
   },
   {
-    // Ensayo del viernes 16/10/2026. Las cifras quedan en la nota impresa.
+    id: "2026-10-02",
+    label: "02/10/2026",
+    shortLabel: "02/10/2026",
+    date: "2026-10-02",
+    lineup: [
+      { id: "nada-es-imposible", key: "G" },
+      { id: "mi-testimonio", key: "D" },
+      { id: "una-y-otra-vez", key: "D" },
+      { id: "santo-espiritu", key: "D" },
+      { id: "te-lo-entrego-todo", key: "D" },
+      { id: "confia-en-dios", key: "A" },
+      { id: "al-unico", key: "G" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-03",
+    label: "03/10/2026",
+    shortLabel: "03/10/2026",
+    date: "2026-10-03",
+    lineup: [
+      { id: "algo-nuevo-viene", key: "Db" },
+      { id: "levanto-un-aleluya", key: "D" },
+      { id: "tumbas-a-jardines", key: "A" },
+      { id: "clamo-a-cristo", key: "A" },
+      { id: "lo-haras-otra-vez", key: "D" },
+      { id: "pertenezco-a-cristo", key: "D" },
+      { id: "autoridad", key: "B" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-11",
+    label: "11/10/2026",
+    shortLabel: "11/10/2026",
+    date: "2026-10-11",
+    lineup: [
+      { id: "dios-esta-aqui", key: "D" },
+      { id: "gracias-dios", key: "E" },
+      { id: "nadie", key: "E" },
+      { id: "ven-ante-su-trono", key: "E" },
+      { id: "la-sangre-de-jesus", key: "E" },
+      { id: "agradecido-estoy", key: "E" },
+      { id: "aleluya", key: "F#" }
+    ],
+    songs: []
+  },
+  {
     id: "2026-10-16",
     label: "16/10/2026",
     shortLabel: "16/10/2026",
     date: "2026-10-16",
     lineup: [
-      { id: "confia-en-dios", key: "C" },
-      { id: "ruido", key: "Eb" },
-      { id: "en-tu-mover", key: "G" }
+      { id: "tumbas-a-jardines", key: "A" },
+      { id: "no-vas-a-parar", key: "D" },
+      { id: "a-ti-adoramos", key: "D" },
+      { id: "santo-por-siempre", key: "G" },
+      { id: "alabare-al-senor", key: "G" },
+      { id: "digno-worthy", key: "C" },
+      { id: "autoridad", key: "Bb" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-25",
+    label: "25/10/2026",
+    shortLabel: "25/10/2026",
+    date: "2026-10-25",
+    lineup: [
+      { id: "todo-es-posible", key: "D" },
+      { id: "toda-lengua-y-toda-nacion", key: "D" },
+      { id: "en-ti-estoy-firme", key: "C" },
+      { id: "imagen-de-dios", key: "C" },
+      { id: "no-hay-otro-nombre", key: "C" },
+      { id: "por-siempre", key: "F" },
+      { id: "gloria-a-cristo", key: "E" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-30",
+    label: "30/10/2026",
+    shortLabel: "30/10/2026",
+    date: "2026-10-30",
+    lineup: [
+      { id: "glorioso-dia", key: "D" },
+      { id: "este-es-el-dia", key: "A" },
+      { id: "abre-los-cielos", key: "F" },
+      { id: "el-que-resucito", key: "F" },
+      { id: "tu-proveeras", key: "F" },
+      { id: "como-en-el-cielo", key: "C" },
+      { id: "bondad-de-dios", key: "F" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-04",
+    label: "04/10/2026",
+    shortLabel: "04/10/2026",
+    date: "2026-10-04",
+    lineup: [
+      { id: "el-vive", key: "E" },
+      { id: "toda-lengua-y-toda-nacion", key: "A" },
+      { id: "glorioso-dia", key: "G" },
+      { id: "grande-eres-dios", key: "D" },
+      { id: "milagroso", key: "D" },
+      { id: "digno-eres-de-gloria", key: "D" },
+      { id: "es-nuestro-dios", key: "E" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-10",
+    label: "10/10/2026",
+    shortLabel: "10/10/2026",
+    date: "2026-10-10",
+    lineup: [
+      { id: "eres-libre", key: "G" },
+      { id: "en-tu-mover", key: "C" },
+      { id: "en-ti-estoy-firme", key: "C" },
+      { id: "no-hay-otro-nombre-igual", key: "C" },
+      { id: "digno-worthy", key: "C" },
+      { id: "mismo-dios", key: "F" },
+      { id: "tu-proveeras", key: "F" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-17",
+    label: "17/10/2026",
+    shortLabel: "17/10/2026",
+    date: "2026-10-17",
+    lineup: [
+      { id: "todo-es-posible", key: "D" },
+      { id: "cordero-y-el-leon", key: "D" },
+      { id: "gracias-dios", key: "E" },
+      { id: "gloria-a-cristo", key: "E" },
+      { id: "para-siempre-cristo", key: "E" },
+      { id: "aleluya", key: "E" },
+      { id: "primer-amor", key: "A" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-24",
+    label: "24/10/2026",
+    shortLabel: "24/10/2026",
+    date: "2026-10-24",
+    lineup: [
+      { id: "levanto-un-aleluya", key: "C" },
+      { id: "por-siempre-te-alabare", key: "D" },
+      { id: "mi-testimonio", key: "A" },
+      { id: "ya-no-soy-esclavo", key: "A" },
+      { id: "ver-la-victoria", key: "D" },
+      { id: "hermoso-nombre", key: "D" },
+      { id: "clamo-a-cristo", key: "D" }
+    ],
+    songs: []
+  },
+  {
+    id: "2026-10-31",
+    label: "31/10/2026",
+    shortLabel: "31/10/2026",
+    date: "2026-10-31",
+    lineup: [
+      { id: "dios-esta-aqui", key: "D" },
+      { id: "creere", key: "A" },
+      { id: "decimos-amen", key: "F" },
+      { id: "revelacion", key: "F" },
+      { id: "santo-por-siempre", key: "F" },
+      { id: "cuan-grande-es-dios", key: "F" },
+      { id: "confia-en-dios", key: "Bb" }
+    ],
+    songs: []
+  },
+  {
+    // Grupo A, domingo 18/10/2026. Las cifras quedan en la nota impresa.
+    id: "2026-10-18",
+    label: "18/10/2026",
+    shortLabel: "18/10/2026",
+    date: "2026-10-18",
+    lineup: [
+      { id: "ruido", key: "C" },
+      { id: "toda-lengua-y-toda-nacion", key: "D" },
+      { id: "en-tu-mover", key: "E" },
+      { id: "give-me-jesus", key: "E" },
+      { id: "clamo-a-dios", key: "E" },
+      { id: "confia-en-dios", key: "B" },
+      { id: "ver-la-victoria", key: "A" }
     ],
     songs: []
   },
@@ -1058,7 +1311,7 @@ const meetings = [
       })
     ]
   }
-];
+]).map(assignLineupGroup);
 
 /**
  * Fábrica de canción. La canción es el objeto: letra (`lyrics`), acordes en la
@@ -1076,6 +1329,7 @@ function song(id, title, assignedKey, overrides = {}) {
     sourceStatus: "pending",
     lyrics: null,
     dates: [],
+    groups: ["A"], // todas arrancan en A; pueden sumarse B y C
     lyricsUrl: null,
     chartUrl: null, // enlace externo a la cifra/tablatura (Cifra Club); no se extrae contenido
     youtubeUrl: null,
@@ -1238,7 +1492,7 @@ const quieroConocerAJesus = song("quiero-conocer-a-jesus", "Quiero conocer a Jes
   artist: "Generación 12",
   sourceKey: "G",
   chartUrl: "https://www.cifraclub.com/generacion-12/quiero-conocer-a-jesus-yeshua-nuestro-dios-part-sofia-mancipe/",
-  dates: [{ id: "2026-10-09", key: "G" }],
+  dates: [{ id: "2026-10-09", key: "F", title: "Yeshua" }],
   sections: [
     { type: "intro", label: "Intro", repeats: 2, measures: JESUS_INTRO },
     { type: "instrumental", label: "Fingerpicking - Intro", repeats: 1, measures: JESUS_INTRO },
@@ -1326,11 +1580,12 @@ const LENGUA_FINAL = [
 ];
 
 const todaLenguaYTodaNacion = song("toda-lengua-y-toda-nacion", "Toda lengua y toda nación", "G", {
+  groups: ["A", "B", "C"],
   artist: "Marcos Brunet",
   sourceKey: "G",
   chartUrl: "https://www.cifraclub.com/marcos-brunet/toda-lengua-y-toda-nacion/",
   tempoBpm: 130,
-  dates: [{ id: "2026-10-09", key: "G" }],
+  dates: [{ id: "2026-10-09", key: "D" }],
   sections: [
     { type: "verse", label: "First Part", repeats: 1, measures: LENGUA_PRIMERA },
     { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: LENGUA_PRE },
@@ -1388,7 +1643,7 @@ const dignoDeAdorar = song("worthy-of-it-all", "Digno de Adorar (Worthy of It Al
   artist: "CCINT MUSIC",
   sourceKey: "D",
   chartUrl: "https://www.cifraclub.com/ccint-music/digno-de-adorar-worthy-of-it-all/",
-  dates: [{ id: "2026-10-09", key: "D" }],
+  dates: [],
   sections: [
     { type: "verse", label: "Verso", repeats: 1, measures: [["G", "A", "G", "A/F#"], ["G", "A", "Bm"], ["G", "A", "D"]] },
     { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A"], ["G"], ["A", "D"]] },
@@ -1404,10 +1659,11 @@ const CONFIA_ESTROFA = [["C"], ["Am"], ["F"], ["C/E", "Dm"], ["C"], ["Am"], ["F"
 const CONFIA_CORO = [["C"], ["Am"], ["F"], ["Dm", "F"]];
 
 const confiaEnDios = song("confia-en-dios", "Confía en Dios (Trust In God)", "C", {
+  groups: ["A", "B", "C"],
   artist: "Elevation Worship",
   sourceKey: "C",
   chartUrl: "https://www.cifraclub.com/elevation-worship/confia-en-dios-trust-in-god-original/",
-  dates: [{ id: "2026-10-16", key: "C" }],
+  dates: [{ id: "2026-10-18", key: "B" }],
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [...CONFIA_RITMO, ...CONFIA_RITMO] },
     { type: "verse", label: "First Part", repeats: 1, measures: CONFIA_ESTROFA },
@@ -1432,7 +1688,7 @@ const ruido = song("ruido", "Ruido!", "Eb", {
   artist: "Elevation Worship, Chris Brown, Steven Furtick, Brandon Lake",
   sourceKey: "Eb",
   chartUrl: "https://www.cifraclub.com/elevation-worship/ruido/",
-  dates: [{ id: "2026-10-16", key: "Eb" }],
+  dates: [{ id: "2026-10-18", key: "C" }],
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["Ab", "Eb/G", "Eb"]] },
     {
@@ -1464,9 +1720,10 @@ const MOVER_CORO = [["G"], ["D"], ["Bm"], ["G", "A"]];
 const MOVER_REY = [["Bm", "D", "G"], ["A", "Bm"], ["D", "G"], ["A"]];
 
 const enTuMover = song("en-tu-mover", "En tu mover", "G", {
+  groups: ["A", "C"],
   artist: "Nemuel",
   sourceKey: "G",
-  dates: [{ id: "2026-10-16", key: "G" }],
+  dates: [{ id: "2026-10-18", key: "E" }],
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["G", "D/F#", "Bm", "G", "A"]] },
     {
@@ -1489,14 +1746,268 @@ const enTuMover = song("en-tu-mover", "En tu mover", "G", {
   ]
 });
 
-const indexedSongs = indexSongs(meetings, [praise, amorEsComoFuego, encuentremeOtraVez, quieroConocerAJesus, todaLenguaYTodaNacion, reyDeReyes, dignoDeAdorar, confiaEnDios, ruido, enTuMover]);
+// Quiero a Cristo. El PDF se llama así; la cifra es Give Me Jesus, UPPERROOM,
+// del 2026-10-15, escrita en G. Key: G, sin capo. "true" y "knowing You" siguen
+// el verso de arriba y no agregan compás. El paréntesis es un compás de
+// acorde, sin letra. Sólo acordes.
+const QUIERO_CORO = [["G"], ["D"], ["Am7", "Em7"], ["C", "D"]];
+const QUIERO_PUENTE = [["G/B"], ["C"], ["Em7"], ["D"]];
+const QUIERO_COLA = [["G/B"], ["C"], ["Em7", "D"]];
+
+const giveMeJesus = song("give-me-jesus", "Quiero a Cristo (Give Me Jesus)", "G", {
+  artist: "UPPERROOM",
+  sourceKey: "G",
+  chartUrl: "https://www.cifraclub.com/upper-room-music/give-me-jesus/",
+  dates: [{ id: "2026-10-18", key: "E" }],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: [["G", "C"]] },
+    {
+      type: "verse", label: "Verse", repeats: 1,
+      measures: [["G"], ["C"], ["Am7"], ["G/B", "C"], ["G"], ["C"], ["Am7", "G/B"], ["C", "C"]]
+    },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: [...QUIERO_CORO, ["G"], ["G"], ["C"]] },
+    { type: "verse", label: "Verse", repeats: 1, measures: [["Am7"], ["G/B", "C", "D"]] },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: [...QUIERO_CORO, ...QUIERO_CORO, ["G/B", "C", "Em7", "D"]] },
+    { type: "bridge", label: "Bridge", repeats: 1, measures: [...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_COLA] },
+    { type: "chorus", label: "Chorus", repeats: 2, measures: QUIERO_CORO },
+    { type: "bridge", label: "Bridge", repeats: 1, measures: [...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_COLA] },
+    { type: "chorus", label: "Chorus", repeats: 2, measures: QUIERO_CORO }
+  ]
+});
+
+// Ver La Victoria. Cifra Club, Elevation Worship, PDF del 2026-10-15.
+// Encabezado: Key Bbm (in the shape of Am), capo 1st fret. Las formas impresas
+// son de Am y el capo 1 coincide (suena Bbm). Se guardan esas letras, en A;
+// no se fija capo: en el escenario restaría las formas. "triunfará" trae su
+// propio C. Sólo acordes.
+const VICTORIA_CORO = [["Am"], ["F"], ["C", "G"], ["Am"], ["F"], ["C", "G"]];
+const VICTORIA_PUENTE = [["F", "G"], ["Am", "F"], ["Am", "G"]];
+
+const verLaVictoria = song("ver-la-victoria", "Ver La Victoria", "A", {
+  groups: ["A", "C"],
+  artist: "Elevation Worship",
+  sourceKey: "A",
+  chartUrl: "https://www.cifraclub.com/elevation-worship/ver-la-victoria/",
+  dates: [{ id: "2026-10-18", key: "A" }],
+  sections: [
+    { type: "intro", label: "Intro", repeats: 1, measures: [["Am", "F", "C"], ["Am", "F", "C"]] },
+    {
+      type: "verse", label: "First Part", repeats: 1,
+      measures: [["Am", "F", "C"], ["Am", "F", "C"], ["Am", "F"], ["C"], ["Am", "F", "C"], ["Am", "F", "C"]]
+    },
+    { type: "chorus", label: "Chorus", repeats: 1, measures: VICTORIA_CORO },
+    { type: "interlude", label: "Interlude", repeats: 1, measures: [["Am", "F", "C"]] },
+    {
+      type: "verse", label: "Second Part", repeats: 1,
+      measures: [["Am"], ["F", "C"], ["Am", "F", "C"], ["Am", "F", "C"], ["Am", "F", "C"], ["Am", "F", "C"]]
+    },
+    { type: "chorus", label: "Chorus", repeats: 2, measures: VICTORIA_CORO },
+    { type: "interlude", label: "Interlude", repeats: 1, measures: [["F", "G", "Am"], ["F", "Am", "G"]] },
+    {
+      type: "bridge", label: "Bridge", repeats: 1,
+      measures: [...Array(6)].flatMap(() => VICTORIA_PUENTE.map((bar) => bar.slice()))
+    },
+    { type: "chorus", label: "Chorus", repeats: 2, measures: VICTORIA_CORO },
+    {
+      type: "bridge", label: "Bridge", repeats: 1,
+      measures: [...Array(2)].flatMap(() => VICTORIA_PUENTE.map((bar) => bar.slice()))
+    }
+  ]
+});
+
+// Grupo B (listas de octubre). El tono del lineup es el de la reunión.
+// chartKey queda en la nota de Cifra Club cuando la versión es clara; sin
+// secciones hasta revisar el chart completo, para no inventar compases.
+function grupoB(id, title, serviceKey, dateId, overrides = {}) {
+  const chartKey = overrides.chartKey ?? serviceKey;
+  const rest = { ...overrides };
+  delete rest.chartKey;
+  return song(id, title, chartKey, {
+    groups: ["B"],
+    dates: [{ id: dateId, key: serviceKey }],
+    ...rest
+  });
+}
+
+const grupoBSongs = [
+  grupoB("nada-es-imposible", "Nada es imposible", "G", "2026-10-02", {
+    artist: "Planetshakers",
+    chartKey: "C",
+    sourceKey: "C",
+    chartUrl: "https://www.cifraclub.com/planetshakers/nada-es-imposible/"
+  }),
+  grupoB("mi-testimonio", "Mi testimonio", "D", "2026-10-02", {
+    groups: ["B", "C"],
+    artist: "Elevation Worship",
+    chartKey: "G",
+    sourceKey: "G",
+    chartUrl: "https://www.cifraclub.com/elevation-worship/mi-testimonio/",
+    youtubeUrl: "https://www.youtube.com/watch?v=1S-i8mtCoTU",
+    youtubeVideoId: "1S-i8mtCoTU"
+  }),
+  grupoB("una-y-otra-vez", "Una y otra vez", "D", "2026-10-02"),
+  grupoB("santo-espiritu", "Santo Espíritu", "D", "2026-10-02"),
+  grupoB("te-lo-entrego-todo", "Te lo entrego todo", "D", "2026-10-02", {
+    artist: "Bethel Music",
+    chartKey: "G",
+    sourceKey: "G",
+    chartUrl: "https://www.cifraclub.com/bethel-music/te-lo-entrego-todo/"
+  }),
+  grupoB("al-unico", "Al único", "G", "2026-10-02"),
+  grupoB("dios-esta-aqui", "Dios está aquí", "D", "2026-10-11", { groups: ["B", "C"] }),
+  grupoB("gracias-dios", "Gracias Dios", "E", "2026-10-11", { groups: ["B", "C"] }),
+  grupoB("ven-ante-su-trono", "Ven ante su trono", "E", "2026-10-11"),
+  grupoB("la-sangre-de-jesus", "La sangre de Jesús", "E", "2026-10-11"),
+  grupoB("agradecido-estoy", "Agradecido estoy", "E", "2026-10-11"),
+  grupoB("aleluya", "Aleluya", "F#", "2026-10-11", { groups: ["B", "C"] }),
+  grupoB("tumbas-a-jardines", "Tumbas a jardines", "A", "2026-10-16", {
+    groups: ["A", "B"],
+    artist: "Elevation Worship",
+    chartKey: "G",
+    sourceKey: "G",
+    chartUrl: "https://www.cifraclub.com/elevation-worship/tumbas-a-jardines/"
+  }),
+  grupoB("no-vas-a-parar", "No vas a parar", "D", "2026-10-16", {
+    artist: "Elevation Worship",
+    chartUrl: "https://www.cifraclub.com/elevation-worship/no-vas-a-parar/"
+  }),
+  grupoB("a-ti-adoramos", "A ti adoramos", "D", "2026-10-16"),
+  grupoB("santo-por-siempre", "Santo por siempre", "G", "2026-10-16", { groups: ["B", "C"] }),
+  grupoB("digno-worthy", "Digno (Worthy)", "C", "2026-10-16", {
+    groups: ["B", "C"],
+    artist: "Elevation Worship",
+    chartUrl: "https://www.cifraclub.com/elevation-worship/digno/"
+  }),
+  grupoB("autoridad", "Autoridad", "Bb", "2026-10-16", {
+    groups: ["A", "B"],
+    artist: "Elevation Worship",
+    chartKey: "C",
+    sourceKey: "C",
+    chartUrl: "https://www.cifraclub.com/elevation-worship/autoridad/"
+  }),
+  grupoB("en-ti-estoy-firme", "En ti estoy firme", "C", "2026-10-25", {
+    groups: ["B", "C"],
+    artist: "Bethel Music"
+  }),
+  grupoB("imagen-de-dios", "Imagen de Dios", "C", "2026-10-25"),
+  grupoB("por-siempre", "Por siempre", "F", "2026-10-25"),
+  grupoB("gloria-a-cristo", "Gloria a Cristo", "E", "2026-10-25", { groups: ["B", "C"] }),
+  grupoB("este-es-el-dia", "Este es el día", "A", "2026-10-30", {
+    artist: "Planetshakers",
+    chartKey: "G",
+    sourceKey: "G",
+    chartUrl: "https://www.cifraclub.com/planetshakers/este-es-el-dia/"
+  }),
+  grupoB("abre-los-cielos", "Abre los cielos", "F", "2026-10-30"),
+  grupoB("el-que-resucito", "El que resucitó", "F", "2026-10-30"),
+  grupoB("tu-proveeras", "Tú proveerás", "F", "2026-10-30", {
+    groups: ["B", "C"],
+    artist: "Majo y Dan, Christine D'Clario",
+    chartUrl: "https://www.cifraclub.com/majo-y-dan/tu-proveeras-part-christine-d-clario/"
+  }),
+  grupoB("como-en-el-cielo", "Como en el cielo", "C", "2026-10-30"),
+  grupoB("bondad-de-dios", "Bondad de Dios", "F", "2026-10-30")
+];
+
+// Grande eres Dios (Great Are You Lord). Cifra Club, All Sons & Daughters, en D.
+// Los acordes de una misma línea comparten el compás. Sólo acordes.
+const GRANDE_ERES_DIOS_VERSO = [["D", "F#m"], ["E"], ["D", "F#m"], ["E"], ["D", "F#m", "E"]];
+const GRANDE_ERES_DIOS_CORO = [["D", "F#m"], ["E"], ["D", "F#m"], ["E"]];
+
+const grupoCSongs = [
+  grupoB("el-vive", "El Vive", "E", "2026-10-04", {
+    groups: ["C"],
+    artist: "Israel Houghton",
+    chartUrl: "https://www.cifraclub.com/israel-houghton/el-vive/",
+    youtubeUrl: "https://www.youtube.com/watch?v=JSdw0pblPqs",
+    youtubeVideoId: "JSdw0pblPqs"
+  }),
+  grupoB("grande-eres-dios", "Grande eres Dios", "D", "2026-10-04", {
+    groups: ["C"],
+    artist: "All Sons & Daughters",
+    sourceKey: "D",
+    chartUrl: "https://www.cifraclub.com/all-sons-and-daughters/great-are-you-lord/",
+    sections: [
+      { type: "intro", label: "Intro", repeats: 2, measures: [["D", "F#m"], ["E"]] },
+      { type: "verse", label: "Verse", repeats: 1, measures: GRANDE_ERES_DIOS_VERSO },
+      { type: "chorus", label: "Chorus", repeats: 1, measures: GRANDE_ERES_DIOS_CORO },
+      { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["A", "Asus4", "D2", "A"]] },
+      { type: "bridge", label: "Bridge", repeats: 1, measures: [["A"], ["Asus4"], ["D2", "A"]] },
+      { type: "outro", label: "Ending", repeats: 1, measures: [["D", "F#m", "E"]] }
+    ]
+  }),
+  grupoB("milagroso", "Milagroso", "D", "2026-10-04", {
+    groups: ["C"],
+    artist: "Leeland",
+    chartKey: "E",
+    sourceKey: "E",
+    chartUrl: "https://www.cifraclub.com/leeland/way-maker/",
+    youtubeUrl: "https://www.youtube.com/watch?v=iJCV_2H9xD0",
+    youtubeVideoId: "iJCV_2H9xD0"
+  }),
+  grupoB("digno-eres-de-gloria", "Digno eres de gloria", "D", "2026-10-04", { groups: ["C"] }),
+  grupoB("es-nuestro-dios", "Es nuestro Dios", "E", "2026-10-04", {
+    groups: ["C"],
+    artist: "Hillsong UNITED",
+    sourceKey: "E",
+    chartUrl: "https://www.cifraclub.com/hillsong-united/es-nuestro-dios/"
+  }),
+  grupoB("eres-libre", "Eres libre", "G", "2026-10-10", { groups: ["C"] }),
+  grupoB("no-hay-otro-nombre-igual", "No hay otro nombre igual", "C", "2026-10-10", { groups: ["C"] }),
+  grupoB("mismo-dios", "Mismo Dios", "F", "2026-10-10", { groups: ["C"] }),
+  grupoB("cordero-y-el-leon", "Cordero y el León", "D", "2026-10-17", {
+    groups: ["C"],
+    artist: "Leeland",
+    chartKey: "B",
+    sourceKey: "B",
+    chartUrl: "https://www.cifraclub.com/leeland/lion-and-the-lamb/"
+  }),
+  grupoB("primer-amor", "Primer amor", "A", "2026-10-17", {
+    groups: ["C"],
+    artist: "UPPERROOM, Toma Tu Lugar",
+    sourceKey: "A",
+    chartUrl: "https://www.cifraclub.com/upper-room-music/primer-amor/"
+  }),
+  grupoB("levanto-un-aleluya", "Levanto un aleluya", "C", "2026-10-24", { groups: ["A", "C"] }),
+  grupoB("por-siempre-te-alabare", "Por siempre te alabaré", "D", "2026-10-24", { groups: ["C"] }),
+  grupoB("ya-no-soy-esclavo", "Ya no soy esclavo / Así peleo mis batallas", "A", "2026-10-24", { groups: ["C"] }),
+  grupoB("hermoso-nombre", "Hermoso nombre", "D", "2026-10-24", { groups: ["C"] }),
+  grupoB("decimos-amen", "Decimos amén", "F", "2026-10-31", { groups: ["C"] }),
+  grupoB("revelacion", "Revelación", "F", "2026-10-31", { groups: ["C"] }),
+  grupoB("cuan-grande-es-dios", "Cuán grande es Dios", "F", "2026-10-31", { groups: ["C"] })
+];
+
+const grupoAOctober = [
+  grupoB("algo-nuevo-viene", "Algo nuevo viene", "Db", "2026-10-03", {
+    groups: ["A"],
+    artist: "Elevation Worship"
+  }),
+  // Cifra Club imprime formas de G (capo 3, suena Bb). Se guarda esa nota, sin capo.
+  grupoB("lo-haras-otra-vez", "Lo harás otra vez", "D", "2026-10-03", {
+    groups: ["A"],
+    artist: "Elevation Worship",
+    chartKey: "G",
+    sourceKey: "G",
+    chartUrl: "https://www.cifraclub.com/elevation-worship/lo-haras-otra-vez/"
+  }),
+  // El chart está en Cm; no se guarda como tono mayor ni se copian compases.
+  grupoB("pertenezco-a-cristo", "Pertenezco a Cristo", "D", "2026-10-03", {
+    groups: ["A"],
+    artist: "Marco Barrientos",
+    chartUrl: "https://www.cifraclub.com/marco-barrientos/pertenezco-a-cristo/"
+  })
+];
+
+const indexedSongs = indexSongs(meetings, [praise, amorEsComoFuego, encuentremeOtraVez, quieroConocerAJesus, todaLenguaYTodaNacion, reyDeReyes, dignoDeAdorar, confiaEnDios, ruido, enTuMover, giveMeJesus, verLaVictoria, ...grupoAOctober, ...grupoBSongs, ...grupoCSongs]);
 
 for (const meeting of meetings) {
   for (const slot of meeting.lineup ?? []) {
     const song = indexedSongs.byId.get(slot.id);
     if (!song) throw new Error(`lineup missing ${slot.id}`);
     if (!song.dates.some((d) => d.id === meeting.id)) {
-      song.dates.push({ id: meeting.id, key: slot.key, title: slot.title });
+      const tag = { id: meeting.id, key: slot.key };
+      if (slot.title) tag.title = slot.title;
+      song.dates.push(tag);
     }
   }
 }
@@ -1516,13 +2027,36 @@ export const setlists = meetings.map((meeting) => {
   };
 });
 
+/** Una lista ordenada por fecha y grupo. El mes sale de la fecha. */
+export const lineups = setlists
+  .filter((setlist) => setlist.group && setlist.songs.length)
+  .map((setlist) => ({
+    id: `${setlist.id}:${setlist.group}`,
+    setlistId: setlist.id,
+    date: setlist.date,
+    group: setlist.group,
+    slots: setlist.songs.map((song, position) => {
+      const slot = { position, songId: song.id, key: song.assignedKey };
+      if (song.title !== song.canonicalTitle) slot.title = song.title;
+      return slot;
+    })
+  }));
+
+const GROUP_ORDER = ["A", "B", "C"];
+for (const song of songs) {
+  const found = lineups
+    .filter((lineup) => lineup.slots.some((slot) => slot.songId === song.id))
+    .map((lineup) => lineup.group);
+  if (found.length) song.groups = GROUP_ORDER.filter((group) => found.includes(group));
+}
+
 export const appearanceKey = (setlistId, songId) => `${setlistId}:${songId}`;
 
 export function validateSetlists(items) {
   const errors = [];
   for (const setlist of items) {
     // El largo lo define el lineup de esa fecha. Ensayo queda afuera.
-    if (!setlist.general && setlist.songs.length < 1) errors.push(`${setlist.id}: empty lineup`);
+    // Una fecha sin canciones es válida: octubre ofrece viernes, sábado y domingo vacíos.
     const ids = new Set();
     for (const s of setlist.songs) {
       if (ids.has(s.id)) errors.push(`${setlist.id}: duplicate ${s.id}`);
@@ -1662,7 +2196,7 @@ export function initialState() {
     accidentalMode: "sharp",
     simplify: "none", // "none" | "basic" | "minimal" — ver simplify-module
     home: true, // true = pestaña Home (índice de todas las canciones); false = una reunión
-    homeFilters: { query: "", key: "", setlistId: "", status: "", group: "" },
+    homeFilters: { query: "", key: "", month: "", setlistId: "", status: "", group: "" },
     metronomeRunning: false
   };
 }
@@ -2207,7 +2741,8 @@ export function buildCatalog(setlists, librarySongs = []) {
       if (song.title && song.title !== title && !entry.aliases.includes(song.title)) entry.aliases.push(song.title);
       entry.hasChart = entry.hasChart || song.sections.length > 0;
       entry.appearances.push({
-        setlistIndex, setlistId: sl.id, label: sl.shortLabel, date: sl.date, songIndex, assignedKey: song.assignedKey
+        setlistIndex, setlistId: sl.id, label: sl.shortLabel, date: sl.date, songIndex,
+        assignedKey: song.assignedKey, title: song.title
       });
       byId.set(song.id, entry);
     });
@@ -2234,12 +2769,79 @@ export function catalogKeys(items) {
   return [...keys].sort((a, b) => KEY_ORDER.indexOf(a) - KEY_ORDER.indexOf(b));
 }
 
-export function filterCatalog(items, { query = "", key = "", setlistId = "", status = "", group = "" } = {}) {
+const MONTH_NAMES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+export function monthLabel(month) {
+  const [year, mm] = String(month).split("-");
+  const name = MONTH_NAMES[Number(mm) - 1];
+  return name ? `${name} ${year}` : String(month);
+}
+
+function setlistHasSongs(setlist, items) {
+  if (Array.isArray(setlist.songs)) return setlist.songs.length > 0;
+  return items.some((item) => (item.appearances ?? []).some((appearance) => appearance.setlistId === setlist.id));
+}
+
+/** Mes, después grupo, después reunión. El grupo lo declara el lineup de esa fecha. */
+export function homeFacets(items, setlists, filters = {}) {
+  const pool = (omit) => filterCatalog(items, { ...filters, [omit]: "" });
+  const rows = setlists
+    .filter((setlist) => setlist.group && setlistHasSongs(setlist, items))
+    .map((setlist) => ({
+      id: setlist.id,
+      month: setlist.date ? String(setlist.date).slice(0, 7) : "",
+      date: setlist.date ?? "9999-99-99",
+      groups: [setlist.group]
+    }))
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  const months = [];
+  for (const row of rows) {
+    if (row.month && !months.includes(row.month)) months.push(row.month);
+  }
+  const inMonth = rows.filter((row) => !filters.month || row.month === filters.month);
+  const groups = GROUPS.filter((group) => inMonth.some((row) => row.groups.includes(group)));
+  const setlistIds = inMonth
+    .filter((row) => !filters.group || row.groups.includes(filters.group))
+    .map((row) => row.id);
+  const statusPool = pool("status");
+  const statuses = [];
+  if (statusPool.some((item) => item.hasChart)) statuses.push("chart");
+  if (statusPool.some((item) => !item.hasChart)) statuses.push("pending");
+  return { keys: catalogKeys(pool("key")), months, setlistIds, groups, statuses };
+}
+
+/** Con mes, grupo o reunión, el índice sigue el puesto del lineup. Sin eso, queda el orden alfabético. */
+export function sortByLineup(items, { setlistId = "", allowedIds = null } = {}) {
+  if (!setlistId && !allowedIds) return items;
+  const rankOf = (item) => {
+    const hits = (item.appearances ?? []).filter((appearance) => {
+      if (setlistId) return appearance.setlistId === setlistId;
+      return allowedIds.has(appearance.setlistId);
+    });
+    if (!hits.length) return null;
+    hits.sort((a, b) => String(a.date ?? "").localeCompare(String(b.date ?? "")) || a.songIndex - b.songIndex);
+    return hits[0];
+  };
+  return items.slice().sort((a, b) => {
+    const left = rankOf(a);
+    const right = rankOf(b);
+    if (!left && !right) return 0;
+    if (!left) return 1;
+    if (!right) return -1;
+    const byDate = String(left.date ?? "").localeCompare(String(right.date ?? ""));
+    if (byDate) return byDate;
+    return left.songIndex - right.songIndex;
+  });
+}
+
+export function filterCatalog(items, { query = "", key = "", month = "", setlistId = "", status = "", group = "" } = {}) {
   const q = normalizeText(query);
   const inKey = (it) => it.appearances.some((a) => a.assignedKey === key) || (it.appearances.length === 0 && it.assignedKey === key);
+  const inMonth = (it) => it.appearances.some((a) => String(a.date ?? "").startsWith(month));
   return items.filter((it) =>
     (!q || normalizeText(it.title).includes(q) || normalizeText(it.artist).includes(q) || (it.aliases ?? []).some((a) => normalizeText(a).includes(q))) &&
     (!key || inKey(it)) &&
+    (!month || inMonth(it)) &&
     (!setlistId || it.appearances.some((a) => a.setlistId === setlistId)) &&
     (!status || (status === "chart" ? it.hasChart : !it.hasChart)) &&
     (!group || (it.groups ?? []).includes(group))
@@ -2247,8 +2849,8 @@ export function filterCatalog(items, { query = "", key = "", setlistId = "", sta
 }
 
 // Fechas y grupos editables desde Home. Una canción puede estar en varias
-// reuniones. Los grupos son A, B y C, aparte de las fechas. Sin `dateIds` en
-// la edición se conservan las fechas del repertorio.
+// reuniones y en varios grupos (A, B y C). Sin `dateIds` en la edición se
+// conservan las fechas del repertorio. El grupo de partida es A.
 export const GROUPS = ["A", "B", "C"];
 
 export function normalizeGroups(groups) {
@@ -2355,6 +2957,219 @@ export function applySongOrder(songs, orderIds) {
    Capa DOM (impura): consume los módulos puros de arriba.
    ============================================================ */
 
+// El ensayo guardado como 16/10 pasa a 18/10 una sola vez. Después el 16 queda libre.
+function migrateStoredDate(fromId, toId) {
+  const flag = `worship-setlist:moved:${fromId}`;
+  const rewrite = (key, transform) => {
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    const next = transform(JSON.parse(raw));
+    if (next !== undefined) localStorage.setItem(key, JSON.stringify(next));
+  };
+  const movePrefix = (parsed) => {
+    if (!parsed || typeof parsed !== "object") return undefined;
+    let changed = false;
+    for (const key of Object.keys(parsed)) {
+      if (!key.startsWith(`${fromId}:`)) continue;
+      const next = `${toId}:${key.slice(fromId.length + 1)}`;
+      if (!(next in parsed)) parsed[next] = parsed[key];
+      delete parsed[key];
+      changed = true;
+    }
+    return changed ? parsed : undefined;
+  };
+  try {
+    if (localStorage.getItem(flag)) return;
+    rewrite("worship-setlist:assignments:v1", (parsed) => {
+      if (!parsed || typeof parsed !== "object") return undefined;
+      let changed = false;
+      for (const entry of Object.values(parsed)) {
+        if (!entry || !Array.isArray(entry.dateIds) || !entry.dateIds.includes(fromId)) continue;
+        entry.dateIds = [...new Set(entry.dateIds.map((id) => (id === fromId ? toId : id)))];
+        changed = true;
+      }
+      return changed ? parsed : undefined;
+    });
+    rewrite("worship-setlist:order:v1", (parsed) => {
+      if (!parsed || typeof parsed !== "object" || !parsed[fromId]) return undefined;
+      if (!parsed[toId]) parsed[toId] = parsed[fromId];
+      delete parsed[fromId];
+      return parsed;
+    });
+    rewrite("worship-setlist:keys:v1", movePrefix);
+    rewrite("worship-setlist:lyrics:v1", movePrefix);
+    localStorage.setItem(flag, "1");
+  } catch { /* la sesión sigue con lo que haya */ }
+}
+migrateStoredDate("2026-10-16", "2026-10-18");
+
+// Las canciones ya guardadas en este navegador también entran a A, sin sacar
+// B o C si ya los tenían. Una sola vez: después se puede quitar A.
+function assignStoredSongsToGroupA() {
+  const flag = "worship-setlist:group-a-default:v1";
+  try {
+    if (localStorage.getItem(flag)) return;
+    const key = "worship-setlist:assignments:v1";
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        let changed = false;
+        for (const entry of Object.values(parsed)) {
+          if (!entry || typeof entry !== "object") continue;
+          const groups = normalizeGroups(entry.groups);
+          if (groups.includes("A")) continue;
+          entry.groups = normalizeGroups(["A", ...groups]);
+          changed = true;
+        }
+        if (changed) localStorage.setItem(key, JSON.stringify(parsed));
+      }
+    }
+    localStorage.setItem(flag, "1");
+  } catch { /* sin esta pasada, el grupo A igual sale del repertorio */ }
+}
+assignStoredSongsToGroupA();
+
+function mergeStoredGroup(songIds, group, flag) {
+  try {
+    if (localStorage.getItem(flag)) return;
+    const key = "worship-setlist:assignments:v1";
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        let changed = false;
+        for (const id of songIds) {
+          const entry = parsed[id];
+          if (!entry || typeof entry !== "object" || !Array.isArray(entry.groups)) continue;
+          if (normalizeGroups(entry.groups).includes(group)) continue;
+          entry.groups = normalizeGroups([...entry.groups, group]);
+          changed = true;
+        }
+        if (changed) localStorage.setItem(key, JSON.stringify(parsed));
+      }
+    }
+    localStorage.setItem(flag, "1");
+  } catch { /* sin esta pasada, el grupo B igual sale del repertorio */ }
+}
+mergeStoredGroup([
+  "confia-en-dios", "nadie", "alabare-al-senor", "todo-es-posible",
+  "toda-lengua-y-toda-nacion", "no-hay-otro-nombre", "glorioso-dia"
+], "B", "worship-setlist:group-b-lineup:v1");
+mergeStoredGroup([
+  "toda-lengua-y-toda-nacion", "glorioso-dia", "en-tu-mover", "en-ti-estoy-firme",
+  "digno-worthy", "tu-proveeras", "dios-esta-aqui", "creere", "santo-por-siempre",
+  "confia-en-dios", "mi-testimonio", "ver-la-victoria", "clamo-a-cristo",
+  "todo-es-posible", "gracias-dios", "gloria-a-cristo", "para-siempre-cristo", "aleluya"
+], "C", "worship-setlist:group-c-lineup:v1");
+
+function mergeStoredDates(pairs, flag) {
+  try {
+    if (localStorage.getItem(flag)) return;
+    const key = "worship-setlist:assignments:v1";
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        let changed = false;
+        for (const [id, dateId] of pairs) {
+          const entry = parsed[id];
+          if (!entry || typeof entry !== "object" || !Array.isArray(entry.dateIds)) continue;
+          if (entry.dateIds.includes(dateId)) continue;
+          entry.dateIds.push(dateId);
+          changed = true;
+        }
+        if (changed) localStorage.setItem(key, JSON.stringify(parsed));
+      }
+    }
+    localStorage.setItem(flag, "1");
+  } catch { /* sin esta pasada, la fecha igual sale del repertorio */ }
+}
+mergeStoredDates([
+  ["toda-lengua-y-toda-nacion", "2026-10-04"],
+  ["glorioso-dia", "2026-10-04"],
+  ["en-tu-mover", "2026-10-10"],
+  ["en-ti-estoy-firme", "2026-10-10"],
+  ["digno-worthy", "2026-10-10"],
+  ["tu-proveeras", "2026-10-10"],
+  ["todo-es-posible", "2026-10-17"],
+  ["gracias-dios", "2026-10-17"],
+  ["gloria-a-cristo", "2026-10-17"],
+  ["para-siempre-cristo", "2026-10-17"],
+  ["aleluya", "2026-10-17"],
+  ["mi-testimonio", "2026-10-24"],
+  ["ver-la-victoria", "2026-10-24"],
+  ["clamo-a-cristo", "2026-10-24"],
+  ["dios-esta-aqui", "2026-10-31"],
+  ["creere", "2026-10-31"],
+  ["santo-por-siempre", "2026-10-31"],
+  ["confia-en-dios", "2026-10-31"]
+], "worship-setlist:group-c-dates:v1");
+
+mergeStoredGroup([
+  "levanto-un-aleluya", "tumbas-a-jardines", "autoridad"
+], "A", "worship-setlist:group-a-october-groups:v1");
+
+// Las tres primeras de octubre del grupo A reemplazan lo guardado en este
+// navegador una sola vez. Después se puede sacar o reordenar.
+function syncStoredLineups(lineups, flag) {
+  try {
+    if (localStorage.getItem(flag)) return;
+    const key = "worship-setlist:assignments:v1";
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        let changed = false;
+        for (const [id, entry] of Object.entries(parsed)) {
+          if (!entry || typeof entry !== "object" || !Array.isArray(entry.dateIds)) continue;
+          for (const [dateId, songIds] of Object.entries(lineups)) {
+            const belongs = songIds.includes(id);
+            const has = entry.dateIds.includes(dateId);
+            if (belongs && !has) {
+              entry.dateIds.push(dateId);
+              changed = true;
+            } else if (!belongs && has) {
+              entry.dateIds = entry.dateIds.filter((stored) => stored !== dateId);
+              changed = true;
+            }
+          }
+        }
+        if (changed) localStorage.setItem(key, JSON.stringify(parsed));
+      }
+    }
+    const orderKey = "worship-setlist:order:v1";
+    const orderRaw = localStorage.getItem(orderKey);
+    if (orderRaw) {
+      const order = JSON.parse(orderRaw);
+      if (order && typeof order === "object") {
+        let changed = false;
+        for (const [dateId, songIds] of Object.entries(lineups)) {
+          if (!Array.isArray(order[dateId])) continue;
+          order[dateId] = songIds.slice();
+          changed = true;
+        }
+        if (changed) localStorage.setItem(orderKey, JSON.stringify(order));
+      }
+    }
+    localStorage.setItem(flag, "1");
+  } catch { /* sin esta pasada, el repertorio igual sale de las listas */ }
+}
+syncStoredLineups({
+  "2026-10-03": [
+    "algo-nuevo-viene", "levanto-un-aleluya", "tumbas-a-jardines", "clamo-a-cristo",
+    "lo-haras-otra-vez", "pertenezco-a-cristo", "autoridad"
+  ],
+  "2026-10-09": [
+    "praise", "toda-lengua-y-toda-nacion", "lavado", "amor-es-como-fuego",
+    "quien-mas", "quiero-conocer-a-jesus", "el-nombre-de-jesus"
+  ],
+  "2026-10-18": [
+    "ruido", "toda-lengua-y-toda-nacion", "en-tu-mover", "give-me-jesus",
+    "clamo-a-dios", "confia-en-dios", "ver-la-victoria"
+  ]
+}, "worship-setlist:group-a-october:v1");
+
 const LYRICS_STORAGE_KEY = "worship-setlist:lyrics:v1";
 const CHROMATIC = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
@@ -2362,7 +3177,7 @@ const el = {
   setlistView: document.getElementById("setlistView"),
   stageView: document.getElementById("stageView"),
   status: document.getElementById("statusMessage"),
-  tablist: document.getElementById("tablist"),
+  meetingSelect: document.getElementById("meetingSelect"),
   cards: document.getElementById("songCards"),
   dialog: document.getElementById("lyricsDialog"),
   textarea: document.getElementById("lyricsTextarea"),
@@ -2433,6 +3248,7 @@ const lyricsStore = (() => {
 })();
 
 const KEYS_STORAGE_KEY = "worship-setlist:keys:v1";
+const ASSIGNMENTS_STORAGE_KEY = "worship-setlist:assignments:v1";
 
 function readKeyOverrides() {
   try {
@@ -2473,7 +3289,10 @@ const assignmentStore = (() => {
 })();
 
 function groupsOf(songId) {
-  return normalizeGroups(assignmentStore.get(songId)?.groups);
+  const saved = assignmentStore.get(songId);
+  if (saved && Array.isArray(saved.groups)) return normalizeGroups(saved.groups);
+  const song = songs.find((item) => item.id === songId);
+  return normalizeGroups(song?.groups ?? ["A"]);
 }
 
 function datesOf(songId) {
@@ -2489,9 +3308,17 @@ const orderStore = (() => {
     try { localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(memory)); } catch { /* el orden sigue en esta sesión */ }
   };
   return {
-    get: (setlistId) => memory[setlistId] ?? null,
-    save(setlistId, ids) {
-      memory = { ...memory, [setlistId]: [...ids] };
+    get(setlist) {
+      if (setlist && typeof setlist === "object") {
+        return memory[`${setlist.id}:${setlist.group}`] ?? memory[setlist.id] ?? null;
+      }
+      return memory[setlist] ?? null;
+    },
+    save(setlist, ids) {
+      const key = setlist && typeof setlist === "object" && setlist.group
+        ? `${setlist.id}:${setlist.group}`
+        : setlist?.id ?? setlist;
+      memory = { ...memory, [key]: [...ids] };
       flush();
     }
   };
@@ -2499,7 +3326,7 @@ const orderStore = (() => {
 
 function rebuildLive() {
   liveSetlists = applyDateAssignments(setlists, songs, assignmentStore.all())
-    .map((sl) => ({ ...sl, songs: applySongOrder(sl.songs, orderStore.get(sl.id)) }));
+    .map((sl) => ({ ...sl, songs: applySongOrder(sl.songs, orderStore.get(sl)) }));
   const placed = new Set(liveSetlists.flatMap((sl) => sl.songs.map((s) => s.id)));
   liveCatalog = buildCatalog(liveSetlists, songs.filter((s) => !placed.has(s.id))).map((item) => ({
     ...item,
@@ -2509,101 +3336,71 @@ function rebuildLive() {
   if (state.selectedSongIndex > max) state = { ...state, selectedSongIndex: max };
 }
 
-function chip(text, removeLabel, onRemove) {
-  const span = document.createElement("span");
-  span.className = "chip";
-  span.append(document.createTextNode(text));
-  if (onRemove) {
-    const remove = document.createElement("button");
-    remove.type = "button";
-    remove.textContent = "×";
-    remove.setAttribute("aria-label", removeLabel);
-    remove.addEventListener("click", onRemove);
-    span.appendChild(remove);
-  }
-  return span;
-}
-
-function addSelect(ariaLabel, placeholder, options, onPick) {
-  const select = document.createElement("select");
-  select.setAttribute("aria-label", ariaLabel);
-  const blank = document.createElement("option");
-  blank.value = "";
-  blank.textContent = placeholder;
-  select.appendChild(blank);
+function multiMenu(menu, label, emptyText, options, selected, onChange) {
+  const details = document.createElement("details");
+  details.className = "menu";
+  details.dataset.menu = menu;
+  const summary = document.createElement("summary");
+  const chosen = options.filter(([value]) => selected.includes(value)).map(([, text]) => text);
+  summary.textContent = chosen.length ? chosen.join(", ") : emptyText;
+  summary.setAttribute("aria-label", label);
+  const panel = document.createElement("div");
+  panel.className = "panel";
   for (const [value, text] of options) {
-    const opt = document.createElement("option");
-    opt.value = value;
-    opt.textContent = text;
-    select.appendChild(opt);
+    const row = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = value;
+    input.checked = selected.includes(value);
+    input.addEventListener("change", () => {
+      const picked = new Set([...panel.querySelectorAll("input:checked")].map((box) => box.value));
+      onChange(options.filter(([id]) => picked.has(id)).map(([id]) => id), value);
+    });
+    row.append(input, document.createTextNode(text));
+    panel.appendChild(row);
   }
-  select.addEventListener("change", () => {
-    if (!select.value) return;
-    onPick(select.value);
-  });
-  return select;
+  details.append(summary, panel);
+  return details;
 }
 
 function renderSongAssignments(parent, item) {
   const dateIds = datesOf(item.id);
   const groups = item.groups ?? groupsOf(item.id);
-
-  const dates = document.createElement("div");
-  dates.className = "assign";
-  const dateLabel = document.createElement("span");
-  dateLabel.className = "hint";
-  dateLabel.textContent = dateIds.length > 1 ? "Fechas:" : "Fecha:";
-  dates.appendChild(dateLabel);
-  if (dateIds.length === 0) {
-    const empty = document.createElement("span");
-    empty.className = "chip quiet";
-    empty.textContent = "Sin fecha";
-    dates.appendChild(empty);
-  }
-  for (const id of dateIds) {
-    const meeting = setlists.find((sl) => sl.id === id);
-    const label = meeting?.shortLabel ?? id;
-    dates.appendChild(chip(label, `Quitar la fecha ${label} de ${item.title}`, () => {
-      editSong(item.id, withoutDate(dateIds, id), groups);
-    }));
-  }
-  const freeDates = setlists.filter((sl) => !dateIds.includes(sl.id));
-  if (freeDates.length) {
-    dates.appendChild(addSelect("Agregar fecha", "Agregar fecha", freeDates.map((sl) => [sl.id, sl.shortLabel]), (id) => {
-      editSong(item.id, withDate(dateIds, id), groups);
-    }));
-  }
-  parent.appendChild(dates);
-
-  const groupRow = document.createElement("div");
-  groupRow.className = "assign";
-  const groupLabel = document.createElement("span");
-  groupLabel.className = "hint";
-  groupLabel.textContent = "Grupos:";
-  groupRow.appendChild(groupLabel);
-  for (const group of groups) {
-    groupRow.appendChild(chip(group, `Quitar el grupo ${group} de ${item.title}`, () => {
-      editSong(item.id, dateIds, withoutGroup(groups, group));
-    }));
-  }
-  const freeGroups = GROUPS.filter((g) => !groups.includes(g));
-  if (freeGroups.length) {
-    groupRow.appendChild(addSelect("Agregar grupo", "Agregar grupo", freeGroups.map((g) => [g, g]), (group) => {
-      editSong(item.id, dateIds, withGroup(groups, group));
-    }));
-  }
-  parent.appendChild(groupRow);
+  const row = document.createElement("div");
+  row.className = "assign";
+  row.appendChild(multiMenu(
+    "fechas",
+    `Fechas de ${item.title}`,
+    "Sin fecha",
+    setlists.map((sl) => [sl.id, sl.shortLabel]),
+    dateIds,
+    (ids, focusValue) => editSong(item.id, ids, groups, "fechas", focusValue)
+  ));
+  row.appendChild(multiMenu(
+    "grupos",
+    `Grupos de ${item.title}`,
+    "Sin grupo",
+    GROUPS.map((group) => [group, `Grupo ${group}`]),
+    groups,
+    (ids, focusValue) => editSong(item.id, dateIds, ids, "grupos", focusValue)
+  ));
+  parent.appendChild(row);
 }
 
 function announce(message) {
   el.status.textContent = message;
 }
 
-function editSong(songId, dateIds, groups) {
+function editSong(songId, dateIds, groups, menu, focusValue) {
   assignmentStore.save(songId, dateIds, groups);
   rebuildLive();
   renderList();
   announce("Canción actualizada");
+  if (!menu) return;
+  const root = el.cards.querySelector(`li[data-song-id="${CSS.escape(songId)}"] details[data-menu="${menu}"]`);
+  if (!root) return;
+  root.open = true;
+  if (focusValue) root.querySelector(`input[value="${CSS.escape(focusValue)}"]`)?.focus();
 }
 
 function activeSetlist() {
@@ -2652,45 +3449,28 @@ function tabDefs() {
   return [{ id: "home", label: "Home", home: true }, ...liveSetlists.map((sl, index) => ({ id: sl.id, label: sl.shortLabel, index }))];
 }
 
-function renderTabs() {
-  el.tablist.innerHTML = "";
+function renderMeetingSelect() {
   const tabs = tabDefs();
+  const selected = tabs.findIndex((t) => t.home ? state.home : !state.home && t.index === state.activeSetlistIndex);
+  el.meetingSelect.replaceChildren();
   tabs.forEach((t, i) => {
-    const tab = document.createElement("button");
-    tab.type = "button";
-    tab.role = "tab";
-    tab.id = `tab-${t.id}`;
-    tab.textContent = t.label;
-    tab.setAttribute("aria-controls", "tabpanel");
-    const selected = t.home ? Boolean(state.home) : (!state.home && t.index === state.activeSetlistIndex);
-    tab.setAttribute("aria-selected", String(selected));
-    tab.tabIndex = selected ? 0 : -1;
-    tab.addEventListener("click", () => {
-      activateTab(i);
-      el.tablist.children[i]?.focus();
-    });
-    tab.addEventListener("keydown", (e) => onTabKeydown(e, i, tabs.length));
-    el.tablist.appendChild(tab);
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = t.label;
+    opt.selected = i === selected;
+    el.meetingSelect.appendChild(opt);
   });
 }
 
 function activateTab(i) {
   state = i === 0 ? { ...state, home: true } : selectSetlist(state, i - 1, liveSetlists.length - 1);
-  renderTabs();
+  renderMeetingSelect();
   renderList();
 }
 
-function onTabKeydown(e, index, count) {
-  let next = null;
-  if (e.key === "ArrowRight") next = (index + 1) % count;
-  else if (e.key === "ArrowLeft") next = (index - 1 + count) % count;
-  else if (e.key === "Home") next = 0;
-  else if (e.key === "End") next = count - 1;
-  if (next === null) return;
-  e.preventDefault();
-  activateTab(next);
-  el.tablist.children[next].focus();
-}
+el.meetingSelect.addEventListener("change", () => {
+  activateTab(Number(el.meetingSelect.value));
+});
 
 /** Listado bajo las pestañas: Home (índice) o la reunión activa. */
 function renderList() {
@@ -2728,15 +3508,12 @@ function ensureHomeControls() {
     }
     return select;
   };
-  const keySelect = makeSelect("homeKey", "Filtrar por tono",
-    [["", "Tono: todos"], ...catalogKeys(liveCatalog).map((k) => [k, `Tono: ${k}`])]);
-  const setlistSelect = makeSelect("homeSetlist", "Filtrar por reunión",
-    [["", "Reunión: todas"], ...liveSetlists.map((sl) => [sl.id, `Reunión: ${sl.shortLabel}`])]);
-  const statusSelect = makeSelect("homeStatus", "Filtrar por partitura",
-    [["", "Partitura: todas"], ["chart", "Con partitura"], ["pending", "Sin partitura"]]);
-  const groupSelect = makeSelect("homeGroup", "Filtrar por grupo",
-    [["", "Grupo: todos"], ...GROUPS.map((g) => [g, `Grupo ${g}`])]);
-  for (const [select, field] of [[keySelect, "key"], [setlistSelect, "setlistId"], [statusSelect, "status"], [groupSelect, "group"]]) {
+  const keySelect = makeSelect("homeKey", "Filtrar por tono", [["", "Tono: todos"]]);
+  const monthSelect = makeSelect("homeMonth", "Filtrar por mes", [["", "Mes: todos"]]);
+  const setlistSelect = makeSelect("homeSetlist", "Filtrar por reunión", [["", "Reunión: todas"]]);
+  const statusSelect = makeSelect("homeStatus", "Filtrar por partitura", [["", "Partitura: todas"]]);
+  const groupSelect = makeSelect("homeGroup", "Filtrar por grupo", [["", "Grupo: todos"]]);
+  for (const [select, field] of [[keySelect, "key"], [monthSelect, "month"], [setlistSelect, "setlistId"], [statusSelect, "status"], [groupSelect, "group"]]) {
     select.addEventListener("change", () => {
       state = setHomeFilters(state, { [field]: select.value });
       renderHomeCards();
@@ -2747,7 +3524,7 @@ function ensureHomeControls() {
   clear.type = "button";
   clear.textContent = "Limpiar";
   clear.addEventListener("click", () => {
-    state = setHomeFilters(state, { query: "", key: "", setlistId: "", status: "", group: "" });
+    state = setHomeFilters(state, { query: "", key: "", month: "", setlistId: "", status: "", group: "" });
     renderHome();
     search.focus();
   });
@@ -2757,28 +3534,71 @@ function ensureHomeControls() {
   count.id = "homeCount";
   count.setAttribute("aria-live", "polite");
 
-  wrap.append(search, keySelect, setlistSelect, groupSelect, statusSelect, clear, count);
+  wrap.append(search, monthSelect, groupSelect, setlistSelect, keySelect, statusSelect, clear, count);
   el.cards.parentElement.insertBefore(wrap, el.cards);
-  homeControls = { wrap, search, keySelect, setlistSelect, statusSelect, groupSelect, count };
+  homeControls = { wrap, search, keySelect, monthSelect, setlistSelect, statusSelect, groupSelect, count };
   return homeControls;
+}
+
+function replaceSelectOptions(select, options, selected) {
+  const keep = options.some(([value]) => value === selected) ? selected : "";
+  select.replaceChildren();
+  for (const [value, text] of options) {
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = text;
+    select.append(opt);
+  }
+  select.value = keep;
+  return keep;
+}
+
+function refreshHomeFacets() {
+  const c = homeControls;
+  if (!c) return;
+  let filters = { query: "", key: "", month: "", setlistId: "", status: "", group: "", ...(state.homeFilters ?? {}) };
+  let facets = homeFacets(liveCatalog, liveSetlists, filters);
+  if (filters.month && !facets.months.includes(filters.month)) {
+    filters = { ...filters, month: "", group: "", setlistId: "" };
+    facets = homeFacets(liveCatalog, liveSetlists, filters);
+  } else if (filters.group && !facets.groups.includes(filters.group)) {
+    filters = { ...filters, group: "", setlistId: "" };
+    facets = homeFacets(liveCatalog, liveSetlists, filters);
+  } else if (filters.setlistId && !facets.setlistIds.includes(filters.setlistId)) {
+    filters = { ...filters, setlistId: "" };
+    facets = homeFacets(liveCatalog, liveSetlists, filters);
+  }
+  const key = replaceSelectOptions(c.keySelect, [["", "Tono: todos"], ...facets.keys.map((k) => [k, `Tono: ${k}`])], filters.key);
+  const month = replaceSelectOptions(c.monthSelect, [["", "Mes: todos"], ...facets.months.map((m) => [m, `Mes: ${monthLabel(m)}`])], filters.month);
+  const setlistId = replaceSelectOptions(c.setlistSelect, [
+    ["", "Reunión: todas"],
+    ...facets.setlistIds.map((id) => [id, `Reunión: ${liveSetlists.find((sl) => sl.id === id).shortLabel}`])
+  ], filters.setlistId);
+  const group = replaceSelectOptions(c.groupSelect, [["", "Grupo: todos"], ...facets.groups.map((g) => [g, `Grupo ${g}`])], filters.group);
+  const statusLabel = { chart: "Con partitura", pending: "Sin partitura" };
+  const status = replaceSelectOptions(c.statusSelect, [["", "Partitura: todas"], ...facets.statuses.map((s) => [s, statusLabel[s]])], filters.status);
+  if (key !== filters.key || month !== filters.month || setlistId !== filters.setlistId || group !== filters.group || status !== filters.status) {
+    state = setHomeFilters(state, { key, month, setlistId, group, status });
+  }
 }
 
 function renderHome() {
   const c = ensureHomeControls();
   c.wrap.hidden = false;
-  const f = state.homeFilters ?? {};
-  c.search.value = f.query ?? "";
-  c.keySelect.value = f.key ?? "";
-  c.setlistSelect.value = f.setlistId ?? "";
-  c.statusSelect.value = f.status ?? "";
-  c.groupSelect.value = f.group ?? "";
+  c.search.value = state.homeFilters?.query ?? "";
   renderHomeCards();
 }
 
 function renderHomeCards() {
   const c = ensureHomeControls();
+  refreshHomeFacets();
   const filters = state.homeFilters ?? {};
-  const items = filterCatalog(liveCatalog, filters);
+  const allowedDates = (filters.month || filters.group)
+    ? new Set(homeFacets(liveCatalog, liveSetlists, filters).setlistIds)
+    : null;
+  let items = filterCatalog(liveCatalog, filters);
+  if (allowedDates) items = items.filter((item) => item.appearances.some((appearance) => allowedDates.has(appearance.setlistId)));
+  if (filters.setlistId || allowedDates) items = sortByLineup(items, { setlistId: filters.setlistId, allowedIds: allowedDates });
   c.count.textContent = `${items.length} de ${liveCatalog.length} canciones`;
   el.cards.innerHTML = "";
   if (items.length === 0) {
@@ -2793,11 +3613,18 @@ function renderHomeCards() {
     const main = item.appearances.find((a) => a.setlistId === filters.setlistId) ?? item.appearances[0];
     const li = document.createElement("li");
     li.className = "card";
+    li.dataset.songId = item.id;
 
     const row1 = document.createElement("div");
     row1.className = "row1";
-    row1.innerHTML = `<span class="num">${position + 1}</span><span class="title"></span>`;
-    row1.querySelector(".title").textContent = item.title;
+    const shown = item.appearances.filter((appearance) => {
+      if (filters.setlistId) return appearance.setlistId === filters.setlistId;
+      if (allowedDates) return allowedDates.has(appearance.setlistId);
+      return true;
+    });
+    const sheet = filters.setlistId ? shown[0] : null;
+    row1.innerHTML = `<span class="num">${(sheet?.songIndex ?? position) + 1}</span><span class="title"></span>`;
+    row1.querySelector(".title").textContent = sheet?.title || item.title;
     li.appendChild(row1);
 
     const meta = document.createElement("div");
@@ -2807,8 +3634,9 @@ function renderHomeCards() {
 
     const keys = document.createElement("div");
     keys.className = "keys";
-    const uniqueKeys = item.appearances.length
-      ? [...new Set(item.appearances.map((a) => playedLabel(a.assignedKey, state.transpositions[`${a.setlistId}:${item.id}`] ?? 0)))]
+    const keySource = shown.length ? shown : item.appearances;
+    const uniqueKeys = keySource.length
+      ? [...new Set(keySource.map((a) => playedLabel(a.assignedKey, state.transpositions[`${a.setlistId}:${item.id}`] ?? 0)))]
       : [playedLabel(item.assignedKey, state.transpositions[`general:${item.id}`] ?? 0)];
     keys.innerHTML = uniqueKeys.map((k) => `<span class="badge">Tono <span class="k">${k}</span></span>`).join("");
     li.appendChild(keys);
@@ -2846,8 +3674,8 @@ function renderHomeCards() {
   });
 }
 
-function commitListOrder(setlistId, ids, focusSongId) {
-  orderStore.save(setlistId, ids);
+function commitListOrder(ids, focusSongId) {
+  orderStore.save(activeSetlist(), ids);
   const selectedId = activeSetlist().songs[state.selectedSongIndex]?.id;
   rebuildLive();
   const sel = activeSetlist().songs.findIndex((s) => s.id === selectedId);
@@ -2955,7 +3783,7 @@ function bindReorder(button, card) {
         card.style.cssText = "";
         if (placeholder.isConnected) placeholder.replaceWith(card);
         if (ids.join("|") !== startIds.join("|")) {
-          commitListOrder(activeSetlist().id, ids, card.dataset.songId);
+          commitListOrder(ids, card.dataset.songId);
         }
       }, 180);
     };
@@ -2973,7 +3801,7 @@ function bindReorder(button, card) {
     event.preventDefault();
     if (to < 0 || to >= cards.length || card.classList.contains("lifting")) return;
     const ids = reorderIds(cards.map((item) => item.dataset.songId), fromIndex, to);
-    commitListOrder(activeSetlist().id, ids, card.dataset.songId);
+    commitListOrder(ids, card.dataset.songId);
   });
 }
 
@@ -3017,18 +3845,7 @@ function renderSetlist() {
       `<span class="badge">Tono <span class="k">${played}</span></span>` +
       (semis !== 0 ? `<span class="badge">Escrita <span class="k">${song.assignedKey}</span></span>` : "");
     li.appendChild(keys);
-    const groups = groupsOf(song.id);
-    if (groups.length) {
-      const groupRow = document.createElement("div");
-      groupRow.className = "assign";
-      for (const group of groups) {
-        const span = document.createElement("span");
-        span.className = "chip quiet";
-        span.textContent = `Grupo ${group}`;
-        groupRow.appendChild(span);
-      }
-      li.appendChild(groupRow);
-    }
+    renderSongAssignments(li, song);
 
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -3116,7 +3933,7 @@ function backToSetlist() {
   librarySongId = null;
   el.stageView.hidden = true;
   el.setlistView.hidden = false;
-  renderTabs();
+  renderMeetingSelect();
   renderList();
   window.scrollTo(0, scrollBySetlist[returnToHome ? "home" : state.activeSetlistIndex] ?? 0);
   if (lastOpenerButton && document.contains(lastOpenerButton)) lastOpenerButton.focus();
@@ -4144,7 +4961,7 @@ window.addEventListener("pagehide", stopMetronome);
 
 /* ---- Boot ---- */
 rebuildLive();
-renderTabs();
+renderMeetingSelect();
 renderList();
     </script>
   </body>
