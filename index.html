@@ -5,22 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Setlist de Worship — Transponible</title>
     <style>
-      :root {
-        --bg: #0f1115;
-        --panel: #171a21;
-        --panel-2: #1f232c;
-        --text: #f3f4f6;
-        --muted: #9aa3b2;
-        --gold: #e7b45a;
-        --gold-strong: #f4c777;
-        --error: #f2777a;
-        --ok: #7ac77a;
-        --border: #2a2f3a;
-        --focus: #8ab4ff;
+      /* Tres apariencias. Tinta es la base; Papel y Pizarra pisan estas variables. */
+      :root,
+      :root[data-theme="tinta"] {
+        color-scheme: dark;
+        --bg: #1c1916;
+        --panel: #262220;
+        --panel-2: #312c28;
+        --text: #e7e1d6;
+        --muted: #a3988c;
+        --gold: #c4a574;
+        --gold-strong: #d8c4a0;
+        --on-accent: #1c1916;
+        --error: #e08a86;
+        --ok: #8fbf8a;
+        --border: #3a342e;
+        --focus: #d8c4a0;
         --radius: 12px;
-        --group-a: #e7b45a;
-        --group-b: #7eb6ff;
-        --group-c: #f08a9a;
+        --group-a: #c4a574;
+        --group-b: #8aa4b8;
+        --group-c: #c49290;
+      }
+      :root[data-theme="papel"] {
+        color-scheme: light;
+        --bg: #f4f0e6;
+        --panel: #fffdf8;
+        --panel-2: #eae4d6;
+        --text: #2c2824;
+        --muted: #6f675e;
+        --gold: #8c4a32;
+        --gold-strong: #6e3824;
+        --on-accent: #fffdf8;
+        --error: #9d3030;
+        --ok: #2f6b3a;
+        --border: #ddd4c4;
+        --focus: #8c4a32;
+        --group-a: #8a6a3b;
+        --group-b: #3d6a78;
+        --group-c: #8d4e55;
+      }
+      :root[data-theme="pizarra"] {
+        color-scheme: dark;
+        --bg: #1a1e24;
+        --panel: #222831;
+        --panel-2: #2a313c;
+        --text: #d5dbe3;
+        --muted: #8e98a6;
+        --gold: #7d9a8a;
+        --gold-strong: #b7cfc2;
+        --on-accent: #1a1e24;
+        --error: #e09a96;
+        --ok: #8fbf8a;
+        --border: #343c48;
+        --focus: #b7cfc2;
+        --group-a: #b7a48a;
+        --group-b: #7f96ad;
+        --group-c: #b08b95;
       }
       * { box-sizing: border-box; }
       html, body { margin: 0; height: 100%; }
@@ -32,7 +72,7 @@
       }
       .skip-link {
         position: absolute; left: -999px; top: 0;
-        background: var(--gold); color: #111; padding: 10px 14px; border-radius: 0 0 8px 0;
+        background: var(--gold); color: var(--on-accent); padding: 10px 14px; border-radius: 0 0 8px 0;
         z-index: 100;
       }
       .skip-link:focus { left: 0; }
@@ -47,7 +87,7 @@
       }
       button:hover { border-color: var(--gold); }
       button:disabled { opacity: .45; cursor: not-allowed; }
-      button.primary { background: var(--gold); color: #14161b; border-color: var(--gold); font-weight: 700; }
+      button.primary { background: var(--gold); color: var(--on-accent); border-color: var(--gold); font-weight: 700; }
       :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
       [hidden] { display: none !important; }
       header.app {
@@ -56,6 +96,11 @@
       }
       header.app h1 { font-size: 1.15rem; margin: 0; }
       header.app p { margin: 0; color: var(--muted); font-size: .85rem; }
+      header.app .theme {
+        margin-left: auto; display: inline-flex; align-items: center; gap: 8px;
+        color: var(--muted); font-size: .85rem;
+      }
+      header.app .theme select { min-height: 44px; }
       main { padding: 16px; max-width: 1100px; margin: 0 auto; }
       #statusMessage {
         position: fixed; bottom: 0; left: 0; right: 0; margin: 0;
@@ -232,7 +277,7 @@
       .pattern .repeats { color: var(--gold-strong); font-size: 1.05rem; font-weight: 700; white-space: nowrap; }
       /* Indicación de arreglo por sección (p. ej. "entra acústica"), dato de Darío */
       .section .cue {
-        margin-left: auto; font-size: .8rem; font-weight: 600;
+        margin-left: 0; font-size: .8rem; font-weight: 600;
         color: var(--text); background: var(--panel-2); border: 1px solid var(--border);
         border-radius: 999px; padding: 2px 10px; white-space: nowrap;
       }
@@ -333,6 +378,14 @@
     <header class="app">
       <h1>Setlist de Worship</h1>
       <p>Lista general · por fecha · acordes transponibles · letras locales</p>
+      <label class="theme">
+        Apariencia
+        <select id="themeSelect" aria-label="Apariencia">
+          <option value="tinta">Tinta cálida</option>
+          <option value="papel">Papel</option>
+          <option value="pizarra">Pizarra</option>
+        </select>
+      </label>
     </header>
 
     <main id="mainContent">
@@ -385,6 +438,14 @@
       </div>
     </dialog>
 
+    <script>
+      try {
+        const theme = localStorage.getItem("worship-setlist:theme:v1");
+        if (theme === "papel" || theme === "pizarra" || theme === "tinta") {
+          document.documentElement.dataset.theme = theme;
+        }
+      } catch { /* la apariencia queda en Tinta cálida */ }
+    </script>
     <script type="module">
 /* content-module:start */
 // Coro de "Todo es posible" (chart oficial Bethel, Bb → D). Se reutiliza en
@@ -521,15 +582,15 @@ const meetings = insertOctoberWeekends([
         // Chart oficial de Bethel Music (CCLI 7148926, tono original Bb,
         // 122 BPM) aportado por Darío; normalizado a D (+4). Sólo acordes.
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D"], ["D"], ["D"], ["D"], ["Bm"], ["G"], ["D"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: TODO_ES_POSIBLE_VERSO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
-          { type: "verse", label: "Verso 3", repeats: 1, measures: TODO_ES_POSIBLE_VERSO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
+          { type: "verse", label: "Verso 1", cue: "There is no shadow", repeats: 1, measures: [["D"], ["D"], ["D"], ["D"], ["Bm"], ["G"], ["D"]] },
+          { type: "verse", label: "Verso 2", cue: "There is no weapon", repeats: 1, measures: TODO_ES_POSIBLE_VERSO },
+          { type: "chorus", label: "Coro", cue: "Show me one thing", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
+          { type: "verse", label: "Verso 3", cue: "There is a kingdom", repeats: 1, measures: TODO_ES_POSIBLE_VERSO },
+          { type: "chorus", label: "Coro", cue: "Show me one thing", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
           { type: "instrumental", label: "Canal", repeats: 2, measures: [["D"], ["D"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["D"], ["D"], ["D"], ["D"]] },
-          { type: "bridge", label: "Puente (acordes alternos)", repeats: 2, measures: [["Bm"], ["A"], ["D/F#"], ["G"], ["Bm"], ["A"], ["D"], ["G"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
+          { type: "bridge", label: "Puente", cue: "All of my fear", repeats: 1, measures: [["D"], ["D"], ["D"], ["D"]] },
+          { type: "bridge", label: "Puente (acordes alternos)", cue: "All of my fear", repeats: 2, measures: [["Bm"], ["A"], ["D/F#"], ["G"], ["Bm"], ["A"], ["D"], ["G"]] },
+          { type: "chorus", label: "Coro", cue: "Show me one thing", repeats: 1, measures: TODO_ES_POSIBLE_CORO },
           { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["G"], ["G"], ["D"], ["A"], ["G"], ["G"], ["D"], ["A"], ["G"], ["G"], ["Bm"], ["D"], ["G"], ["G"], ["D"], ["A"]] }
         ]
       }),
@@ -542,21 +603,21 @@ const meetings = insertOctoberWeekends([
         // Chart en G aportado por Darío (PDF, 2026-09-07); sin transposición.
         // Tres acordes (G, D, A). Sin BPM en la fuente. Sólo acordes.
         sections: [
-          { type: "chorus", label: "Coro", repeats: 1, measures: A_JESUS_CORO },
-          { type: "tag", label: "Tag", repeats: 1, measures: A_JESUS_TAG },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["G", "D", "A"], ["G", "D"], ["A"], ["G", "D", "A"], ["G", "D"], ["A"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: A_JESUS_CORO },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["G", "D", "A"], ["G", "D"], ["G", "D", "A"], ["G"], ["D", "A"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: A_JESUS_CORO },
-          { type: "tag", label: "Tag", repeats: 1, measures: A_JESUS_TAG },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
-          { type: "tag", label: "Tag", repeats: 2, measures: A_JESUS_TAG },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: A_JESUS_PRECORO },
-          { type: "tag", label: "Tag", repeats: 2, measures: A_JESUS_TAG },
-          { type: "chorus", label: "Coro (final)", repeats: 1, measures: A_JESUS_CORO },
-          { type: "tag", label: "Tag", repeats: 1, measures: A_JESUS_TAG }
+          { type: "chorus", label: "Coro", cue: "A Jesús seguiré", repeats: 1, measures: A_JESUS_CORO },
+          { type: "tag", label: "Tag", cue: "A Jesús seguiré", repeats: 1, measures: A_JESUS_TAG },
+          { type: "verse", label: "Verso 1", cue: "Tu reino la oscuridad", repeats: 1, measures: [["G", "D", "A"], ["G", "D"], ["A"], ["G", "D", "A"], ["G", "D"], ["A"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Su trono él dejó", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "chorus", label: "Coro", cue: "A Jesús seguiré", repeats: 1, measures: A_JESUS_CORO },
+          { type: "verse", label: "Verso 2", cue: "Tu reino en la", repeats: 1, measures: [["G", "D", "A"], ["G", "D"], ["G", "D", "A"], ["G"], ["D", "A"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Su trono él dejó", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "chorus", label: "Coro", cue: "A Jesús seguiré", repeats: 1, measures: A_JESUS_CORO },
+          { type: "tag", label: "Tag", cue: "A Jesús seguiré", repeats: 1, measures: A_JESUS_TAG },
+          { type: "prechorus", label: "Pre-coro", cue: "Su trono él dejó", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "tag", label: "Tag", cue: "A Jesús seguiré", repeats: 2, measures: A_JESUS_TAG },
+          { type: "prechorus", label: "Pre-coro", cue: "Su trono él dejó", repeats: 1, measures: A_JESUS_PRECORO },
+          { type: "tag", label: "Tag", cue: "A Jesús seguiré", repeats: 2, measures: A_JESUS_TAG },
+          { type: "chorus", label: "Coro (final)", cue: "A Jesús seguiré", repeats: 1, measures: A_JESUS_CORO },
+          { type: "tag", label: "Tag", cue: "A Jesús seguiré", repeats: 1, measures: A_JESUS_TAG }
         ]
       }),
       song("creere", "Creeré", "A", {
@@ -572,18 +633,18 @@ const meetings = insertOctoberWeekends([
         // Las multipistas oficiales del zip están en "Tonalidad de A". Sólo acordes.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["D"], ["A", "D"], ["A", "D"], ["A", "D"], ["A", "D"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A", "Asus", "A"], ["Asus", "A"], ["F#m"], ["D", "A", "F#m", "E", "D"]] },
-          { type: "chorus", label: "Coro 1", repeats: 1, measures: CREERE_CORO },
+          { type: "verse", label: "Verso 1", cue: "En tu sangre yo", repeats: 1, measures: [["A", "Asus", "A"], ["Asus", "A"], ["F#m"], ["D", "A", "F#m", "E", "D"]] },
+          { type: "chorus", label: "Coro 1", cue: "Al postrarme ante ti", repeats: 1, measures: CREERE_CORO },
           { type: "instrumental", label: "Transición 1", repeats: 1, measures: [["A", "D"], ["A", "D"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A"], ["Asus", "A"], ["A", "Asus", "A"], ["F#m"], ["D", "A", "F#m", "E", "D"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: CREERE_CORO },
+          { type: "verse", label: "Verso 2", cue: "Hoy los muros están", repeats: 1, measures: [["A"], ["Asus", "A"], ["A", "Asus", "A"], ["F#m"], ["D", "A", "F#m", "E", "D"]] },
+          { type: "chorus", label: "Coro", cue: "Al postrarme ante ti", repeats: 1, measures: CREERE_CORO },
           { type: "instrumental", label: "Transición 2", repeats: 1, measures: [["A", "E/G#"], ["F#m", "E"], ["D"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: CREERE_PUENTE },
-          { type: "chorus", label: "Coro 2", repeats: 1, measures: [["A"], ["Asus", "A"], ["F#m", "E"], ["D", "E"], ["A"], ["Asus", "A"], ["F#m", "E"], ["D", "E"]] },
-          { type: "chorus", label: "Coro 1", repeats: 1, measures: CREERE_CORO },
-          { type: "tag", label: "Tag", repeats: 3, measures: [["A"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: CREERE_PUENTE },
-          { type: "chorus", label: "Coro", repeats: 1, measures: CREERE_CORO }
+          { type: "bridge", label: "Puente", cue: "Cántalo a las hijas", repeats: 1, measures: CREERE_PUENTE },
+          { type: "chorus", label: "Coro 2", cue: "No importa donde voy", repeats: 1, measures: [["A"], ["Asus", "A"], ["F#m", "E"], ["D", "E"], ["A"], ["Asus", "A"], ["F#m", "E"], ["D", "E"]] },
+          { type: "chorus", label: "Coro 1", cue: "Al postrarme ante ti", repeats: 1, measures: CREERE_CORO },
+          { type: "tag", label: "Tag", cue: "De una a otra", repeats: 3, measures: [["A"]] },
+          { type: "bridge", label: "Puente", cue: "Cántalo a las hijas", repeats: 1, measures: CREERE_PUENTE },
+          { type: "chorus", label: "Coro", cue: "Al postrarme ante ti", repeats: 1, measures: CREERE_CORO }
         ]
       }),
       song("santo-una-cosa", "Santo una cosa", "A", {
@@ -596,11 +657,11 @@ const meetings = insertOctoberWeekends([
         // Chart Cifra Club (TOMATULUGAR) aportado por Darío el 2026-09-08, en G;
         // normalizado a A (+2). "C9" del chart = Cadd9 → "D9". Sin BPM. Sólo acordes.
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A"], ["D9"], ["F#m", "D9"], ["E", "D9"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A"], ["D9"], ["F#m"], ["D9", "E", "D9"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["A"], ["D9"], ["A"], ["D9"], ["C#m", "B"], ["A"], ["C#m", "B", "A"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["A", "D9"], ["F#m"], ["D9"], ["F#m"], ["E"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["Bm", "G#m", "A"], ["B"]] }
+          { type: "verse", label: "Verso 1", cue: "Todo está preparado", repeats: 1, measures: [["A"], ["D9"], ["F#m", "D9"], ["E", "D9"]] },
+          { type: "verse", label: "Verso 2", cue: "Los hijos ya están", repeats: 1, measures: [["A"], ["D9"], ["F#m"], ["D9", "E", "D9"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Todos los versos", repeats: 1, measures: [["A"], ["D9"], ["A"], ["D9"], ["C#m", "B"], ["A"], ["C#m", "B", "A"]] },
+          { type: "chorus", label: "Coro", cue: "Tú eres santo", repeats: 1, measures: [["A", "D9"], ["F#m"], ["D9"], ["F#m"], ["E"]] },
+          { type: "bridge", label: "Puente", cue: "Una cosa pediré", repeats: 1, measures: [["Bm", "G#m", "A"], ["B"]] }
         ]
       }),
       song("al-que-esta-sentado", "Al que está sentado", "A", {
@@ -615,15 +676,15 @@ const meetings = insertOctoberWeekends([
         // "D11+" se conserva literal (revisar). Sin BPM. Sólo acordes.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["D9", "F#m", "A"], ["D9", "F#m", "A", "E"], ["D9", "F#m", "A"], ["D9", "F#m", "A/C#", "E", "E4"], ["D9", "E", "D9", "E"]] },
-          { type: "verse", label: "Verso", repeats: 1, measures: SENTADO_VERSO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "E", "E4"], ["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "D11+"], ["E", "E4"]] },
+          { type: "verse", label: "Verso", cue: "Quiero conocerte", repeats: 1, measures: SENTADO_VERSO },
+          { type: "chorus", label: "Coro", cue: "Al que está sentado", repeats: 1, measures: [["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "E", "E4"], ["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "D11+"], ["E", "E4"]] },
           { type: "instrumental", label: "Interludio", repeats: 1, measures: [["D", "F#m", "A2"], ["D", "F#m", "E/G#"], ["D", "D11+", "D"]] },
-          { type: "verse", label: "Verso", repeats: 1, measures: SENTADO_VERSO },
-          { type: "chorus", label: "Coro 2", repeats: 1, measures: [["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "D11+"], ["E"], ["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "E"], ["Bm", "A/C#"], ["D", "E", "E4"], ["Bm", "A/C#"], ["D", "E"]] },
+          { type: "verse", label: "Verso", cue: "Quiero conocerte", repeats: 1, measures: SENTADO_VERSO },
+          { type: "chorus", label: "Coro 2", cue: "Al que está sentado", repeats: 1, measures: [["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "D11+"], ["E"], ["A2"], ["F#m"], ["Bm", "A/C#"], ["D", "E"], ["Bm", "A/C#"], ["D", "E", "E4"], ["Bm", "A/C#"], ["D", "E"]] },
           { type: "instrumental", label: "Interludio 2", repeats: 1, measures: [["D", "F#m", "A"], ["Bm", "F#m", "C#m7"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["D", "F#m", "A2"], ["D", "F#m", "A2"], ["Bm", "C#m"], ["D", "E"]] },
-          { type: "chorus", label: "Coro final", repeats: 1, measures: [["A2"], ["E/G#"], ["F#m"], ["Bm", "A/C#"], ["D", "E"], ["A2"], ["E/G#"], ["F#m"], ["Bm", "A/C#"], ["D", "E"]] },
-          { type: "tag", label: "Tag", repeats: 4, measures: SENTADO_TAG }
+          { type: "bridge", label: "Puente", cue: "Santo, tú eres", repeats: 1, measures: [["D", "F#m", "A2"], ["D", "F#m", "A2"], ["Bm", "C#m"], ["D", "E"]] },
+          { type: "chorus", label: "Coro final", cue: "Al que está sentado", repeats: 1, measures: [["A2"], ["E/G#"], ["F#m"], ["Bm", "A/C#"], ["D", "E"], ["A2"], ["E/G#"], ["F#m"], ["Bm", "A/C#"], ["D", "E"]] },
+          { type: "tag", label: "Tag", cue: "Sea la gloria, sea", repeats: 4, measures: SENTADO_TAG }
         ]
       }),
       song("digno-de-alabar", "Digno de alabar", "D", {
@@ -637,14 +698,14 @@ const meetings = insertOctoberWeekends([
         // 2026-09-08, en D = asignado, sin transposición. Sin BPM. Sólo acordes.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["G", "A"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["G", "A"], ["G", "A"], ["G", "A", "D/F#"], ["G", "A"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["A"], ["D/F#", "G"], ["A"], ["D"]] },
+          { type: "verse", label: "Verso 1", cue: "All the saints and", repeats: 1, measures: [["G", "A"], ["G", "A"], ["G", "A", "D/F#"], ["G", "A"]] },
+          { type: "chorus", label: "Coro", cue: "You're worthy of", repeats: 1, measures: [["D"], ["A"], ["D/F#", "G"], ["A"], ["D"]] },
           { type: "instrumental", label: "Interludio", repeats: 1, measures: [["G", "A"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["G", "A"], ["G", "A"], ["G", "A", "D/F#"], ["G", "A", "D"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: WORTHY_CORO_B },
+          { type: "verse", label: "Verso 2", cue: "All the saints and", repeats: 1, measures: [["G", "A"], ["G", "A"], ["G", "A", "D/F#"], ["G", "A", "D"]] },
+          { type: "chorus", label: "Coro", cue: "You're worthy of", repeats: 2, measures: WORTHY_CORO_B },
           { type: "instrumental", label: "Interludio 2", repeats: 1, measures: [["D", "F#m/C#", "Bm", "G"], ["D", "F#m/C#", "Em", "G"]] },
-          { type: "bridge", label: "Puente", repeats: 2, measures: [["D"], ["F#m/C#"], ["Bm"], ["G"], ["D/A#"], ["D/A#"], ["Em"], ["G"]] },
-          { type: "chorus", label: "Coro final", repeats: 2, measures: WORTHY_CORO_B }
+          { type: "bridge", label: "Puente", cue: "Day and night, night", repeats: 2, measures: [["D"], ["F#m/C#"], ["Bm"], ["G"], ["D/A#"], ["D/A#"], ["Em"], ["G"]] },
+          { type: "chorus", label: "Coro final", cue: "You are worthy of", repeats: 2, measures: WORTHY_CORO_B }
         ]
       }),
       song("dios-de-avivamiento", "Dios de avivamiento", "C", {
@@ -659,11 +720,11 @@ const meetings = insertOctoberWeekends([
         // letras no son formas de A: se guarda la cifra impresa. El 04/09 suena
         // en C. El PDF no trae etiquetas de sección. Sólo acordes.
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["C4", "C"], ["Am"], ["G"], ["C4", "C"], ["Am"], ["G"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["F"], ["Am"], ["C"], ["G"], ["F"], ["Am"], ["C"], ["G"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["F", "G/B"], ["Am"], ["G/B", "C", "G"], ["F", "G/B", "Am"], ["G/B", "C", "G"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["C4", "C"], ["Am"], ["G"], ["F", "C"], ["Am"], ["G"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["C"], ["Am"], ["G"], ["C"], ["Am"], ["G"]] }
+          { type: "verse", label: "Verso 1", cue: "Sé que puedes hacer", repeats: 1, measures: [["C4", "C"], ["Am"], ["G"], ["C4", "C"], ["Am"], ["G"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "No hay prisiones que", repeats: 1, measures: [["F"], ["Am"], ["C"], ["G"], ["F"], ["Am"], ["C"], ["G"]] },
+          { type: "chorus", label: "Coro", cue: "En la oscuridad", repeats: 1, measures: [["F", "G/B"], ["Am"], ["G/B", "C", "G"], ["F", "G/B", "Am"], ["G/B", "C", "G"]] },
+          { type: "verse", label: "Verso 2", cue: "En victoria estás", repeats: 1, measures: [["C4", "C"], ["Am"], ["G"], ["F", "C"], ["Am"], ["G"]] },
+          { type: "bridge", label: "Puente", cue: "Dios de avivamiento", repeats: 1, measures: [["C"], ["Am"], ["G"], ["C"], ["Am"], ["G"]] }
         ]
       })
     ]
@@ -691,17 +752,17 @@ const meetings = insertOctoberWeekends([
         // Puente ×2 → Outro. V1–V4 = las dos mitades de cada verso del chart.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["E", "Esus"], ["E", "Esus"], ["E", "Esus"], ["E", "Esus"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: JEHOVA_VERSO },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: JEHOVA_VERSO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: JEHOVA_CORO },
+          { type: "verse", label: "Verso 1", cue: "He shames every idol", repeats: 1, measures: JEHOVA_VERSO },
+          { type: "verse", label: "Verso 2", cue: "His foes will be", repeats: 1, measures: JEHOVA_VERSO },
+          { type: "chorus", label: "Coro", cue: "Call the Name", repeats: 1, measures: JEHOVA_CORO },
           { type: "interlude", label: "Interludio", repeats: 1, measures: JEHOVA_VAMP },
-          { type: "verse", label: "Verso 3", repeats: 1, measures: JEHOVA_VERSO },
-          { type: "verse", label: "Verso 4", repeats: 1, measures: JEHOVA_VERSO },
-          { type: "chorus", label: "Coro", repeats: 2, measures: JEHOVA_CORO },
+          { type: "verse", label: "Verso 3", cue: "He shames every idol", repeats: 1, measures: JEHOVA_VERSO },
+          { type: "verse", label: "Verso 4", cue: "His foes will be", repeats: 1, measures: JEHOVA_VERSO },
+          { type: "chorus", label: "Coro", cue: "Call the Name", repeats: 2, measures: JEHOVA_CORO },
           { type: "interlude", label: "Interludio", repeats: 1, measures: JEHOVA_VAMP },
-          { type: "bridge", label: "Puente", repeats: 4, measures: JEHOVA_PUENTE },
-          { type: "chorus", label: "Coro", repeats: 2, measures: JEHOVA_CORO },
-          { type: "bridge", label: "Puente (final)", repeats: 2, measures: JEHOVA_PUENTE_FINAL },
+          { type: "bridge", label: "Puente", cue: "Jehovah Nissi, fight", repeats: 4, measures: JEHOVA_PUENTE },
+          { type: "chorus", label: "Coro", cue: "Call the Name", repeats: 2, measures: JEHOVA_CORO },
+          { type: "bridge", label: "Puente (final)", cue: "Jehovah Nissi, fight", repeats: 2, measures: JEHOVA_PUENTE_FINAL },
           { type: "outro", label: "Outro", repeats: 1, measures: JEHOVA_VAMP }
         ]
       }),
@@ -718,16 +779,16 @@ const meetings = insertOctoberWeekends([
         // Estructura dictada por Darío (2026-09-09).
         sections: [
           { type: "intro", label: "Intro", repeats: 2, measures: LAVADO_INTRO },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: LAVADO_VERSO },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: LAVADO_VERSO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: LAVADO_CORO },
-          { type: "verse", label: "Verso 3", repeats: 1, measures: LAVADO_VERSO },
-          { type: "verse", label: "Verso 4", repeats: 1, measures: LAVADO_VERSO },
-          { type: "chorus", label: "Coro", repeats: 2, measures: LAVADO_CORO },
-          { type: "bridge", label: "Puente", repeats: 1, measures: LAVADO_PUENTE },
+          { type: "verse", label: "Verso 1", cue: "Me limpió, era", repeats: 1, measures: LAVADO_VERSO },
+          { type: "verse", label: "Verso 2", cue: "Mi Dios, cómo lo", repeats: 1, measures: LAVADO_VERSO },
+          { type: "chorus", label: "Coro", cue: "Fui lavado en", repeats: 1, measures: LAVADO_CORO },
+          { type: "verse", label: "Verso 3", cue: "Mi Dios, compraste mi", repeats: 1, measures: LAVADO_VERSO },
+          { type: "verse", label: "Verso 4", cue: "Mi Dios, tu amor", repeats: 1, measures: LAVADO_VERSO },
+          { type: "chorus", label: "Coro", cue: "Fui lavado en", repeats: 2, measures: LAVADO_CORO },
+          { type: "bridge", label: "Puente", cue: "Mi vergüenza él", repeats: 1, measures: LAVADO_PUENTE },
           { type: "intro", label: "Intro", repeats: 4, measures: LAVADO_INTRO },
           { type: "intro", label: "Intro", repeats: 3, measures: LAVADO_INTRO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: LAVADO_CORO }
+          { type: "chorus", label: "Coro", cue: "Fui lavado en", repeats: 1, measures: LAVADO_CORO }
         ]
       }),
       song("nadie", "Nadie", "G", {
@@ -743,9 +804,9 @@ const meetings = insertOctoberWeekends([
         // BORRADOR normalizado a G desde worshiptogether (D). Revisar con Darío.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["D/G", "G"], ["D/C", "C"]] },
-          { type: "verse", label: "Verso", repeats: 2, measures: [["G"], ["D"], ["C"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["D"], ["C"], ["Em"], ["D"], ["G/B"], ["C"]] },
-          { type: "bridge", label: "Puente", repeats: 2, measures: [["D/G", "G"], ["D/C", "C"]] }
+          { type: "verse", label: "Verso", cue: "Yahweh, santo eres", repeats: 2, measures: [["G"], ["D"], ["C"]] },
+          { type: "chorus", label: "Coro", cue: "No habrá otro Dios", repeats: 1, measures: [["G"], ["D"], ["C"], ["Em"], ["D"], ["G/B"], ["C"]] },
+          { type: "bridge", label: "Puente", cue: "Quién más nos llama", repeats: 2, measures: [["D/G", "G"], ["D/C", "C"]] }
         ]
       }),
       song("quien-mas", "Quién Más", "G", {
@@ -766,10 +827,10 @@ const meetings = insertOctoberWeekends([
         // BORRADOR normalizado a G desde worshiptogether (Ab). Revisar con Darío.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["G"]] },
-          { type: "verse", label: "Verso", repeats: 2, measures: [["G"], ["D"], ["Em7"], ["D"], ["C2"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["G"], ["Am7"], ["Em7"], ["C2"]] },
-          { type: "bridge", label: "Puente", repeats: 2, measures: [["C2"], ["D"], ["Em7"], ["Gsus", "G"], ["D"]] },
-          { type: "tag", label: "Tag", repeats: 2, measures: [["Em7"], ["C2"]] }
+          { type: "verse", label: "Verso", cue: "Un instrumento soy", repeats: 2, measures: [["G"], ["D"], ["Em7"], ["D"], ["C2"]] },
+          { type: "chorus", label: "Coro", cue: "Quién más es digno", repeats: 2, measures: [["G"], ["Am7"], ["Em7"], ["C2"]] },
+          { type: "bridge", label: "Puente", cue: "Cordero ungido, reinará", repeats: 2, measures: [["C2"], ["D"], ["Em7"], ["Gsus", "G"], ["D"]] },
+          { type: "tag", label: "Tag", cue: "Tú eres digno, tú", repeats: 2, measures: [["Em7"], ["C2"]] }
         ]
       }),
       song("canta-al-senor", "Canta al Señor", "G", {
@@ -783,9 +844,9 @@ const meetings = insertOctoberWeekends([
         // vía web a pedido de Darío el 2026-09-07; en A, normalizado a G (−2).
         // Sin BPM en la fuente. Revisar con Darío. Sólo acordes.
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 1, measures: CANTA_VERSO },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: CANTA_VERSO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [
+          { type: "verse", label: "Verso 1", cue: "Mi Cristo, mi rey", repeats: 1, measures: CANTA_VERSO },
+          { type: "verse", label: "Verso 2", cue: "Consuelo, refugio", repeats: 1, measures: CANTA_VERSO },
+          { type: "chorus", label: "Coro", cue: "Cante al Señor", repeats: 1, measures: [
             ["G", "Em", "C", "D"], ["G", "Em", "C", "D"], ["Em", "C", "G", "D"], ["D", "C", "D"],
             ["G", "Em", "C", "D"], ["G", "Em", "C", "D"], ["Em", "C", "G", "D"], ["Em", "C", "G", "D", "G"]
           ] }
@@ -807,11 +868,11 @@ const meetings = insertOctoberWeekends([
         // repetidos → el recorrido lo dicta la banda. Sólo acordes.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["G", "D/F#"], ["G", "Am"], ["G", "D/F#"], ["Em"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: NHON_VERSO },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: NHON_VERSO },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"], ["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"]] },
-          { type: "verse", label: "Verso 3", repeats: 1, measures: [["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"], ["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"], ["G/B", "C"], ["Em"], ["G", "C"], ["Em", "C"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["G"], ["Em"], ["C"], ["Em", "C"]] },
+          { type: "verse", label: "Verso 1", cue: "Él es quien reina", repeats: 1, measures: NHON_VERSO },
+          { type: "verse", label: "Verso 2", cue: "Su luz radiante más", repeats: 1, measures: NHON_VERSO },
+          { type: "chorus", label: "Coro", cue: "Ven a adorar al", repeats: 1, measures: [["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"], ["G"], ["Em"], ["Bm"], ["C"], ["Em", "C"]] },
+          { type: "verse", label: "Verso 3", cue: "En él está la", repeats: 1, measures: [["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"], ["D/F#", "G"], ["D/F#", "G"], ["Am", "G"], ["D/F#", "Em"], ["G/B", "C"], ["Em"], ["G", "C"], ["Em", "C"]] },
+          { type: "bridge", label: "Puente", cue: "Con tu poder, se", repeats: 1, measures: [["G"], ["Em"], ["C"], ["Em", "C"]] },
           { type: "outro", label: "Final", repeats: 1, measures: [["G"], ["Em"], ["C"], ["Em"], ["C"], ["G"]] }
         ]
       }),
@@ -826,17 +887,17 @@ const meetings = insertOctoberWeekends([
         // en Db; normalizado a D (+1). Sin BPM en la fuente. Sólo acordes.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["D", "A/C#"], ["G"], ["D", "A/C#"], ["G"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D", "A/C#", "G"], ["D", "A/C#", "G"], ["Bm", "A", "G"], ["Bm", "A", "G"]] },
-          { type: "chorus", label: "Coro 1", repeats: 1, measures: [["Em"], ["G"], ["D"], ["Bm", "A"], ["Em", "G"], ["D", "Bm", "A"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["D", "A/C#", "Em", "G"], ["D", "A/C#", "Em", "G"], ["Bm", "A", "G"], ["Bm", "A", "G"]] },
-          { type: "chorus", label: "Coro 2", repeats: 2, measures: [["Em"], ["G"], ["D"], ["A"], ["Em", "G"], ["D", "A"]] },
+          { type: "verse", label: "Verso 1", cue: "Tu nombre podría yo", repeats: 1, measures: [["D", "A/C#", "G"], ["D", "A/C#", "G"], ["Bm", "A", "G"], ["Bm", "A", "G"]] },
+          { type: "chorus", label: "Coro 1", cue: "Solo el nombre de", repeats: 1, measures: [["Em"], ["G"], ["D"], ["Bm", "A"], ["Em", "G"], ["D", "Bm", "A"]] },
+          { type: "verse", label: "Verso 2", cue: "Tú has sido mi", repeats: 1, measures: [["D", "A/C#", "Em", "G"], ["D", "A/C#", "Em", "G"], ["Bm", "A", "G"], ["Bm", "A", "G"]] },
+          { type: "chorus", label: "Coro 2", cue: "Solo el nombre de", repeats: 2, measures: [["Em"], ["G"], ["D"], ["A"], ["Em", "G"], ["D", "A"]] },
           { type: "instrumental", label: "Instrumental 1", repeats: 1, measures: NOMBRE_JESUS_INSTR1 },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["D"], ["Em"], ["G"], ["Bm", "A"], ["A"], ["Em"], ["G"], ["D"], ["A"]] },
-          { type: "chorus", label: "Coro 3", repeats: 2, measures: NOMBRE_JESUS_CORO3 },
+          { type: "bridge", label: "Puente", cue: "Tu nombre es como", repeats: 1, measures: [["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["Bm", "A"], ["Em"], ["G"], ["D"], ["Em"], ["G"], ["Bm", "A"], ["A"], ["Em"], ["G"], ["D"], ["A"]] },
+          { type: "chorus", label: "Coro 3", cue: "Solo el nombre de", repeats: 2, measures: NOMBRE_JESUS_CORO3 },
           { type: "instrumental", label: "Instrumental 1", repeats: 1, measures: NOMBRE_JESUS_INSTR1 },
-          { type: "chorus", label: "Coro 3", repeats: 1, measures: NOMBRE_JESUS_CORO3 },
+          { type: "chorus", label: "Coro 3", cue: "Solo el nombre de", repeats: 1, measures: NOMBRE_JESUS_CORO3 },
           { type: "instrumental", label: "Instrumental 2", repeats: 1, measures: [["Em"], ["G"], ["Em"], ["G"], ["D", "Bm"], ["D", "Bm"], ["A"], ["A"]] },
-          { type: "chorus", label: "Coro final", repeats: 2, measures: [["Em"], ["G"], ["D"], ["A"], ["Em"], ["G"], ["D"], ["A", "G"]] }
+          { type: "chorus", label: "Coro final", cue: "Solo el nombre de", repeats: 2, measures: [["Em"], ["G"], ["D"], ["A"], ["Em"], ["G"], ["D"], ["A", "G"]] }
         ]
       })
     ]
@@ -858,12 +919,12 @@ const meetings = insertOctoberWeekends([
         // normalizada a C (-4) con el motor. Orden del chart. Sólo acordes. Revisar.
         sections: [
           { type: "intro", label: "Intro", repeats: 4, measures: [["C"], ["G/C"], ["Bb/C"], ["F/C"]] },
-          { type: "verse", label: "Verso", repeats: 1, measures: [["C"], ["G/C"], ["Bb/C"], ["F/C"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["F", "G/F"], ["Fm7", "Bb/F"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["C", "G", "Bb", "F"], ["C", "G", "Bb", "F"], ["C", "G", "Bb", "F"], ["C/E", "Gm7", "Ab", "Bb"], ["Cm7"]] },
+          { type: "verse", label: "Verso", cue: "Lord, You are good", repeats: 1, measures: [["C"], ["G/C"], ["Bb/C"], ["F/C"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "People from every", repeats: 1, measures: [["F", "G/F"], ["Fm7", "Bb/F"]] },
+          { type: "chorus", label: "Coro", cue: "We worship You", repeats: 1, measures: [["C", "G", "Bb", "F"], ["C", "G", "Bb", "F"], ["C", "G", "Bb", "F"], ["C/E", "Gm7", "Ab", "Bb"], ["Cm7"]] },
           { type: "instrumental", label: "Instrumental", repeats: 4, measures: [["Cm7", "Dm7/C"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["N.C."]] },
-          { type: "outro", label: "Final", repeats: 1, measures: [["Bb", "Ab/C"], ["Bb/D", "Fm7"], ["Gm7", "C7#9"]] }
+          { type: "bridge", label: "Puente", cue: "You are good, all", repeats: 1, measures: [["N.C."]] },
+          { type: "outro", label: "Final", cue: "For who You are", repeats: 1, measures: [["Bb", "Ab/C"], ["Bb/D", "Fm7"], ["Gm7", "C7#9"]] }
         ]
       }),
       song("en-el-nombre-de-jesus", "En el nombre de Jesús", "C", {
@@ -877,14 +938,14 @@ const meetings = insertOctoberWeekends([
         // normalizada a C (-2) con el motor. Orden del chart. Sólo acordes. Revisar.
         sections: [
           { type: "intro", label: "Intro", repeats: 2, measures: [["C", "Bb", "C", "Bb"]] },
-          { type: "verse", label: "Verso", repeats: 2, measures: [["F", "Dm"], ["Am", "C"], ["F", "Dm"], ["C"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
-          { type: "verse", label: "Verso", repeats: 1, measures: [["F", "Dm"], ["Am", "C"], ["F", "Dm"], ["C"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
-          { type: "bridge", label: "Puente", repeats: 4, measures: [["F", "G", "Am", "C"]] },
-          { type: "tag", label: "Puente (tag)", repeats: 2, measures: [["F", "G"], ["Am", "C"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
-          { type: "tag", label: "Puente (tag)", repeats: 2, measures: [["F", "G"], ["Am", "C"]] }
+          { type: "verse", label: "Verso", cue: "Lucha por nosotros", repeats: 2, measures: [["F", "Dm"], ["Am", "C"], ["F", "Dm"], ["C"]] },
+          { type: "chorus", label: "Coro", cue: "Viviré, no moriré", repeats: 1, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
+          { type: "verse", label: "Verso", cue: "Lleva nuestras cargas", repeats: 1, measures: [["F", "Dm"], ["Am", "C"], ["F", "Dm"], ["C"]] },
+          { type: "chorus", label: "Coro", cue: "Viviré, no moriré", repeats: 2, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
+          { type: "bridge", label: "Puente", cue: "Dios es por nosotros", repeats: 4, measures: [["F", "G", "Am", "C"]] },
+          { type: "tag", label: "Puente (tag)", cue: "Y yo lo gritaré", repeats: 2, measures: [["F", "G"], ["Am", "C"]] },
+          { type: "chorus", label: "Coro", cue: "Viviré, no moriré", repeats: 2, measures: [["G", "F"], ["C", "Am"], ["Bb", "F"], ["C", "Bb", "C", "Bb"]] },
+          { type: "tag", label: "Puente (tag)", cue: "Y yo lo gritaré", repeats: 2, measures: [["F", "G"], ["Am", "C"]] }
         ]
       }),
       song("clamo-a-cristo", "Clamo a Cristo", "E", {
@@ -899,12 +960,12 @@ const meetings = insertOctoberWeekends([
         // normalizada a E (-1) con el motor. Orden del chart. Sólo acordes. Revisar.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["B", "A", "E"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "B", "A", "E"], ["E", "B", "A", "E"], ["E", "B", "A", "E"], ["A", "E"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["B", "A"], ["E", "A"], ["B", "A"], ["E", "A", "E"], ["B"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["B", "A", "E"], ["B", "A", "E"], ["B", "A", "E"], ["A", "E"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["A", "B", "E"], ["A", "B", "E"], ["B", "B", "E"]] },
-          { type: "bridge", label: "Puente 2", repeats: 1, measures: [["B", "F#m", "E"], ["B", "F#m", "E"]] },
-          { type: "bridge", label: "Puente 3", repeats: 1, measures: [["B", "B"], ["A", "E"]] }
+          { type: "verse", label: "Verso 1", cue: "Tu nombre Jesús, calma", repeats: 1, measures: [["E", "B", "A", "E"], ["E", "B", "A", "E"], ["E", "B", "A", "E"], ["A", "E"]] },
+          { type: "chorus", label: "Coro", cue: "Clamo a Cristo", repeats: 1, measures: [["B", "A"], ["E", "A"], ["B", "A"], ["E", "A", "E"], ["B"]] },
+          { type: "verse", label: "Verso 2", cue: "Tengo un Rey", repeats: 1, measures: [["B", "A", "E"], ["B", "A", "E"], ["B", "A", "E"], ["A", "E"]] },
+          { type: "bridge", label: "Puente", cue: "Cada vez que clamo", repeats: 1, measures: [["A", "B", "E"], ["A", "B", "E"], ["B", "B", "E"]] },
+          { type: "bridge", label: "Puente 2", cue: "Muerte ya no reina", repeats: 1, measures: [["B", "F#m", "E"], ["B", "F#m", "E"]] },
+          { type: "bridge", label: "Puente 3", cue: "Lo muerto vivirá", repeats: 1, measures: [["B", "B"], ["A", "E"]] }
         ]
       }),
       song("como-no-voy-a-creer", "Cómo no voy a creer", "E", {
@@ -918,12 +979,12 @@ const meetings = insertOctoberWeekends([
         // normalizada a E (+4) con el motor. Orden del chart. Sólo acordes. Revisar.
         sections: [
           { type: "intro", label: "Intro", repeats: 2, measures: [["A", "E", "C#m", "B"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A", "E"], ["C#m", "B"], ["A", "E"], ["E"], ["B"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["A", "E"], ["C#m", "B", "A"], ["C#m", "E"], ["B", "A"], ["C#m", "E", "B"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A", "E"], ["C#m", "B"], ["A", "C#m"], ["E"], ["B"]] },
-          { type: "tag", label: "Tag", repeats: 1, measures: [["A", "C#m", "E", "B"]] },
-          { type: "bridge", label: "Puente", repeats: 4, measures: [["A", "C#m"], ["E"], ["B"]] },
-          { type: "outro", label: "Final", repeats: 1, measures: [["F#m"], ["C#m"], ["B/D#", "E"], ["B"], ["F#m", "E/G#"], ["C#m", "B"], ["A"], ["C#m", "E", "B"]] }
+          { type: "verse", label: "Verso 1", cue: "Yo he visto tu", repeats: 1, measures: [["A", "E"], ["C#m", "B"], ["A", "E"], ["E"], ["B"]] },
+          { type: "chorus", label: "Coro", cue: "Eres asombroso, Dios", repeats: 1, measures: [["A", "E"], ["C#m", "B", "A"], ["C#m", "E"], ["B", "A"], ["C#m", "E", "B"]] },
+          { type: "verse", label: "Verso 2", cue: "Con mis manos yo", repeats: 1, measures: [["A", "E"], ["C#m", "B"], ["A", "C#m"], ["E"], ["B"]] },
+          { type: "tag", label: "Tag", cue: "¿Cómo no voy", repeats: 1, measures: [["A", "C#m", "E", "B"]] },
+          { type: "bridge", label: "Puente", cue: "Yo lo he visto", repeats: 4, measures: [["A", "C#m"], ["E"], ["B"]] },
+          { type: "outro", label: "Final", cue: "No hay nada que", repeats: 1, measures: [["F#m"], ["C#m"], ["B/D#", "E"], ["B"], ["F#m", "E/G#"], ["C#m", "B"], ["A"], ["C#m", "E", "B"]] }
         ]
       }),
       song("para-siempre-cristo", "Para siempre Cristo", "E", {
@@ -938,16 +999,16 @@ const meetings = insertOctoberWeekends([
         // Orden del chart (recortado por su autor antes del selah final). Sólo acordes.
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["A/E", "E"], ["C#m"], ["F#m", "E", "A"], ["A", "E", "B"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["A/E", "E", "C#m"], ["F#m", "E", "A", "E", "B"], ["A/E", "E", "C#m"], ["F#m", "E", "A", "E", "B"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["A", "C#m"], ["E", "B"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["A/E", "E", "C#m"], ["F#m", "E", "A", "A/C#", "E", "B"], ["A/E", "E", "C#m"], ["F#m", "E", "A", "A/C#", "E", "B"]] },
-          { type: "chorus", label: "Coro", repeats: 4, measures: [["A", "C#m"], ["E", "B"]] },
+          { type: "verse", label: "Verso 1", cue: "Adonai Elohim, el", repeats: 1, measures: [["A/E", "E", "C#m"], ["F#m", "E", "A", "E", "B"], ["A/E", "E", "C#m"], ["F#m", "E", "A", "E", "B"]] },
+          { type: "chorus", label: "Coro", cue: "Tu nombre es grande", repeats: 2, measures: [["A", "C#m"], ["E", "B"]] },
+          { type: "verse", label: "Verso 2", cue: "Adonai Elohim, el", repeats: 1, measures: [["A/E", "E", "C#m"], ["F#m", "E", "A", "A/C#", "E", "B"], ["A/E", "E", "C#m"], ["F#m", "E", "A", "A/C#", "E", "B"]] },
+          { type: "chorus", label: "Coro", cue: "Tu nombre es grande", repeats: 4, measures: [["A", "C#m"], ["E", "B"]] },
           { type: "instrumental", label: "Instrumental", repeats: 2, measures: [["E", "A/E"]] },
-          { type: "bridge", label: "Puente", repeats: 3, measures: [["E", "A/E"], ["E", "A/E"]] },
-          { type: "bridge", label: "Puente (desarrollo)", repeats: 1, measures: [["E", "A/E"], ["E", "A"], ["C#m", "B"], ["E", "A"], ["C#m", "B"], ["E", "A"]] },
+          { type: "bridge", label: "Puente", cue: "Digno eras tú", repeats: 3, measures: [["E", "A/E"], ["E", "A/E"]] },
+          { type: "bridge", label: "Puente (desarrollo)", cue: "Digno eras tú", repeats: 1, measures: [["E", "A/E"], ["E", "A"], ["C#m", "B"], ["E", "A"], ["C#m", "B"], ["E", "A"]] },
           { type: "instrumental", label: "Instrumental 2", repeats: 1, measures: [["C#m", "B"]] },
-          { type: "chorus", label: "Coro", repeats: 4, measures: [["A", "C#m"], ["E", "B"]] },
-          { type: "bridge", label: "Puente (final)", repeats: 1, measures: [["C#m", "B"], ["E", "A"], ["C#m", "B"], ["E", "A"], ["C#m", "B/D#"], ["E/G#", "A"], ["C#m", "B"], ["E", "A"]] }
+          { type: "chorus", label: "Coro", cue: "Tu nombre es grande", repeats: 4, measures: [["A", "C#m"], ["E", "B"]] },
+          { type: "bridge", label: "Puente (final)", cue: "Digno eras tú", repeats: 1, measures: [["C#m", "B"], ["E", "A"], ["C#m", "B"], ["E", "A"], ["C#m", "B/D#"], ["E/G#", "A"], ["C#m", "B"], ["E", "A"]] }
         ]
       }),
       song("agnus-dei", "Agnus Dei", "E", {
@@ -960,10 +1021,10 @@ const meetings = insertOctoberWeekends([
         // BORRADOR: cifra indicada por Darío (2026-09-17), leída vía web; en A,
         // normalizada a E (-5) con el motor. Orden del chart. Sólo acordes. Revisar.
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "E"], ["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["B/E", "A/E", "E"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "E"], ["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["B/E", "A/E", "E"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["A/E", "B/E", "E"], ["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E/G#", "A"], ["A", "B/A", "E"]] },
-          { type: "chorus", label: "Coro (final)", repeats: 1, measures: [["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E", "A"], ["A", "B/A", "E"], ["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E/G#", "A"], ["A", "B/A", "A", "E"]] }
+          { type: "verse", label: "Verso 1", cue: "Alleluia, alleluia", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "E"], ["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["B/E", "A/E", "E"]] },
+          { type: "verse", label: "Verso 2", cue: "Alleluia, alleluia", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "E"], ["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["B/E", "A/E", "E"]] },
+          { type: "chorus", label: "Coro", cue: "Holy, holy, are You", repeats: 1, measures: [["E", "A/E", "B/E", "A/E", "B/E", "A/E"], ["A/E", "B/E", "E"], ["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E/G#", "A"], ["A", "B/A", "E"]] },
+          { type: "chorus", label: "Coro (final)", cue: "Holy, holy, are You", repeats: 1, measures: [["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E", "A"], ["A", "B/A", "E"], ["B/E", "E"], ["A/E", "E", "C#m7", "B"], ["F#m7", "E/G#", "A"], ["F#m7", "E/G#", "A"], ["A", "B/A", "A", "E"]] }
         ]
       }),
       song("alabare-al-senor", "Alabaré al Señor", "D", {
@@ -978,12 +1039,12 @@ const meetings = insertOctoberWeekends([
         // normalizada a D (+2) con el motor. Orden del chart. Sólo acordes. Revisar.
         sections: [
           { type: "intro", label: "Intro", repeats: 2, measures: [["D", "D7M/F#", "G"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A11", "D", "D7M/F#", "G"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D", "D7M/F#", "G"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["G", "D"], ["Bm", "A4", "A"], ["D/F#", "G", "Bm"], ["G", "A", "D"], ["D", "D7M/F#", "G"]] },
-          { type: "verse", label: "Verso 3", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D", "D4", "D"]] },
-          { type: "verse", label: "Verso 4", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["D"], ["G", "D"], ["Bm", "A4", "A"], ["D/F#", "G", "Bm"], ["G", "A", "D"], ["D", "D7M/F#", "G"]] }
+          { type: "verse", label: "Verso 1", cue: "Recordaré aquella cruz", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A11", "D", "D7M/F#", "G"]] },
+          { type: "verse", label: "Verso 2", cue: "Su cuerpo envuelto en", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D", "D7M/F#", "G"]] },
+          { type: "chorus", label: "Coro", cue: "Alabaré al Señor", repeats: 1, measures: [["D"], ["G", "D"], ["Bm", "A4", "A"], ["D/F#", "G", "Bm"], ["G", "A", "D"], ["D", "D7M/F#", "G"]] },
+          { type: "verse", label: "Verso 3", cue: "Pero al tercer amanecer", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D", "D4", "D"]] },
+          { type: "verse", label: "Verso 4", cue: "Muy pronto él regresará", repeats: 1, measures: [["D"], ["A", "Bm"], ["G", "D/F#"], ["A", "D"]] },
+          { type: "chorus", label: "Coro", cue: "Alabaré al Señor", repeats: 2, measures: [["D"], ["G", "D"], ["Bm", "A4", "A"], ["D/F#", "G", "Bm"], ["G", "A", "D"], ["D", "D7M/F#", "G"]] }
         ]
       })
     ]
@@ -1005,12 +1066,12 @@ const meetings = insertOctoberWeekends([
         youtubeUrl: "https://www.youtube.com/watch?v=zPf1Rvjixxc",
         youtubeVideoId: "zPf1Rvjixxc",
         sections: [
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["D"], ["Em"], ["D/F#"], ["G"]] },
+          { type: "verse", label: "Verso 1", cue: "Este es el sonido", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
+          { type: "verse", label: "Verso 2", cue: "Tus hijos regresan", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["Bm"], ["F#m"], ["G"]] },
+          { type: "chorus", label: "Coro", cue: "Hay júbilo y", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["D"], ["Em"], ["D/F#"], ["G"]] },
           { type: "instrumental", label: "Interludio", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["Bm"], ["G"], ["D"], ["Em"], ["Bm"], ["G"], ["D"], ["Em"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["D"], ["Em"], ["D/F#"], ["G"]] }
+          { type: "bridge", label: "Puente", cue: "Ven, ven, ven, aún", repeats: 1, measures: [["Bm"], ["G"], ["D"], ["Em"], ["Bm"], ["G"], ["D"], ["Em"]] },
+          { type: "chorus", label: "Coro", cue: "Hay júbilo y", repeats: 1, measures: [["D"], ["Em"], ["D/F#"], ["G"], ["D"], ["Em"], ["D/F#"], ["G"]] }
         ]
       }),
       // Glorioso Día (Remix): grados dictados por Darío (2026-09-21) sobre el tono
@@ -1025,9 +1086,9 @@ const meetings = insertOctoberWeekends([
         tempoBpm: 114,
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["G"], ["A"], ["Bm"]] },
-          { type: "verse", label: "Verso", repeats: 1, measures: [["G"], ["A"], ["Bm"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["G"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["Bm"], ["G"], ["A"]] },
+          { type: "verse", label: "Verso", cue: "Mi vergüenza me sepultó", repeats: 1, measures: [["G"], ["A"], ["Bm"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Tu voz me habló", repeats: 1, measures: [["G"]] },
+          { type: "chorus", label: "Coro", cue: "Glorioso día, tu", repeats: 1, measures: [["Bm"], ["G"], ["A"]] },
           { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["G"], ["A"], ["Bm"], ["D"], ["G"], ["A"], ["Bm"], ["F#m"], ["G"]] }
         ]
       }),
@@ -1043,12 +1104,12 @@ const meetings = insertOctoberWeekends([
         chartUrl: "https://www.cifraclub.com/elevation-rhythm/adios-al-ayer/",
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["Ab"], ["Db"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["Ab"], ["Db"], ["Ab"], ["Db"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Ab"], ["Db"], ["Ab"], ["Db"]] },
-          { type: "prechorus", label: "He decidido…", repeats: 1, measures: [["Ab"], ["Bbm"], ["Ab"], ["Bbm"], ["Ab"], ["Bbm"], ["Fm"], ["Eb"], ["Db"]] },
-          { type: "chorus", label: "Otra vez…", repeats: 1, measures: [["Db"], ["Eb"], ["Fm"], ["Db"], ["Db"], ["Eb"], ["Fm"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["Ab"], ["Bbm"], ["Cm"], ["Eb"], ["Ab"], ["Bbm"], ["Fm"], ["Eb"]] },
-          { type: "chorus", label: "Otra vez…", repeats: 1, measures: [["Db"], ["Eb"], ["Fm"], ["Db"], ["Db"], ["Eb"], ["Fm"]] }
+          { type: "verse", label: "Verso 1", cue: "Adiós al ayer", repeats: 1, measures: [["Ab"], ["Db"], ["Ab"], ["Db"]] },
+          { type: "verse", label: "Verso 2", cue: "Adiós al ayer", repeats: 1, measures: [["Ab"], ["Db"], ["Ab"], ["Db"]] },
+          { type: "prechorus", label: "He decidido…", cue: "He decidido seguir", repeats: 1, measures: [["Ab"], ["Bbm"], ["Ab"], ["Bbm"], ["Ab"], ["Bbm"], ["Fm"], ["Eb"], ["Db"]] },
+          { type: "chorus", label: "Otra vez…", cue: "Otra vez y otra", repeats: 1, measures: [["Db"], ["Eb"], ["Fm"], ["Db"], ["Db"], ["Eb"], ["Fm"]] },
+          { type: "bridge", label: "Puente", cue: "Sobre esa tumba", repeats: 1, measures: [["Ab"], ["Bbm"], ["Cm"], ["Eb"], ["Ab"], ["Bbm"], ["Fm"], ["Eb"]] },
+          { type: "chorus", label: "Otra vez…", cue: "Otra vez y otra", repeats: 1, measures: [["Db"], ["Eb"], ["Fm"], ["Db"], ["Db"], ["Eb"], ["Fm"]] }
         ]
       }),
       song("clamo-a-dios", "Clamo a Dios", "D", {
@@ -1066,20 +1127,20 @@ const meetings = insertOctoberWeekends([
         tempoBpm: 143,
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["Bb"], ["Gm"], ["Eb"], ["Bb"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["Eb"], ["Gm"], ["Bb"], ["F"], ["Eb"], ["Gm"], ["Bb"], ["F"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Bb"], ["Gm"], ["Fm"], ["Ebm"], ["Eb"], ["Bb"], ["Gm"], ["Fm"], ["Ebm"], ["Eb"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["Eb"], ["Gm"], ["Bb"], ["F"], ["Eb"], ["Gm"], ["Bb"], ["F"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
-          { type: "bridge", label: "Puente 1", repeats: 1, measures: [["Bb"], ["Gm"], ["Eb"], ["F"], ["Bb"], ["Gm"], ["Eb"], ["F"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "verse", label: "Verso 1", cue: "Estoy preparando el", repeats: 1, measures: [["Bb"], ["Gm"], ["Eb"], ["Bb"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Mi placer en él", repeats: 1, measures: [["Eb"], ["Gm"], ["Bb"], ["F"], ["Eb"], ["Gm"], ["Bb"], ["F"]] },
+          { type: "chorus", label: "Coro", cue: "Es él, por él", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "verse", label: "Verso 2", cue: "Estoy preparando el", repeats: 1, measures: [["Bb"], ["Gm"], ["Fm"], ["Ebm"], ["Eb"], ["Bb"], ["Gm"], ["Fm"], ["Ebm"], ["Eb"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Mi placer en él", repeats: 1, measures: [["Eb"], ["Gm"], ["Bb"], ["F"], ["Eb"], ["Gm"], ["Bb"], ["F"]] },
+          { type: "chorus", label: "Coro", cue: "Es él, por él", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "bridge", label: "Puente 1", cue: "Él volverá, soberano", repeats: 1, measures: [["Bb"], ["Gm"], ["Eb"], ["F"], ["Bb"], ["Gm"], ["Eb"], ["F"]] },
+          { type: "chorus", label: "Coro", cue: "Es él, por él", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
           { type: "instrumental", label: "Solo", repeats: 1, measures: [["Cm"], ["F"], ["Gm"], ["F/A"], ["Bb"], ["Cm"], ["F"]] },
-          { type: "bridge", label: "Puente 2", repeats: 1, measures: [["Gm"], ["F/A"], ["Bb"], ["Cm"], ["Eb"], ["F"], ["Gm"], ["F/A"], ["Bb"], ["Cm"], ["Eb"], ["F"]] },
-          { type: "chorus", label: "Coro (final)", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
+          { type: "bridge", label: "Puente 2", cue: "Él volverá, soberano", repeats: 1, measures: [["Gm"], ["F/A"], ["Bb"], ["Cm"], ["Eb"], ["F"], ["Gm"], ["F/A"], ["Bb"], ["Cm"], ["Eb"], ["F"]] },
+          { type: "chorus", label: "Coro (final)", cue: "Es él, por él", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] },
           { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"]], cue: "repite varias veces · vale la pena" },
           { type: "instrumental", label: "Instrumental (última parte)", repeats: 1, measures: [["Cm"], ["F"], ["Gm"], ["F"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] }
+          { type: "chorus", label: "Coro", cue: "Es él, por él", repeats: 1, measures: [["Eb"], ["F"], ["Gm"], ["Dm"], ["Eb"], ["F"]] }
         ]
       }),
       // Vida nueva: grados dictados por Darío (2026-09-21) sobre el tono original B.
@@ -1092,18 +1153,18 @@ const meetings = insertOctoberWeekends([
         sourceKey: "B",
         tempoBpm: 73,
         sections: [
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
-          { type: "verse", label: "Verso 3", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"]], cue: "seguido del verso" },
-          { type: "bridge", label: "Puente (última vuelta)", repeats: 1, measures: [["E"], ["B"], ["F#"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
-          { type: "bridge", label: "Puente 2 · Si el enemigo…", repeats: 3, measures: [["B"], ["B"], ["B"], ["B"]] },
-          { type: "bridge", label: "Puente 2 (b)", repeats: 4, measures: [["B"], ["G#m"], ["E"]] },
-          { type: "bridge", label: "Puente 2 (cierre)", repeats: 1, measures: [["B"], ["G#m"], ["F#"]] },
-          { type: "chorus", label: "Coro (final)", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] }
+          { type: "chorus", label: "Coro", cue: "Ya no vivo yo", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
+          { type: "verse", label: "Verso 1", cue: "No olvidaré el momento", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
+          { type: "verse", label: "Verso 2", cue: "Donde había religión", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
+          { type: "chorus", label: "Coro", cue: "Ya no vivo yo", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
+          { type: "verse", label: "Verso 3", cue: "Cuando algo dice", repeats: 1, measures: [["B"], ["F#"], ["B/D#"], ["E"]] },
+          { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"]], cue: "¿Cómo empezar a" },
+          { type: "bridge", label: "Puente (última vuelta)", cue: "¿Cómo empezar a", repeats: 1, measures: [["E"], ["B"], ["F#"]] },
+          { type: "chorus", label: "Coro", cue: "Ya no vivo yo", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] },
+          { type: "bridge", label: "Puente 2 · Si el enemigo…", cue: "Si el enemigo pensó", repeats: 3, measures: [["B"], ["B"], ["B"], ["B"]] },
+          { type: "bridge", label: "Puente 2 (b)", cue: "Si el enemigo pensó", repeats: 4, measures: [["B"], ["G#m"], ["E"]] },
+          { type: "bridge", label: "Puente 2 (cierre)", cue: "Si el enemigo pensó", repeats: 1, measures: [["B"], ["G#m"], ["F#"]] },
+          { type: "chorus", label: "Coro (final)", cue: "Ya no vivo yo", repeats: 1, measures: [["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["B"]] }
         ]
       }),
       // De gracia en gracia: grados dictados por Darío (2026-09-21) sobre el tono original B.
@@ -1116,16 +1177,16 @@ const meetings = insertOctoberWeekends([
         sourceKey: "B",
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["E"], ["F#"], ["E"], ["F#"], ["D#m"], ["E"], ["G#m"], ["F#"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
+          { type: "verse", label: "Verso 1", cue: "Su amor cargó aquella", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Por mí soportaste el", repeats: 1, measures: [["E"], ["F#"], ["E"], ["F#"], ["D#m"], ["E"], ["G#m"], ["F#"]] },
+          { type: "chorus", label: "Coro", cue: "Hermoso Dios, eterno", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
           { type: "interlude", label: "Interludio", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"]] },
-          { type: "prechorus", label: "Pre-coro", repeats: 1, measures: [["E"], ["F#"], ["E"], ["F#"], ["D#m"], ["E"], ["G#m"], ["F#"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
-          { type: "bridge", label: "Puente", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] }
+          { type: "verse", label: "Verso 2", cue: "La tumba vacía ahora", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"]] },
+          { type: "prechorus", label: "Pre-coro", cue: "Si todo lo diste", repeats: 1, measures: [["E"], ["F#"], ["E"], ["F#"], ["D#m"], ["E"], ["G#m"], ["F#"]] },
+          { type: "chorus", label: "Coro", cue: "Hermoso Dios, eterno", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
+          { type: "bridge", label: "Puente", cue: "Al mirar tu cruz", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] },
+          { type: "chorus", label: "Coro", cue: "Hermoso Dios, eterno", repeats: 1, measures: [["B"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"], ["G#m"], ["E"], ["F#"], ["G#m"], ["E"], ["F#"]] },
+          { type: "bridge", label: "Puente", cue: "Al mirar tu cruz", repeats: 1, measures: [["E"], ["G#m"], ["B"], ["F#"], ["E"], ["G#m"], ["B"], ["F#"], ["E"], ["F#"], ["G#m"], ["E"], ["B"], ["F#"]] }
         ]
       })
     ]
@@ -1382,13 +1443,13 @@ const meetings = insertOctoberWeekends([
         // reusa los acordes del Coro (misma fuente).
         sections: [
           { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7", "Bbsus"]] },
-          { type: "verse", label: "Verso 1", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
-          { type: "chorus", label: "Coro", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
-          { type: "verse", label: "Verso 2", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
-          { type: "bridge", label: "Puente", repeats: 4, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] },
-          { type: "chorus", label: "Coro", repeats: 2, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
-          { type: "bridge", label: "Puente", repeats: 3, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] }
+          { type: "verse", label: "Verso 1", cue: "Jesucristo, precioso Rey", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
+          { type: "chorus", label: "Coro", cue: "Mover tu corazón", repeats: 1, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
+          { type: "verse", label: "Verso 2", cue: "Jesucristo, te ofreceré", repeats: 1, measures: [["Eb"], ["Eb/D"], ["Abmaj7/C"], ["Abmaj7"], ["Bbsus"]] },
+          { type: "chorus", label: "Coro", cue: "Mover tu corazón", repeats: 2, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
+          { type: "bridge", label: "Puente", cue: "Si es una fragancia", repeats: 4, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] },
+          { type: "chorus", label: "Coro", cue: "Mover tu corazón", repeats: 2, measures: [["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Eb"], ["Ab"], ["Eb/G"], ["Bbsus"], ["Bb"]] },
+          { type: "bridge", label: "Puente", cue: "Si es una fragancia", repeats: 3, measures: [["Ab"], ["Eb/G"], ["Cm"], ["Bb"]] }
         ]
       })
     ]
@@ -1441,22 +1502,22 @@ const praise = song("praise", "Praise", "C", {
   chartUrl: "https://www.cifraclub.com/elevation-worship/praise-feat-brandon-lake-chris-brown-chandler-moore/",
   dates: [{ id: "2026-10-09", key: "C", title: "Alabar" }],
   sections: [
-    { type: "tag", label: "Refrão", repeats: 1, measures: [["C"]] },
-    { type: "verse", label: "First Part", repeats: 1, measures: PRAISE_PART_A },
-    { type: "verse", label: "Second Part", repeats: 1, measures: [["C"], ["F2", "C"], ["G/B"], ["F", "C"]] },
-    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: [["G"], ["F"]] },
-    { type: "chorus", label: "Chorus 1", repeats: 2, measures: PRAISE_CHORUS },
-    { type: "verse", label: "Third Part", repeats: 1, measures: [["C", "F2"], ["G", "C"], ["G/B", "F2"], ["C"]] },
-    { type: "verse", label: "Fourth Part", repeats: 1, measures: PRAISE_PART_A },
-    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: [["G"], ["F"]] },
-    { type: "chorus", label: "Chorus 1", repeats: 2, measures: PRAISE_CHORUS },
-    { type: "tag", label: "I won't be quiet", repeats: 1, measures: PRAISE_QUIET },
-    { type: "chorus", label: "Chorus 1", repeats: 1, measures: PRAISE_CHORUS },
+    { type: "tag", label: "Refrão", cue: "Let everything that", repeats: 1, measures: [["C"]] },
+    { type: "verse", label: "First Part", cue: "I'll praise in the", repeats: 1, measures: PRAISE_PART_A },
+    { type: "verse", label: "Second Part", cue: "I'll praise when", repeats: 1, measures: [["C"], ["F2", "C"], ["G/B"], ["F", "C"]] },
+    { type: "prechorus", label: "Pre-Chorus", cue: "As long as I'm", repeats: 1, measures: [["G"], ["F"]] },
+    { type: "chorus", label: "Chorus 1", cue: "Praise the Lord", repeats: 2, measures: PRAISE_CHORUS },
+    { type: "verse", label: "Third Part", cue: "I'll praise when I", repeats: 1, measures: [["C", "F2"], ["G", "C"], ["G/B", "F2"], ["C"]] },
+    { type: "verse", label: "Fourth Part", cue: "My praise is a", repeats: 1, measures: PRAISE_PART_A },
+    { type: "prechorus", label: "Pre-Chorus", cue: "As long as I'm", repeats: 1, measures: [["G"], ["F"]] },
+    { type: "chorus", label: "Chorus 1", cue: "Praise the Lord", repeats: 2, measures: PRAISE_CHORUS },
+    { type: "tag", label: "I won't be quiet", cue: "I won't be quiet", repeats: 1, measures: PRAISE_QUIET },
+    { type: "chorus", label: "Chorus 1", cue: "Praise the Lord", repeats: 1, measures: PRAISE_CHORUS },
     { type: "interlude", label: "Interlude", repeats: 1, measures: [["G"], ["C"]] },
-    { type: "bridge", label: "Bridge", repeats: 2, measures: [["C"], ["Dm"], ["Am", "F"]] },
-    { type: "chorus", label: "Chorus", repeats: 4, measures: PRAISE_CHORUS },
-    { type: "tag", label: "Chorus 2", repeats: 3, measures: PRAISE_QUIET },
-    { type: "chorus", label: "Chorus 2", repeats: 1, measures: PRAISE_CHORUS },
+    { type: "bridge", label: "Bridge", cue: "I'll praise 'cause You're", repeats: 2, measures: [["C"], ["Dm"], ["Am", "F"]] },
+    { type: "chorus", label: "Chorus", cue: "Praise the Lord", repeats: 4, measures: PRAISE_CHORUS },
+    { type: "tag", label: "Chorus 2", cue: "I won't be quiet", repeats: 3, measures: PRAISE_QUIET },
+    { type: "chorus", label: "Chorus 2", cue: "I won't be quiet", repeats: 1, measures: PRAISE_CHORUS },
     { type: "outro", label: "Final", repeats: 2, measures: PRAISE_CHORUS }
   ]
 });
@@ -1475,11 +1536,11 @@ const amorEsComoFuego = song("amor-es-como-fuego", "Amor es como fuego", "E", {
   dates: [{ id: "2026-10-09", key: "Bb" }],
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["E"], ["C#m"], ["B"], ["A"], ["E"]] },
-    { type: "verse", label: "First Part", repeats: 1, measures: FUEGO_VERSO },
-    { type: "verse", label: "Second Part", repeats: 1, measures: FUEGO_VERSO },
-    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: [["C#m"], ["A", "E", "B"], ["C#m"], ["A", "E"], ["B", "E"]] },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: FUEGO_CORO },
-    { type: "verse", label: "Third Part", repeats: 1, measures: FUEGO_VERSO }
+    { type: "verse", label: "First Part", cue: "Anhelo un toque de", repeats: 1, measures: FUEGO_VERSO },
+    { type: "verse", label: "Second Part", cue: "Y no alcanzo a", repeats: 1, measures: FUEGO_VERSO },
+    { type: "prechorus", label: "Pre-Chorus", cue: "Tu amor es como", repeats: 1, measures: [["C#m"], ["A", "E", "B"], ["C#m"], ["A", "E"], ["B", "E"]] },
+    { type: "chorus", label: "Chorus", cue: "Que tu amor me", repeats: 1, measures: FUEGO_CORO },
+    { type: "verse", label: "Third Part", cue: "Me rindo ante ti", repeats: 1, measures: FUEGO_VERSO }
   ]
 });
 
@@ -1498,14 +1559,14 @@ const encuentremeOtraVez = song("encuentreme-otra-vez", "Encuéntrame otra vez",
   dates: [],
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: AQUI_GIRO },
-    { type: "verse", label: "Primera Parte", repeats: 1, measures: AQUI_VERSO },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: AQUI_CORO },
-    { type: "verse", label: "Second Part", repeats: 1, measures: AQUI_VERSO },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: AQUI_CORO },
+    { type: "verse", label: "Primera Parte", cue: "No puedo volver al", repeats: 1, measures: AQUI_VERSO },
+    { type: "chorus", label: "Chorus", cue: "No puedo más", repeats: 1, measures: AQUI_CORO },
+    { type: "verse", label: "Second Part", cue: "Mientras camine por el", repeats: 1, measures: AQUI_VERSO },
+    { type: "chorus", label: "Chorus", cue: "No puedo más", repeats: 1, measures: AQUI_CORO },
     { type: "interlude", label: "A Bm G", repeats: 1, measures: AQUI_GIRO },
-    { type: "bridge", label: "Bridge", repeats: 1, measures: [["D", "A/C#"], ["Bm"], ["A", "G"], ["D", "A/C#"], ["Bm"], ["A", "G"]] },
+    { type: "bridge", label: "Bridge", cue: "Ni por un momento", repeats: 1, measures: [["D", "A/C#"], ["Bm"], ["A", "G"], ["D", "A/C#"], ["Bm"], ["A", "G"]] },
     { type: "interlude", label: "A Bm G", repeats: 1, measures: AQUI_GIRO },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: AQUI_CORO }
+    { type: "chorus", label: "Chorus", cue: "No puedo más", repeats: 1, measures: AQUI_CORO }
   ]
 });
 
@@ -1579,25 +1640,25 @@ const quieroConocerAJesus = song("quiero-conocer-a-jesus", "Quiero conocer a Jes
     { type: "intro", label: "Intro", repeats: 2, measures: JESUS_INTRO },
     { type: "instrumental", label: "Fingerpicking - Intro", repeats: 1, measures: JESUS_INTRO },
     { type: "instrumental", label: "Solo - Intro", repeats: 1, measures: JESUS_INTRO },
-    { type: "verse", label: "Primera parte", repeats: 1, measures: JESUS_VERSO },
-    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: JESUS_PRE },
-    { type: "verse", label: "First Part", repeats: 1, measures: JESUS_VERSO },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: JESUS_CORO },
+    { type: "verse", label: "Primera parte", cue: "Mi orgullo me sacó", repeats: 1, measures: JESUS_VERSO },
+    { type: "prechorus", label: "Pre-Chorus", cue: "Quiero conocer a", repeats: 1, measures: JESUS_PRE },
+    { type: "verse", label: "First Part", cue: "Mi orgullo me sacó", repeats: 1, measures: JESUS_VERSO },
+    { type: "chorus", label: "Chorus", cue: "Quiero conocer a", repeats: 1, measures: JESUS_CORO },
     { type: "interlude", label: "Interlude", repeats: 1, measures: [JESUS_YESHUA] },
     { type: "instrumental", label: "Tab - Solo", repeats: 1, measures: [JESUS_YESHUA] },
     {
       type: "bridge",
-      label: "Bridge",
+      label: "Bridge", cue: "Yeshua",
       repeats: 1,
       measures: [
         ...Array.from({ length: 14 }, () => ["C", "D", "Em", "Bm"]),
         ["C", "D", "Em"], ["Bm"], ["C7M"], ["D", "Em", "Bm"]
       ]
     },
-    { type: "chorus", label: "Chorus", repeats: 4, measures: [["C", "Em"], ["G", "Bm7"]] },
+    { type: "chorus", label: "Chorus", cue: "Mi amado es, el", repeats: 4, measures: [["C", "Em"], ["G", "Bm7"]] },
     {
       type: "outro",
-      label: "Ending",
+      label: "Ending", cue: "Nuestro Dios reinará",
       repeats: 1,
       measures: [...Array.from({ length: 8 }, () => [["C", "D", "Em"], ["D/F#", "G"]]).flat(), ["G"]]
     }
@@ -1669,17 +1730,17 @@ const todaLenguaYTodaNacion = song("toda-lengua-y-toda-nacion", "Toda lengua y t
   tempoBpm: 130,
   dates: [{ id: "2026-10-09", key: "D" }],
   sections: [
-    { type: "verse", label: "First Part", repeats: 1, measures: LENGUA_PRIMERA },
-    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: LENGUA_PRE },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: LENGUA_CORO },
+    { type: "verse", label: "First Part", cue: "Hasta que Él venga", repeats: 1, measures: LENGUA_PRIMERA },
+    { type: "prechorus", label: "Pre-Chorus", cue: "Y mientras te esperamos", repeats: 1, measures: LENGUA_PRE },
+    { type: "chorus", label: "Chorus", cue: "Toda lengua y toda", repeats: 1, measures: LENGUA_CORO },
     { type: "bridge", label: "Bridge", repeats: 1, measures: LENGUA_PUENTE },
-    { type: "verse", label: "First Part", repeats: 1, measures: LENGUA_PRIMERA_2 },
-    { type: "prechorus", label: "Pre-Chorus", repeats: 1, measures: LENGUA_PRE },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: LENGUA_CORO },
+    { type: "verse", label: "First Part", cue: "Hasta que Él venga", repeats: 1, measures: LENGUA_PRIMERA_2 },
+    { type: "prechorus", label: "Pre-Chorus", cue: "Y mientras te esperamos", repeats: 1, measures: LENGUA_PRE },
+    { type: "chorus", label: "Chorus", cue: "Toda lengua y toda", repeats: 1, measures: LENGUA_CORO },
     { type: "interlude", label: "Interlúdio 1", repeats: 1, measures: LENGUA_INTER },
-    { type: "verse", label: "Second Part", repeats: 1, measures: [...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA] },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: LENGUA_CORO_FINAL },
-    { type: "verse", label: "Second Part", repeats: 1, measures: LENGUA_SEGUNDA },
+    { type: "verse", label: "Second Part", cue: "Santo y digno es", repeats: 1, measures: [...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA, ...LENGUA_SEGUNDA] },
+    { type: "chorus", label: "Chorus", cue: "Toda lengua y toda", repeats: 1, measures: LENGUA_CORO_FINAL },
+    { type: "verse", label: "Second Part", cue: "Santo y digno es", repeats: 1, measures: LENGUA_SEGUNDA },
     { type: "outro", label: "Ending", repeats: 1, measures: LENGUA_FINAL }
   ]
 });
@@ -1695,24 +1756,24 @@ const reyDeReyes = song("rey-de-reyes", "Rey de Reyes", "D", {
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["D"]] },
     {
-      type: "verse", label: "Verso 1", repeats: 1,
+      type: "verse", label: "Verso 1", cue: "En la oscuridad estaba", repeats: 1,
       measures: [["D/F#", "G"], ["A", "D"], ["D/F#", "G"], ["A", "D"], ["D/F#", "G", "A"], ["D"], ["D/F#", "G"], ["A", "D"]]
     },
-    { type: "chorus", label: "Coro", repeats: 1, measures: REY_CORO },
+    { type: "chorus", label: "Coro", cue: "Gloria al Padre", repeats: 1, measures: REY_CORO },
     {
-      type: "verse", label: "Verso 2", repeats: 1,
+      type: "verse", label: "Verso 2", cue: "Para revelar tu", repeats: 1,
       measures: [["D/F#", "G", "A"], ["D"], ["D/F#", "G", "A"], ["D"], ["D/F#", "G", "A"], ["D"], ["D/F#", "G"], ["A", "D"]]
     },
-    { type: "chorus", label: "Coro", repeats: 1, measures: REY_CORO },
+    { type: "chorus", label: "Coro", cue: "Gloria al Padre", repeats: 1, measures: REY_CORO },
     {
-      type: "bridge", label: "Puente", repeats: 1,
+      type: "bridge", label: "Puente", cue: "Al tercer amanecer", repeats: 1,
       measures: [["Bm", "G", "A"], ["D"], ["Bm", "G"], ["A", "D"], ["Bm", "G", "A"], ["D"], ["Bm", "G", "A"], ["D"]]
     },
     {
-      type: "verse", label: "Verso 3", repeats: 1,
+      type: "verse", label: "Verso 3", cue: "Y la iglesia comenzó", repeats: 1,
       measures: [["D/F#", "G"], ["A", "D"], ["D/F#", "G"], ["A", "D"], ["D/F#", "G"], ["A", "D"], ["D/F#", "G", "A"], ["D"]]
     },
-    { type: "chorus", label: "Coro", repeats: 1, measures: [...REY_CORO, ["D/F#", "G", "A", "D"]] }
+    { type: "chorus", label: "Coro", cue: "Gloria al Padre", repeats: 1, measures: [...REY_CORO, ["D/F#", "G", "A", "D"]] }
   ]
 });
 
@@ -1727,9 +1788,9 @@ const dignoDeAdorar = song("worthy-of-it-all", "Digno de Adorar (Worthy of It Al
   chartUrl: "https://www.cifraclub.com/ccint-music/digno-de-adorar-worthy-of-it-all/",
   dates: [],
   sections: [
-    { type: "verse", label: "Verso", repeats: 1, measures: [["G", "A", "G", "A/F#"], ["G", "A", "Bm"], ["G", "A", "D"]] },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A"], ["G"], ["A", "D"]] },
-    { type: "bridge", label: "Bridge", repeats: 1, measures: [["D"], ["A"], ["Bm"], ["G"], ["D", "A", "G", "A", "D"]] }
+    { type: "verse", label: "Verso", cue: "Ángeles y santos hoy", repeats: 1, measures: [["G", "A", "G", "A/F#"], ["G", "A", "Bm"], ["G", "A", "D"]] },
+    { type: "chorus", label: "Chorus", cue: "Eres digno de", repeats: 1, measures: [["D"], ["A"], ["G"], ["A", "D"]] },
+    { type: "bridge", label: "Bridge", cue: "Día y noche, se", repeats: 1, measures: [["D"], ["A"], ["Bm"], ["G"], ["D", "A", "G", "A", "D"]] }
   ]
 });
 
@@ -1748,12 +1809,12 @@ const confiaEnDios = song("confia-en-dios", "Confía en Dios (Trust In God)", "C
   dates: [{ id: "2026-10-18", key: "B" }],
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [...CONFIA_RITMO, ...CONFIA_RITMO] },
-    { type: "verse", label: "First Part", repeats: 1, measures: CONFIA_ESTROFA },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: CONFIA_CORO },
-    { type: "verse", label: "Second Part", repeats: 1, measures: CONFIA_ESTROFA },
-    { type: "chorus", label: "Chorus", repeats: 2, measures: CONFIA_CORO },
+    { type: "verse", label: "First Part", cue: "Grata certeza", repeats: 1, measures: CONFIA_ESTROFA },
+    { type: "chorus", label: "Chorus", cue: "Confío en Dios", repeats: 1, measures: CONFIA_CORO },
+    { type: "verse", label: "Second Part", cue: "Siempre rendido", repeats: 1, measures: CONFIA_ESTROFA },
+    { type: "chorus", label: "Chorus", cue: "Confío en Dios", repeats: 2, measures: CONFIA_CORO },
     { type: "interlude", label: "Interludio", repeats: 1, measures: CONFIA_RITMO },
-    { type: "bridge", label: "Puente", repeats: 1, measures: [["C"], ["Am"], ["F"], ["Dm"], ["F"]] }
+    { type: "bridge", label: "Puente", cue: "Busqué al Señor", repeats: 1, measures: [["C"], ["Am"], ["F"], ["Dm"], ["F"]] }
   ]
 });
 
@@ -1774,23 +1835,23 @@ const ruido = song("ruido", "Ruido!", "Eb", {
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["Eb"], ["Ab", "Eb/G", "Eb"]] },
     {
-      type: "verse", label: "First Part", repeats: 1,
+      type: "verse", label: "First Part", cue: "Sábado en silencio", repeats: 1,
       measures: [["Eb", "Eb", "Eb"], ["Cm"], ["Bb", "Ab"], ["Eb/G", "Eb"], ["Eb"], ["Cm"], ["Bb", "Ab", "Eb/G"], ["Eb", "Ab", "Eb/G", "Eb"]]
     },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: RUIDO_CORO },
+    { type: "chorus", label: "Chorus", cue: "Este es el ruido", repeats: 1, measures: RUIDO_CORO },
     {
-      type: "verse", label: "Second Part", repeats: 1,
+      type: "verse", label: "Second Part", cue: "Despierta un fuego", repeats: 1,
       measures: [["Eb"], ["Cm"], ["Bb"], ["Ab", "Eb/G", "Eb"], ["Ab"], ["Bb", "Cm"], ["Bb"], ["Ab", "Eb/G", "Eb"]]
     },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: RUIDO_CORO },
+    { type: "chorus", label: "Chorus", cue: "Este es el ruido", repeats: 1, measures: RUIDO_CORO },
     {
-      type: "bridge", label: "Puente", repeats: 1,
+      type: "bridge", label: "Puente", cue: "Mi Dios hoy puede", repeats: 1,
       measures: [
         ["Eb"], ["Ab", "Eb/G", "Eb", "Ab"], ["Eb/G", "Eb"], ["Ab", "Eb/G", "Eb", "Ab"], ["Eb/G", "Eb"],
         ["Ab", "Eb/G", "Eb"], ["Ab", "Eb/G", "Eb"], ["Ab", "Eb/G", "Eb"], ["Cm", "Bb", "Ab"]
       ]
     },
-    { type: "chorus", label: "Chorus 2", repeats: 1, measures: RUIDO_CORO_2 }
+    { type: "chorus", label: "Chorus 2", cue: "Este es el ruido", repeats: 1, measures: RUIDO_CORO_2 }
   ]
 });
 
@@ -1809,22 +1870,22 @@ const enTuMover = song("en-tu-mover", "En tu mover", "G", {
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["G", "D/F#", "Bm", "G", "A"]] },
     {
-      type: "verse", label: "Verse", repeats: 1,
+      type: "verse", label: "Verse", cue: "En tu mover la", repeats: 1,
       measures: [["Bm"], ["G", "D"], ["Bm"], ["G", "D"], ["Bm"], ["G", "D"], ["Bm"], ["G", "D"]]
     },
-    { type: "chorus", label: "Coro", repeats: 1, measures: MOVER_CORO },
+    { type: "chorus", label: "Coro", cue: "Y ve, Dios queremos", repeats: 1, measures: MOVER_CORO },
     {
-      type: "verse", label: "Verse", repeats: 1,
+      type: "verse", label: "Verse", cue: "En tu mover me", repeats: 1,
       measures: [
         ["Bm"], ["G", "D", "Dmaj7/F#"], ["Bm"], ["G", "D", "Dmaj7/F#"],
         ["Bm"], ["G", "D", "Dmaj7/F#"], ["Bm"], ["G", "D", "Daj7/F#"]
       ]
     },
-    { type: "chorus", label: "Coro", repeats: 1, measures: MOVER_CORO },
-    { type: "chorus", label: "Coro 2", repeats: 2, measures: MOVER_REY },
-    { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["D/F#"], ["Bm"], ["G", "A"]] },
-    { type: "chorus", label: "Coro", repeats: 1, measures: MOVER_CORO },
-    { type: "chorus", label: "Coro", repeats: 1, measures: [["G"], ["D"], ["Bm"], ["G", "A", "G"]] }
+    { type: "chorus", label: "Coro", cue: "Y ve, Dios queremos", repeats: 1, measures: MOVER_CORO },
+    { type: "chorus", label: "Coro 2", cue: "Rey de generaciones", repeats: 2, measures: MOVER_REY },
+    { type: "chorus", label: "Coro", cue: "Acércanos a ti", repeats: 1, measures: [["G"], ["D/F#"], ["Bm"], ["G", "A"]] },
+    { type: "chorus", label: "Coro", cue: "Y ve, Dios queremos", repeats: 1, measures: MOVER_CORO },
+    { type: "chorus", label: "Coro", cue: "Acércanos a ti", repeats: 1, measures: [["G"], ["D"], ["Bm"], ["G", "A", "G"]] }
   ]
 });
 
@@ -1844,16 +1905,16 @@ const giveMeJesus = song("give-me-jesus", "Quiero a Cristo (Give Me Jesus)", "G"
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["G", "C"]] },
     {
-      type: "verse", label: "Verse", repeats: 1,
+      type: "verse", label: "Verse", cue: "I don't want anything", repeats: 1,
       measures: [["G"], ["C"], ["Am7"], ["G/B", "C"], ["G"], ["C"], ["Am7", "G/B"], ["C", "C"]]
     },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: [...QUIERO_CORO, ["G"], ["G"], ["C"]] },
-    { type: "verse", label: "Verse", repeats: 1, measures: [["Am7"], ["G/B", "C", "D"]] },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: [...QUIERO_CORO, ...QUIERO_CORO, ["G/B", "C", "Em7", "D"]] },
-    { type: "bridge", label: "Bridge", repeats: 1, measures: [...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_COLA] },
-    { type: "chorus", label: "Chorus", repeats: 2, measures: QUIERO_CORO },
-    { type: "bridge", label: "Bridge", repeats: 1, measures: [...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_COLA] },
-    { type: "chorus", label: "Chorus", repeats: 2, measures: QUIERO_CORO }
+    { type: "chorus", label: "Chorus", cue: "Give me Jesus", repeats: 1, measures: [...QUIERO_CORO, ["G"], ["G"], ["C"]] },
+    { type: "verse", label: "Verse", cue: "More than silver, more", repeats: 1, measures: [["Am7"], ["G/B", "C", "D"]] },
+    { type: "chorus", label: "Chorus", cue: "Give me Jesus", repeats: 1, measures: [...QUIERO_CORO, ...QUIERO_CORO, ["G/B", "C", "Em7", "D"]] },
+    { type: "bridge", label: "Bridge", cue: "I don't want anyone", repeats: 1, measures: [...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_COLA] },
+    { type: "chorus", label: "Chorus", cue: "Give me Jesus", repeats: 2, measures: QUIERO_CORO },
+    { type: "bridge", label: "Bridge", cue: "I don't want anyone", repeats: 1, measures: [...QUIERO_PUENTE, ...QUIERO_PUENTE, ...QUIERO_COLA] },
+    { type: "chorus", label: "Chorus", cue: "Give me Jesus", repeats: 2, measures: QUIERO_CORO }
   ]
 });
 
@@ -1874,24 +1935,24 @@ const verLaVictoria = song("ver-la-victoria", "Ver La Victoria", "A", {
   sections: [
     { type: "intro", label: "Intro", repeats: 1, measures: [["Am", "F", "C"], ["Am", "F", "C"]] },
     {
-      type: "verse", label: "First Part", repeats: 1,
+      type: "verse", label: "First Part", cue: "No prosperará el arma", repeats: 1,
       measures: [["Am", "F", "C"], ["Am", "F", "C"], ["Am", "F"], ["C"], ["Am", "F", "C"], ["Am", "F", "C"]]
     },
-    { type: "chorus", label: "Chorus", repeats: 1, measures: VICTORIA_CORO },
+    { type: "chorus", label: "Chorus", cue: "Voy a ver la", repeats: 1, measures: VICTORIA_CORO },
     { type: "interlude", label: "Interlude", repeats: 1, measures: [["Am", "F", "C"]] },
     {
-      type: "verse", label: "Second Part", repeats: 1,
+      type: "verse", label: "Second Part", cue: "Hay poder en el", repeats: 1,
       measures: [["Am"], ["F", "C"], ["Am", "F", "C"], ["Am", "F", "C"], ["Am", "F", "C"], ["Am", "F", "C"]]
     },
-    { type: "chorus", label: "Chorus", repeats: 2, measures: VICTORIA_CORO },
+    { type: "chorus", label: "Chorus", cue: "Voy a ver la", repeats: 2, measures: VICTORIA_CORO },
     { type: "interlude", label: "Interlude", repeats: 1, measures: [["F", "G", "Am"], ["F", "Am", "G"]] },
     {
-      type: "bridge", label: "Bridge", repeats: 1,
+      type: "bridge", label: "Bridge", cue: "Todo lo que viene", repeats: 1,
       measures: [...Array(6)].flatMap(() => VICTORIA_PUENTE.map((bar) => bar.slice()))
     },
-    { type: "chorus", label: "Chorus", repeats: 2, measures: VICTORIA_CORO },
+    { type: "chorus", label: "Chorus", cue: "Voy a ver la", repeats: 2, measures: VICTORIA_CORO },
     {
-      type: "bridge", label: "Bridge", repeats: 1,
+      type: "bridge", label: "Bridge", cue: "Todo lo que viene", repeats: 1,
       measures: [...Array(2)].flatMap(() => VICTORIA_PUENTE.map((bar) => bar.slice()))
     }
   ]
@@ -2011,10 +2072,10 @@ const grupoCSongs = [
     chartUrl: "https://www.cifraclub.com/all-sons-and-daughters/great-are-you-lord/",
     sections: [
       { type: "intro", label: "Intro", repeats: 2, measures: [["D", "F#m"], ["E"]] },
-      { type: "verse", label: "Verse", repeats: 1, measures: GRANDE_ERES_DIOS_VERSO },
-      { type: "chorus", label: "Chorus", repeats: 1, measures: GRANDE_ERES_DIOS_CORO },
+      { type: "verse", label: "Verse", cue: "You give life, You", repeats: 1, measures: GRANDE_ERES_DIOS_VERSO },
+      { type: "chorus", label: "Chorus", cue: "It's Your breath in", repeats: 1, measures: GRANDE_ERES_DIOS_CORO },
       { type: "instrumental", label: "Instrumental", repeats: 1, measures: [["A", "Asus4", "D2", "A"]] },
-      { type: "bridge", label: "Bridge", repeats: 1, measures: [["A"], ["Asus4"], ["D2", "A"]] },
+      { type: "bridge", label: "Bridge", cue: "All the earth will", repeats: 1, measures: [["A"], ["Asus4"], ["D2", "A"]] },
       { type: "outro", label: "Ending", repeats: 1, measures: [["D", "F#m", "E"]] }
     ]
   }),
@@ -2064,16 +2125,16 @@ const grupoCSongs = [
     lyricsUrl: "https://www.worshiptogether.com/es/canciones/decimos-amen-lakewood-music/",
     sections: [
       { type: "intro", label: "Intro", repeats: 2, measures: [["F(4)"], ["F"], ["F(4)"], ["F"]] },
-      { type: "verse", label: "Verso 1", repeats: 1, measures: [["F"], ["F(4)"], ["Am", "G", "F"], ["F"], ["F(4)"], ["Dm", "Bb", "F"], ["Dm", "Bb", "F"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
+      { type: "verse", label: "Verso 1", repeats: 1, cue: "Si dos o tres", measures: [["F"], ["F(4)"], ["Am", "G", "F"], ["F"], ["F(4)"], ["Dm", "Bb", "F"], ["Dm", "Bb", "F"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Y decimos amén", measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
       { type: "instrumental", label: "Canal", repeats: 1, measures: [["F(4)"], ["F"], ["F(4)"], ["F"]] },
-      { type: "verse", label: "Verso 2", repeats: 1, measures: [["F"], ["F(4)"], ["Dm", "Bb", "F"], ["F"], ["F(4)"], ["Dm", "Bb", "F"], ["Dm", "Bb", "F"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
+      { type: "verse", label: "Verso 2", repeats: 1, cue: "El cielo se abre", measures: [["F"], ["F(4)"], ["Dm", "Bb", "F"], ["F"], ["F(4)"], ["Dm", "Bb", "F"], ["Dm", "Bb", "F"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Y decimos amén", measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
       { type: "instrumental", label: "Interludio", repeats: 1, measures: [["F(4)"], ["F"], ["F(4)"], ["F"]] },
-      { type: "bridge", label: "Puente", repeats: 1, measures: [["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"]] },
-      { type: "bridge", label: "Puente 2", repeats: 1, measures: [["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/Eb", "Bb/D", "F"], ["Bb", "F"], ["Bb", "F"], ["Bbsus/Eb", "Bb/D", "F"], ["Bbsus/Eb", "Bb/D", "F"]] },
-      { type: "chorus", label: "Coro", repeats: 2, measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
-      { type: "tag", label: "Tag", repeats: 1, measures: [["Dm"], ["Bb", "F"], ["Dm"], ["Bb", "F"]] }
+      { type: "bridge", label: "Puente", repeats: 1, cue: "Firmes en tu voluntad", measures: [["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"]] },
+      { type: "bridge", label: "Puente 2", repeats: 1, cue: "Con tu poder hoy", measures: [["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/Eb", "Bb/D", "F"], ["Bb", "F"], ["Bb", "F"], ["Bbsus/Eb", "Bb/D", "F"], ["Bbsus/Eb", "Bb/D", "F"]] },
+      { type: "chorus", label: "Coro", repeats: 2, cue: "Y decimos amén", measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
+      { type: "tag", label: "Tag", repeats: 1, cue: "Todas tus promesas", measures: [["Dm"], ["Bb", "F"], ["Dm"], ["Bb", "F"]] }
     ]
   }),
   grupoB("revelacion", "Revelación", "F", "2026-10-31", { groups: ["C"] }),
@@ -2106,11 +2167,11 @@ const grupoAOctober = [
     artist: "Israel Houghton",
     sourceKey: "C",
     sections: [
-      { type: "verse", label: "Verso", repeats: 1, measures: [["Fmaj7", "Dm7"], ["Am7", "C"], ["Fmaj7", "Dm7"], ["C"], ["C", "D", "E"], ["Fmaj7", "Dm7"], ["Am7", "C"], ["Fmaj7", "Dm7"], ["C"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["C/E", "F", "G11", "F"], ["C", "Am7"], ["Bb", "C/D"]] },
-      { type: "bridge", label: "Puente", repeats: 1, measures: [["F", "G"], ["Am"], ["E", "F", "G"], ["Am", "C/D"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["C/E", "F", "G11"], ["D", "F", "A", "E", "D", "C"], ["Am7"], ["Bb", "C/D"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["C/E", "F", "G11", "F"], ["C", "Am7"], ["Eb", "Bb", "C/D"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Lucha por nosotros", measures: [["Fmaj7", "Dm7"], ["Am7", "C"], ["Fmaj7", "Dm7"], ["C"], ["C", "D", "E"], ["Fmaj7", "Dm7"], ["Am7", "C"], ["Fmaj7", "Dm7"], ["C"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Vi viré no moriré", measures: [["C/E", "F", "G11", "F"], ["C", "Am7"], ["Bb", "C/D"]] },
+      { type: "bridge", label: "Puente", repeats: 1, cue: "Dios es por nosotros", measures: [["F", "G"], ["Am"], ["E", "F", "G"], ["Am", "C/D"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Vi viré no moriré", measures: [["C/E", "F", "G11"], ["D", "F", "A", "E", "D", "C"], ["Am7"], ["Bb", "C/D"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Vi viré no moriré", measures: [["C/E", "F", "G11", "F"], ["C", "Am7"], ["Eb", "Bb", "C/D"]] },
       { type: "outro", label: "Final", repeats: 1, measures: [["A", "G", "F", "E", "D"], ["F", "G/B", "C9"]] }
     ]
   }),
@@ -2123,13 +2184,13 @@ const grupoAOctober = [
     tempoBpm: 122,
     beatsPerMeasure: 4,
     sections: [
-      { type: "verse", label: "Verse 1", repeats: 1, measures: [["A"], ["A"], ["F#m7"], ["D", "A"]] },
-      { type: "verse", label: "Verse 2", repeats: 1, measures: [["A", "C#m7", "D"], ["A", "C#m7", "D"], ["F#m7", "E"], ["A/C#", "D", "A"]] },
-      { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A"], ["A/E"]] },
-      { type: "verse", label: "Verse 3", repeats: 1, measures: [["A", "A/C#", "D"], ["A", "A/C#", "D"], ["F#m7", "E"], ["A/C#", "D", "A"]] },
-      { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A", "A/E"]] },
-      { type: "bridge", label: "Bridge", repeats: 1, measures: [["A"], ["A"], ["F#m7"], ["E4"], ["A/C#"], ["D"], ["F#m7"], ["E4"], ["A/C#"], ["D"]] },
-      { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A", "A/E"]] }
+      { type: "verse", label: "Verse 1", repeats: 1, cue: "There is no shadow", measures: [["A"], ["A"], ["F#m7"], ["D", "A"]] },
+      { type: "verse", label: "Verse 2", repeats: 1, cue: "There is no weapon", measures: [["A", "C#m7", "D"], ["A", "C#m7", "D"], ["F#m7", "E"], ["A/C#", "D", "A"]] },
+      { type: "chorus", label: "Chorus", repeats: 1, cue: "Show me one thing", measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A"], ["A/E"]] },
+      { type: "verse", label: "Verse 3", repeats: 1, cue: "There is a kingdom", measures: [["A", "A/C#", "D"], ["A", "A/C#", "D"], ["F#m7", "E"], ["A/C#", "D", "A"]] },
+      { type: "chorus", label: "Chorus", repeats: 1, cue: "Show me one thing", measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A", "A/E"]] },
+      { type: "bridge", label: "Bridge", repeats: 1, cue: "All of my fear", measures: [["A"], ["A"], ["F#m7"], ["E4"], ["A/C#"], ["D"], ["F#m7"], ["E4"], ["A/C#"], ["D"]] },
+      { type: "chorus", label: "Chorus", repeats: 1, cue: "Show me one thing", measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A", "A/E"]] }
     ]
   }),
   // Worship Chords, clave F. El intro escribe Bb; el resto escribe A#. Sólo acordes.
@@ -2139,14 +2200,14 @@ const grupoAOctober = [
     sourceKey: "F",
     sections: [
       { type: "intro", label: "Intro", repeats: 2, measures: [["F"], ["F"], ["F", "G", "A", "A#", "C", "D"], ["D"], ["Bb"]] },
-      { type: "verse", label: "Verso", repeats: 2, measures: [["F", "A#"], ["F"]] },
-      { type: "verse", label: "Verso", repeats: 1, measures: [["F", "A#"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["D", "E"], ["F", "C", "F"], ["A#", "F", "Dm", "C"], ["C", "F/A", "A#", "F/C", "A", "A#"], ["C", "F", "C", "F"], ["A#", "F", "Dm", "C"], ["F/A", "A#", "F/A", "A#", "C", "F"]] },
+      { type: "verse", label: "Verso", repeats: 2, cue: "Aleluya, aleluya", measures: [["F", "A#"], ["F"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Aleluya", measures: [["F", "A#"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Santo, santo", measures: [["D", "E"], ["F", "C", "F"], ["A#", "F", "Dm", "C"], ["C", "F/A", "A#", "F/C", "A", "A#"], ["C", "F", "C", "F"], ["A#", "F", "Dm", "C"], ["F/A", "A#", "F/A", "A#", "C", "F"]] },
       { type: "instrumental", label: "Preludio", repeats: 2, measures: [["F"], ["F"], ["F", "G", "A", "A#", "C", "D"], ["D"], ["Bb"]] },
-      { type: "bridge", label: "Puente", repeats: 1, measures: [["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"], ["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"]] },
-      { type: "bridge", label: "Puente", repeats: 1, measures: [["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"], ["A#"], ["Dm", "C"], ["Dm", "Gm"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["F/A", "A#"], ["Dm", "C"], ["Am"], ["Dm"], ["Gm"], ["C"], ["F", "Fsus4", "F"]] },
-      { type: "outro", label: "Final", repeats: 2, measures: [["Gm"], ["C"], ["F", "Dm"]] }
+      { type: "bridge", label: "Puente", repeats: 1, cue: "Tu nombre es más", measures: [["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"], ["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"]] },
+      { type: "bridge", label: "Puente", repeats: 1, cue: "Tu nombre es más", measures: [["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"], ["A#"], ["Dm", "C"], ["Dm", "Gm"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Claman ángeles", measures: [["F/A", "A#"], ["Dm", "C"], ["Am"], ["Dm"], ["Gm"], ["C"], ["F", "Fsus4", "F"]] },
+      { type: "outro", label: "Final", repeats: 2, cue: "Y por siempre es", measures: [["Gm"], ["C"], ["F", "Dm"]] }
     ]
   }),
   // Scribd y Chordify no publican una cifra escrita. Sigue pendiente.
@@ -2163,11 +2224,11 @@ const grupoAOctober = [
     sourceKey: "Db",
     chartUrl: "https://www.cifraclub.com/bettel-music/sufrido-hijo-de-dios/",
     sections: [
-      { type: "verse", label: "Verse 1", repeats: 1, measures: [["Db", "Ab"], ["Db/F", "Gb", "Ab"], ["Db"], ["Ab"], ["Db/F", "Gb", "Ab"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["Gb", "Db"], ["Ab"], ["Bbm"], ["Gb", "Ab", "Bbm"], ["Ab", "Gb", "Db"]] },
-      { type: "verse", label: "Verse 2", repeats: 1, measures: [["Db", "Ab"], ["Db/F", "Gb", "Ab"], ["Db"], ["Ab"], ["Db", "Gb", "Ab"], ["Db", "Gb", "Ab"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["Gb", "Db"], ["Ab"], ["Bbm"], ["Gb", "Ab", "Bbm"], ["Ab", "Gb", "Db"]] },
-      { type: "bridge", label: "Puente", repeats: 1, measures: [["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Gb"], ["Db"], ["Gb/Bb"], ["Db/F"], ["Gb"], ["Db"], ["Gb/F"], ["Ab"], ["Gb", "Db"], ["Gb/Bb", "Db/F"], ["Gb", "Db"]] }
+      { type: "verse", label: "Verse 1", repeats: 1, cue: "Oh perfecto Hijo de", measures: [["Db", "Ab"], ["Db/F", "Gb", "Ab"], ["Db"], ["Ab"], ["Db/F", "Gb", "Ab"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Lloro y sangro", measures: [["Gb", "Db"], ["Ab"], ["Bbm"], ["Gb", "Ab", "Bbm"], ["Ab", "Gb", "Db"]] },
+      { type: "verse", label: "Verse 2", repeats: 1, cue: "Algunos hoy te ven", measures: [["Db", "Ab"], ["Db/F", "Gb", "Ab"], ["Db"], ["Ab"], ["Db", "Gb", "Ab"], ["Db", "Gb", "Ab"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Lloro y sangro", measures: [["Gb", "Db"], ["Ab"], ["Bbm"], ["Gb", "Ab", "Bbm"], ["Ab", "Gb", "Db"]] },
+      { type: "bridge", label: "Puente", repeats: 1, cue: "En tu cruz soy", measures: [["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Gb"], ["Db"], ["Gb/Bb"], ["Db/F"], ["Gb"], ["Db"], ["Gb/F"], ["Ab"], ["Gb", "Db"], ["Gb/Bb", "Db/F"], ["Gb", "Db"]] }
     ]
   }),
   // Cifra Club etiqueta el tono como F#m, pero imprime estos acordes (A, D, E)
@@ -2179,8 +2240,8 @@ const grupoAOctober = [
     chartUrl: "https://www.cifraclub.com/en-espiritu-en-verdad/gracias-por-la-cruz/",
     sections: [
       { type: "intro", label: "Intro", repeats: 1, measures: [["A", "D", "E", "A"]] },
-      { type: "verse", label: "Verso", repeats: 1, measures: [["A", "D", "E", "A"], ["A", "D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"], ["A", "D", "E", "A"], ["D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"]] },
-      { type: "chorus", label: "Coro", repeats: 1, measures: [["A", "E"], ["Bm7", "A", "D"], ["E", "D", "C#", "D"], ["Bm", "A", "E"], ["A", "E"], ["E", "D", "C#", "D"], ["Bm", "A", "E", "D"], ["Bm", "A", "E", "D"]] }
+      { type: "verse", label: "Verso", repeats: 1, cue: "Gracias por la cruz", measures: [["A", "D", "E", "A"], ["A", "D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"], ["A", "D", "E", "A"], ["D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Digno es el Señor", measures: [["A", "E"], ["Bm7", "A", "D"], ["E", "D", "C#", "D"], ["Bm", "A", "E"], ["A", "E"], ["E", "D", "C#", "D"], ["Bm", "A", "E", "D"], ["Bm", "A", "E", "D"]] }
     ]
   })
 ];
@@ -2777,7 +2838,9 @@ export function songStructure(sections) {
 
   const namedBlocks = blocks.map((b) => {
     const displayLabels = b.labels.map((l) => display(b.id, l));
-    return { ...b, displayLabels, title: displayLabels.join(" · ") };
+    const cues = b.occurrences.map((i) => sections[i].cue).filter((c) => typeof c === "string" && c.trim());
+    const cue = cues.length === b.occurrences.length && cues.every((c) => c === cues[0]) ? cues[0] : null;
+    return { ...b, displayLabels, title: displayLabels.join(" · "), cue };
   });
   const namedRoadmap = roadmap.map((r) => ({ ...r, displayLabel: display(r.blockId, r.label) }));
 
@@ -3392,8 +3455,22 @@ const el = {
   lyricsFile: document.getElementById("lyricsFile"),
   lyricsSave: document.getElementById("lyricsSave"),
   lyricsCancel: document.getElementById("lyricsCancel"),
-  popover: document.getElementById("chordPopover")
+  popover: document.getElementById("chordPopover"),
+  themeSelect: document.getElementById("themeSelect")
 };
+
+const THEME_STORAGE_KEY = "worship-setlist:theme:v1";
+const THEMES = ["tinta", "papel", "pizarra"];
+
+function applyTheme(id) {
+  const theme = THEMES.includes(id) ? id : "tinta";
+  document.documentElement.dataset.theme = theme;
+  if (el.themeSelect) el.themeSelect.value = theme;
+  try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch { /* sigue en esta visita */ }
+}
+
+applyTheme(document.documentElement.dataset.theme || "tinta");
+el.themeSelect.addEventListener("change", () => applyTheme(el.themeSelect.value));
 
 let state = initialState();
 let scrollBySetlist = {};
@@ -4496,7 +4573,7 @@ function renderStage() {
       const shapes = stageCapo
         ? transposeSections([{ measures: block.measures }], -stageCapo, "sharp")[0].measures
         : block.measures;
-      const li = renderSection({ label: block.title, repeats: 1, measures: shapes }, { measures: block.measures }, stageKeyRoot);
+      const li = renderSection({ label: block.title, repeats: 1, measures: shapes, cue: block.cue }, { measures: block.measures }, stageKeyRoot);
       li.id = `block-${block.id}`;
       if (block.occurrences.length > 1) {
         const uses = document.createElement("span");
@@ -5285,33 +5362,33 @@ function renderChordDiagram(v) {
   };
 
   for (let s = 0; s < 6; s++) {
-    mk("line", { x1: left + s * sx, y1: top, x2: left + s * sx, y2: top + 5 * sy, stroke: "#9aa3b2", "stroke-width": 1 });
+    mk("line", { x1: left + s * sx, y1: top, x2: left + s * sx, y2: top + 5 * sy, stroke: "var(--muted)", "stroke-width": 1 });
   }
   for (let f = 0; f <= 5; f++) {
     const nut = f === 0 && baseFret === 1;
-    mk("line", { x1: left, y1: top + f * sy, x2: left + 5 * sx, y2: top + f * sy, stroke: nut ? "#f3f4f6" : "#9aa3b2", "stroke-width": nut ? 5 : 1 });
+    mk("line", { x1: left, y1: top + f * sy, x2: left + 5 * sx, y2: top + f * sy, stroke: nut ? "var(--text)" : "var(--muted)", "stroke-width": nut ? 5 : 1 });
   }
   if (baseFret > 1) {
-    mk("text", { x: left - 20, y: top + sy * 0.65, fill: "#9aa3b2", "font-size": 12, "text-anchor": "middle" }, `${baseFret}`);
+    mk("text", { x: left - 20, y: top + sy * 0.65, fill: "var(--muted)", "font-size": 12, "text-anchor": "middle" }, `${baseFret}`);
   }
   if (v.barre) {
     const row = v.barre.fret - baseFret + 1;
     mk("rect", {
       x: left + v.barre.from * sx - 9, y: top + (row - 0.5) * sy - 9,
-      width: (v.barre.to - v.barre.from) * sx + 18, height: 18, rx: 9, fill: "#e7b45a"
+      width: (v.barre.to - v.barre.from) * sx + 18, height: 18, rx: 9, fill: "var(--gold)"
     });
   }
   v.frets.forEach((f, s) => {
     const x = left + s * sx;
     if (f === "x") {
-      mk("text", { x, y: top - 12, fill: "#f2777a", "font-size": 15, "text-anchor": "middle", "font-weight": 700 }, "×");
+      mk("text", { x, y: top - 12, fill: "var(--error)", "font-size": 15, "text-anchor": "middle", "font-weight": 700 }, "×");
     } else if (f === 0) {
-      mk("circle", { cx: x, cy: top - 16, r: 5, fill: "none", stroke: "#f3f4f6", "stroke-width": 1.5 });
+      mk("circle", { cx: x, cy: top - 16, r: 5, fill: "none", stroke: "var(--text)", "stroke-width": 1.5 });
     } else {
       const y = top + (f - baseFret + 0.5) * sy;
-      mk("circle", { cx: x, cy: y, r: 10, fill: "#e7b45a" });
+      mk("circle", { cx: x, cy: y, r: 10, fill: "var(--gold)" });
       const finger = v.fingers[s];
-      if (finger) mk("text", { x, y: y + 4, fill: "#14161b", "font-size": 12, "text-anchor": "middle", "font-weight": 700 }, String(finger));
+      if (finger) mk("text", { x, y: y + 4, fill: "var(--on-accent)", "font-size": 12, "text-anchor": "middle", "font-weight": 700 }, String(finger));
     }
   });
   return svg;

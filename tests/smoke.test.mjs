@@ -112,6 +112,17 @@ test("degree subscripts and manual capo are wired", () => {
   assert.match(html, /capoOverrides/);
 });
 
+test("the appearance menu offers the three palettes", () => {
+  assert.match(html, /id="themeSelect"/);
+  assert.match(html, /aria-label="Apariencia"/);
+  assert.match(html, /<option value="tinta">Tinta cálida<\/option>/);
+  assert.match(html, /<option value="papel">Papel<\/option>/);
+  assert.match(html, /<option value="pizarra">Pizarra<\/option>/);
+  assert.match(html, /worship-setlist:theme:v1/);
+  assert.match(html, /data-theme="papel"/);
+  assert.match(html, /data-theme="pizarra"/);
+});
+
 test("no button is left without an accessible name", () => {
   // Rough source-level check: every <button ...> has text or aria-label.
   const buttons = html.match(/<button\b[^>]*>[\s\S]*?<\/button>/g) ?? [];

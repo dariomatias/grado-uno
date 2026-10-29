@@ -24,7 +24,8 @@ test("Júbilo: Darío's degree chart (2026-09-21) rendered in the original key D
     { type: "bridge", label: "Puente", repeats: 1, measures: bars([...puente, ...puente]) },
     { type: "chorus", label: "Coro", repeats: 1, measures: bars([...A, ...A]) }
   ], "D");
-  assert.deepEqual(s.sections, expected);
+  const chords = (sections) => sections.map(({ cue, ...section }) => section);
+  assert.deepEqual(chords(s.sections), chords(expected));
   assert.deepEqual(s.sections[0].measures.flat(), ["D", "Em", "D/F#", "G", "Bm", "F#m", "G"]);
   assert.deepEqual(s.sections[4].measures.flat().slice(0, 4), ["Bm", "G", "D", "Em"]);
   const st = songStructure(s.sections);
@@ -1537,7 +1538,8 @@ for (const [id, spec] of Object.entries(DOM27_DEGREES)) {
     assert.equal(s.assignedKey, spec.key);
     assert.equal(s.sourceKey, spec.key);
     assert.equal(s.sourceStatus, "confirmed");
-    assert.deepEqual(s.sections, degreesToSections(spec.sections, spec.key));
+    const chords = (sections) => sections.map(({ cue, ...section }) => section);
+    assert.deepEqual(chords(s.sections), chords(degreesToSections(spec.sections, spec.key)));
   });
 }
 
