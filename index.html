@@ -18,6 +18,9 @@
         --border: #2a2f3a;
         --focus: #8ab4ff;
         --radius: 12px;
+        --group-a: #e7b45a;
+        --group-b: #7eb6ff;
+        --group-c: #f08a9a;
       }
       * { box-sizing: border-box; }
       html, body { margin: 0; height: 100%; }
@@ -65,7 +68,54 @@
       .meeting-picker {
         display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-weight: 600;
       }
-      .meeting-picker select { min-width: min(100%, 280px); }
+      .datepick { position: relative; flex: 1 1 280px; max-width: 320px; }
+      #meetingSelect {
+        width: 100%; text-align: left; background: var(--panel-2);
+        padding-right: 36px; position: relative;
+      }
+      #meetingSelect::after {
+        content: "▾"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted);
+      }
+      #meetingSelect[aria-expanded="true"] { border-color: var(--gold); }
+      .datepick-pop {
+        position: absolute; z-index: 35; left: 0; top: calc(100% + 6px);
+        width: min(100vw - 32px, 340px);
+        background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 12px; box-shadow: 0 16px 36px rgba(0, 0, 0, .45);
+        max-height: min(70vh, 640px); overflow: auto;
+      }
+      .datepick-legend { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+      .datepick-legend .swatch, .datepick-when .swatch {
+        display: inline-flex; align-items: center; gap: 6px;
+        border-radius: 999px; padding: 4px 10px; font-size: .85rem; font-weight: 700;
+        border: 1px solid transparent;
+      }
+      .swatch.group-a { color: var(--group-a); background: color-mix(in srgb, var(--group-a) 18%, transparent); border-color: color-mix(in srgb, var(--group-a) 45%, transparent); }
+      .swatch.group-b { color: var(--group-b); background: color-mix(in srgb, var(--group-b) 18%, transparent); border-color: color-mix(in srgb, var(--group-b) 45%, transparent); }
+      .swatch.group-c { color: var(--group-c); background: color-mix(in srgb, var(--group-c) 18%, transparent); border-color: color-mix(in srgb, var(--group-c) 45%, transparent); }
+      .datepick-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+      .datepick-nav button { min-width: 44px; padding: 8px; }
+      .datepick-nav span { font-weight: 700; }
+      .datepick-week, .datepick-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+      .datepick-week { color: var(--muted); font-size: .75rem; text-align: center; margin-bottom: 4px; }
+      .datepick-days .pad { min-height: 44px; }
+      .datepick-days .day {
+        min-width: 0; min-height: 48px; padding: 4px 2px; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 0; line-height: 1.1;
+      }
+      .datepick-days .day .g { font-size: .68rem; font-weight: 800; }
+      .datepick-days .day.group-a { color: var(--group-a); background: color-mix(in srgb, var(--group-a) 22%, transparent); border-color: color-mix(in srgb, var(--group-a) 55%, transparent); }
+      .datepick-days .day.group-b { color: var(--group-b); background: color-mix(in srgb, var(--group-b) 22%, transparent); border-color: color-mix(in srgb, var(--group-b) 55%, transparent); }
+      .datepick-days .day.group-c { color: var(--group-c); background: color-mix(in srgb, var(--group-c) 22%, transparent); border-color: color-mix(in srgb, var(--group-c) 55%, transparent); }
+      .datepick-days .day[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--text); }
+      .datepick-when { display: grid; gap: 6px; margin-top: 10px; }
+      .datepick-when p { margin: 0; display: flex; gap: 8px; align-items: baseline; font-size: .9rem; font-weight: 600; }
+      .datepick-extra { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+      .datepick-extra .group-a { color: var(--group-a); border-color: color-mix(in srgb, var(--group-a) 55%, transparent); }
+      .datepick-extra .group-b { color: var(--group-b); border-color: color-mix(in srgb, var(--group-b) 55%, transparent); }
+      .datepick-extra .group-c { color: var(--group-c); border-color: color-mix(in srgb, var(--group-c) 55%, transparent); }
+      .datepick-days .pad { color: var(--muted); display: grid; place-items: center; font-size: .9rem; }
+      .datepick-home[aria-pressed="true"] { border-color: var(--gold); }
 
       /* Setlist cards */
       .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
@@ -287,9 +337,24 @@
 
     <main id="mainContent">
       <section id="setlistView" aria-label="Listado de canciones por reunión">
-        <label class="meeting-picker">Fecha
-          <select id="meetingSelect" aria-label="Elegir fecha"></select>
-        </label>
+        <div class="meeting-picker">
+          <span>Fecha</span>
+          <div class="datepick">
+            <button type="button" id="meetingSelect" aria-label="Elegir fecha" aria-haspopup="dialog" aria-expanded="false" aria-controls="datePicker">Home</button>
+            <div id="datePicker" class="datepick-pop" role="dialog" aria-label="Calendario de reuniones" hidden>
+              <div class="datepick-legend" id="datePickerLegend"></div>
+              <div class="datepick-nav">
+                <button type="button" id="datePrev" aria-label="Mes anterior">‹</button>
+                <span id="dateMonth"></span>
+                <button type="button" id="dateNext" aria-label="Mes siguiente">›</button>
+              </div>
+              <div class="datepick-week" aria-hidden="true"><span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sá</span><span>Do</span></div>
+              <div class="datepick-days" id="dateGrid"></div>
+              <div class="datepick-when" id="dateWhen"></div>
+              <div class="datepick-extra" id="dateExtra"></div>
+            </div>
+          </div>
+        </div>
         <div id="tabpanel">
           <ol class="cards" id="songCards"></ol>
         </div>
@@ -427,6 +492,7 @@ const LINEUP_GROUPS = {
   "2026-10-25": "B",
   "2026-10-30": "B",
   "2026-10-31": "C",
+  "2026-11-01": "A",
   "ensayo-general": "A"
 };
 
@@ -1258,6 +1324,22 @@ const meetings = insertOctoberWeekends([
     songs: []
   },
   {
+    id: "2026-11-01",
+    label: "01/11/2026",
+    shortLabel: "01/11/2026",
+    date: "2026-11-01",
+    lineup: [
+      { id: "en-el-nombre-de-jesus-houghton", key: "C" },
+      { id: "anything-is-possible", key: "A" },
+      { id: "decimos-amen", key: "F" },
+      { id: "santo-por-siempre-agnus-dei", key: "F" },
+      { id: "salon-del-trono", key: "F" },
+      { id: "sufrido-hijo-de-dios", key: "F" },
+      { id: "gracias-por-la-cruz", key: "A" }
+    ],
+    songs: []
+  },
+  {
     // Grupo A, domingo 18/10/2026. Las cifras quedan en la nota impresa.
     id: "2026-10-18",
     label: "18/10/2026",
@@ -1972,7 +2054,28 @@ const grupoCSongs = [
   grupoB("por-siempre-te-alabare", "Por siempre te alabaré", "D", "2026-10-24", { groups: ["C"] }),
   grupoB("ya-no-soy-esclavo", "Ya no soy esclavo / Así peleo mis batallas", "A", "2026-10-24", { groups: ["C"] }),
   grupoB("hermoso-nombre", "Hermoso nombre", "D", "2026-10-24", { groups: ["C"] }),
-  grupoB("decimos-amen", "Decimos amén", "F", "2026-10-31", { groups: ["C"] }),
+  // Worship Together, clave F, 90 BPM. Las barras | F(4) / / / | son un
+  // acorde por compás. En las líneas de cifra, los acordes de la misma línea
+  // comparten el compás. F(4) queda como está impreso. Sólo acordes.
+  grupoB("decimos-amen", "Decimos amén", "F", "2026-10-31", {
+    groups: ["C"],
+    artist: "Lakewood Music",
+    tempoBpm: 90,
+    lyricsUrl: "https://www.worshiptogether.com/es/canciones/decimos-amen-lakewood-music/",
+    sections: [
+      { type: "intro", label: "Intro", repeats: 2, measures: [["F(4)"], ["F"], ["F(4)"], ["F"]] },
+      { type: "verse", label: "Verso 1", repeats: 1, measures: [["F"], ["F(4)"], ["Am", "G", "F"], ["F"], ["F(4)"], ["Dm", "Bb", "F"], ["Dm", "Bb", "F"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
+      { type: "instrumental", label: "Canal", repeats: 1, measures: [["F(4)"], ["F"], ["F(4)"], ["F"]] },
+      { type: "verse", label: "Verso 2", repeats: 1, measures: [["F"], ["F(4)"], ["Dm", "Bb", "F"], ["F"], ["F(4)"], ["Dm", "Bb", "F"], ["Dm", "Bb", "F"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
+      { type: "instrumental", label: "Interludio", repeats: 1, measures: [["F(4)"], ["F"], ["F(4)"], ["F"]] },
+      { type: "bridge", label: "Puente", repeats: 1, measures: [["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"]] },
+      { type: "bridge", label: "Puente 2", repeats: 1, measures: [["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/F", "Bb/F", "F"], ["F(4)", "F"], ["F(4)", "F"], ["Bbsus/Eb", "Bb/D", "F"], ["Bb", "F"], ["Bb", "F"], ["Bbsus/Eb", "Bb/D", "F"], ["Bbsus/Eb", "Bb/D", "F"]] },
+      { type: "chorus", label: "Coro", repeats: 2, measures: [["F"], ["F"], ["Dm"], ["Bb", "F"], ["F"], ["F"], ["Dm"], ["Bb", "F"]] },
+      { type: "tag", label: "Tag", repeats: 1, measures: [["Dm"], ["Bb", "F"], ["Dm"], ["Bb", "F"]] }
+    ]
+  }),
   grupoB("revelacion", "Revelación", "F", "2026-10-31", { groups: ["C"] }),
   grupoB("cuan-grande-es-dios", "Cuán grande es Dios", "F", "2026-10-31", { groups: ["C"] })
 ];
@@ -1995,6 +2098,90 @@ const grupoAOctober = [
     groups: ["A"],
     artist: "Marco Barrientos",
     chartUrl: "https://www.cifraclub.com/marco-barrientos/pertenezco-a-cristo/"
+  }),
+  // Israel Houghton, ChordLines, tono C, sin capo. No es el tema de Ingrid Rosario.
+  // Un paréntesis es un compás aparte. Los acordes de una misma línea comparten el compás.
+  grupoB("en-el-nombre-de-jesus-houghton", "En el nombre de Jesús", "C", "2026-11-01", {
+    groups: ["A"],
+    artist: "Israel Houghton",
+    sourceKey: "C",
+    sections: [
+      { type: "verse", label: "Verso", repeats: 1, measures: [["Fmaj7", "Dm7"], ["Am7", "C"], ["Fmaj7", "Dm7"], ["C"], ["C", "D", "E"], ["Fmaj7", "Dm7"], ["Am7", "C"], ["Fmaj7", "Dm7"], ["C"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["C/E", "F", "G11", "F"], ["C", "Am7"], ["Bb", "C/D"]] },
+      { type: "bridge", label: "Puente", repeats: 1, measures: [["F", "G"], ["Am"], ["E", "F", "G"], ["Am", "C/D"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["C/E", "F", "G11"], ["D", "F", "A", "E", "D", "C"], ["Am7"], ["Bb", "C/D"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["C/E", "F", "G11", "F"], ["C", "Am7"], ["Eb", "Bb", "C/D"]] },
+      { type: "outro", label: "Final", repeats: 1, measures: [["A", "G", "F", "E", "D"], ["F", "G/B", "C9"]] }
+    ]
+  }),
+  // GuitarTabsExplorer, escrita en A. No reemplaza «Todo es posible».
+  // La grabación reportada está en Bb; esta cifra no. Sólo acordes.
+  grupoB("anything-is-possible", "Anything Is Possible (Todo es posible)", "A", "2026-11-01", {
+    groups: ["A"],
+    artist: "Bethel Music, Dante Bowe",
+    sourceKey: "Bb",
+    tempoBpm: 122,
+    beatsPerMeasure: 4,
+    sections: [
+      { type: "verse", label: "Verse 1", repeats: 1, measures: [["A"], ["A"], ["F#m7"], ["D", "A"]] },
+      { type: "verse", label: "Verse 2", repeats: 1, measures: [["A", "C#m7", "D"], ["A", "C#m7", "D"], ["F#m7", "E"], ["A/C#", "D", "A"]] },
+      { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A"], ["A/E"]] },
+      { type: "verse", label: "Verse 3", repeats: 1, measures: [["A", "A/C#", "D"], ["A", "A/C#", "D"], ["F#m7", "E"], ["A/C#", "D", "A"]] },
+      { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A", "A/E"]] },
+      { type: "bridge", label: "Bridge", repeats: 1, measures: [["A"], ["A"], ["F#m7"], ["E4"], ["A/C#"], ["D"], ["F#m7"], ["E4"], ["A/C#"], ["D"]] },
+      { type: "chorus", label: "Chorus", repeats: 1, measures: [["D"], ["A", "A/E"], ["D"], ["A", "A/E"], ["D"], ["F#m7", "A"], ["D"], ["A", "A/E"]] }
+    ]
+  }),
+  // Worship Chords, clave F. El intro escribe Bb; el resto escribe A#. Sólo acordes.
+  grupoB("santo-por-siempre-agnus-dei", "Santo por siempre / Agnus Dei", "F", "2026-11-01", {
+    groups: ["A"],
+    artist: "Medley",
+    sourceKey: "F",
+    sections: [
+      { type: "intro", label: "Intro", repeats: 2, measures: [["F"], ["F"], ["F", "G", "A", "A#", "C", "D"], ["D"], ["Bb"]] },
+      { type: "verse", label: "Verso", repeats: 2, measures: [["F", "A#"], ["F"]] },
+      { type: "verse", label: "Verso", repeats: 1, measures: [["F", "A#"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["D", "E"], ["F", "C", "F"], ["A#", "F", "Dm", "C"], ["C", "F/A", "A#", "F/C", "A", "A#"], ["C", "F", "C", "F"], ["A#", "F", "Dm", "C"], ["F/A", "A#", "F/A", "A#", "C", "F"]] },
+      { type: "instrumental", label: "Preludio", repeats: 2, measures: [["F"], ["F"], ["F", "G", "A", "A#", "C", "D"], ["D"], ["Bb"]] },
+      { type: "bridge", label: "Puente", repeats: 1, measures: [["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"], ["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"]] },
+      { type: "bridge", label: "Puente", repeats: 1, measures: [["A#"], ["Dm", "C"], ["Dm", "Dm", "C", "A#"], ["A#"], ["Dm", "C"], ["Dm", "Gm"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["F/A", "A#"], ["Dm", "C"], ["Am"], ["Dm"], ["Gm"], ["C"], ["F", "Fsus4", "F"]] },
+      { type: "outro", label: "Final", repeats: 2, measures: [["Gm"], ["C"], ["F", "Dm"]] }
+    ]
+  }),
+  // Scribd y Chordify no publican una cifra escrita. Sigue pendiente.
+  grupoB("salon-del-trono", "Salón del trono", "F", "2026-11-01", {
+    groups: ["A"],
+    artist: "Versión «Cristo está aquí»"
+  }),
+  // Cifra Club, tono Db, sin capo. La reunión está en F: el escenario transpone.
+  // La lista de acordes del encabezado no es un compás. Sólo acordes.
+  grupoB("sufrido-hijo-de-dios", "Sufrido Hijo de Dios", "F", "2026-11-01", {
+    groups: ["A"],
+    artist: "Bethel Music",
+    chartKey: "Db",
+    sourceKey: "Db",
+    chartUrl: "https://www.cifraclub.com/bettel-music/sufrido-hijo-de-dios/",
+    sections: [
+      { type: "verse", label: "Verse 1", repeats: 1, measures: [["Db", "Ab"], ["Db/F", "Gb", "Ab"], ["Db"], ["Ab"], ["Db/F", "Gb", "Ab"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["Gb", "Db"], ["Ab"], ["Bbm"], ["Gb", "Ab", "Bbm"], ["Ab", "Gb", "Db"]] },
+      { type: "verse", label: "Verse 2", repeats: 1, measures: [["Db", "Ab"], ["Db/F", "Gb", "Ab"], ["Db"], ["Ab"], ["Db", "Gb", "Ab"], ["Db", "Gb", "Ab"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["Gb", "Db"], ["Ab"], ["Bbm"], ["Gb", "Ab", "Bbm"], ["Ab", "Gb", "Db"]] },
+      { type: "bridge", label: "Puente", repeats: 1, measures: [["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Db"], ["Gb"], ["Db"], ["Gb/Bb"], ["Db/F"], ["Gb"], ["Db"], ["Gb/F"], ["Ab"], ["Gb", "Db"], ["Gb/Bb", "Db/F"], ["Gb", "Db"]] }
+    ]
+  }),
+  // Cifra Club etiqueta el tono como F#m, pero imprime estos acordes (A, D, E)
+  // y no hay capo. Se guardan esas letras, en A, que es también el tono del set.
+  grupoB("gracias-por-la-cruz", "Gracias por la cruz (Digno es el Señor)", "A", "2026-11-01", {
+    groups: ["A"],
+    artist: "En Espíritu y en Verdad",
+    sourceKey: "A",
+    chartUrl: "https://www.cifraclub.com/en-espiritu-en-verdad/gracias-por-la-cruz/",
+    sections: [
+      { type: "intro", label: "Intro", repeats: 1, measures: [["A", "D", "E", "A"]] },
+      { type: "verse", label: "Verso", repeats: 1, measures: [["A", "D", "E", "A"], ["A", "D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"], ["A", "D", "E", "A"], ["D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"]] },
+      { type: "chorus", label: "Coro", repeats: 1, measures: [["A", "E"], ["Bm7", "A", "D"], ["E", "D", "C#", "D"], ["Bm", "A", "E"], ["A", "E"], ["E", "D", "C#", "D"], ["Bm", "A", "E", "D"], ["Bm", "A", "E", "D"]] }
+    ]
   })
 ];
 
@@ -3110,6 +3297,11 @@ mergeStoredGroup([
   "levanto-un-aleluya", "tumbas-a-jardines", "autoridad"
 ], "A", "worship-setlist:group-a-october-groups:v1");
 
+mergeStoredGroup(["decimos-amen"], "A", "worship-setlist:group-a-nov-1-groups:v1");
+mergeStoredDates([
+  ["decimos-amen", "2026-11-01"]
+], "worship-setlist:group-a-nov-1:v1");
+
 // Las tres primeras de octubre del grupo A reemplazan lo guardado en este
 // navegador una sola vez. Después se puede sacar o reordenar.
 function syncStoredLineups(lineups, flag) {
@@ -3169,6 +3361,13 @@ syncStoredLineups({
     "clamo-a-dios", "confia-en-dios", "ver-la-victoria"
   ]
 }, "worship-setlist:group-a-october:v1");
+syncStoredLineups({
+  "2026-11-01": [
+    "en-el-nombre-de-jesus-houghton", "anything-is-possible", "decimos-amen",
+    "santo-por-siempre-agnus-dei", "salon-del-trono", "sufrido-hijo-de-dios",
+    "gracias-por-la-cruz"
+  ]
+}, "worship-setlist:group-a-nov-1-lineup:v1");
 
 const LYRICS_STORAGE_KEY = "worship-setlist:lyrics:v1";
 const CHROMATIC = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -3178,6 +3377,14 @@ const el = {
   stageView: document.getElementById("stageView"),
   status: document.getElementById("statusMessage"),
   meetingSelect: document.getElementById("meetingSelect"),
+  datePicker: document.getElementById("datePicker"),
+  datePickerLegend: document.getElementById("datePickerLegend"),
+  dateMonth: document.getElementById("dateMonth"),
+  dateGrid: document.getElementById("dateGrid"),
+  dateWhen: document.getElementById("dateWhen"),
+  dateExtra: document.getElementById("dateExtra"),
+  datePrev: document.getElementById("datePrev"),
+  dateNext: document.getElementById("dateNext"),
   cards: document.getElementById("songCards"),
   dialog: document.getElementById("lyricsDialog"),
   textarea: document.getElementById("lyricsTextarea"),
@@ -3444,32 +3651,195 @@ function playedLabel(assignedKey, semis) {
   return semis ? keyName(assignedKey, semis) : assignedKey;
 }
 
-/* ---- Render: pestañas (Home + una por reunión) ---- */
+/* ---- Render: calendario de fechas (Home + una por reunión) ---- */
 function tabDefs() {
   return [{ id: "home", label: "Home", home: true }, ...liveSetlists.map((sl, index) => ({ id: sl.id, label: sl.shortLabel, index }))];
 }
 
-function renderMeetingSelect() {
-  const tabs = tabDefs();
-  const selected = tabs.findIndex((t) => t.home ? state.home : !state.home && t.index === state.activeSetlistIndex);
-  el.meetingSelect.replaceChildren();
-  tabs.forEach((t, i) => {
-    const opt = document.createElement("option");
-    opt.value = String(i);
-    opt.textContent = t.label;
-    opt.selected = i === selected;
-    el.meetingSelect.appendChild(opt);
-  });
+let datePickerOpen = false;
+let pickerMonth = "";
+
+function datedMeetings() {
+  return liveSetlists.filter((setlist) => setlist.date);
 }
 
-function activateTab(i) {
-  state = i === 0 ? { ...state, home: true } : selectSetlist(state, i - 1, liveSetlists.length - 1);
+function pickerMonths() {
+  return [...new Set(datedMeetings().map((setlist) => String(setlist.date).slice(0, 7)))].sort();
+}
+
+function selectedMeeting() {
+  return state.home ? null : liveSetlists[state.activeSetlistIndex] ?? null;
+}
+
+function closeDatePicker() {
+  datePickerOpen = false;
+  el.datePicker.hidden = true;
+  el.meetingSelect.setAttribute("aria-expanded", "false");
+}
+
+function openDatePicker() {
+  const active = selectedMeeting();
+  const months = pickerMonths();
+  pickerMonth = active?.date ? String(active.date).slice(0, 7) : (months.at(-1) ?? "");
+  datePickerOpen = true;
+  el.datePicker.hidden = false;
+  el.meetingSelect.setAttribute("aria-expanded", "true");
+  renderDatePicker();
+}
+
+function renderMeetingSelect() {
+  const tabs = tabDefs();
+  const selected = tabs.findIndex((tab) => tab.home ? state.home : !state.home && tab.index === state.activeSetlistIndex);
+  el.meetingSelect.textContent = tabs[selected]?.label ?? "Home";
+  el.meetingSelect.setAttribute("aria-expanded", datePickerOpen ? "true" : "false");
+  if (datePickerOpen) renderDatePicker();
+}
+
+function groupSwatch(group, text) {
+  const span = document.createElement("span");
+  span.className = `swatch group-${group.toLowerCase()}`;
+  span.textContent = text;
+  return span;
+}
+
+function renderDatePicker() {
+  const months = pickerMonths();
+  if (!months.length) return;
+  if (!months.includes(pickerMonth)) pickerMonth = months.at(-1);
+  const monthIndex = months.indexOf(pickerMonth);
+  el.datePrev.disabled = monthIndex <= 0;
+  el.dateNext.disabled = monthIndex >= months.length - 1;
+  el.dateMonth.textContent = monthLabel(pickerMonth);
+
+  el.datePickerLegend.replaceChildren(
+    groupSwatch("A", "Grupo A"),
+    groupSwatch("B", "Grupo B"),
+    groupSwatch("C", "Grupo C")
+  );
+
+  const [year, month] = pickerMonth.split("-").map(Number);
+  const start = new Date(Date.UTC(year, month - 1, 1));
+  const offset = (start.getUTCDay() + 6) % 7;
+  const days = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const byDate = new Map(datedMeetings().map((setlist) => [setlist.date, setlist]));
+  const active = selectedMeeting();
+  el.dateGrid.replaceChildren();
+  for (let i = 0; i < offset; i++) {
+    const pad = document.createElement("span");
+    pad.className = "pad";
+    el.dateGrid.appendChild(pad);
+  }
+  for (let day = 1; day <= days; day++) {
+    const iso = `${pickerMonth}-${String(day).padStart(2, "0")}`;
+    const meeting = byDate.get(iso);
+    if (!meeting) {
+      const span = document.createElement("span");
+      span.className = "pad";
+      span.textContent = String(day);
+      el.dateGrid.appendChild(span);
+      continue;
+    }
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "day";
+    if (meeting.group) button.classList.add(`group-${meeting.group.toLowerCase()}`);
+    button.setAttribute("aria-pressed", String(active?.id === meeting.id));
+    button.setAttribute("aria-label", meeting.group ? `${meeting.shortLabel}, Grupo ${meeting.group}` : meeting.shortLabel);
+    button.innerHTML = `<span>${day}</span>${meeting.group ? `<span class="g">${meeting.group}</span>` : ""}`;
+    button.addEventListener("click", () => {
+      activateTab(meeting.id);
+      closeDatePicker();
+    });
+    el.dateGrid.appendChild(button);
+  }
+
+  el.dateWhen.replaceChildren();
+  for (const group of ["A", "B", "C"]) {
+    const hits = datedMeetings().filter((setlist) => String(setlist.date).startsWith(pickerMonth) && setlist.group === group);
+    if (!hits.length) continue;
+    const line = document.createElement("p");
+    const daysLabel = hits.map((setlist) => setlist.shortLabel.slice(0, 2));
+    const when = daysLabel.length === 1
+      ? daysLabel[0]
+      : `${daysLabel.slice(0, -1).join(", ")} y ${daysLabel.at(-1)}`;
+    line.append(groupSwatch(group, `Grupo ${group}`), document.createTextNode(` toca el ${when}`));
+    el.dateWhen.appendChild(line);
+  }
+
+  el.dateExtra.replaceChildren();
+  const home = document.createElement("button");
+  home.type = "button";
+  home.className = "datepick-home";
+  home.textContent = "Home";
+  home.setAttribute("aria-pressed", String(state.home));
+  home.addEventListener("click", () => {
+    activateTab("home");
+    closeDatePicker();
+  });
+  el.dateExtra.appendChild(home);
+  for (const setlist of liveSetlists.filter((item) => !item.date)) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = setlist.group ? `group-${setlist.group.toLowerCase()}` : "";
+    button.textContent = setlist.group ? `${setlist.shortLabel} · Grupo ${setlist.group}` : setlist.shortLabel;
+    button.setAttribute("aria-pressed", String(active?.id === setlist.id));
+    button.addEventListener("click", () => {
+      activateTab(setlist.id);
+      closeDatePicker();
+    });
+    el.dateExtra.appendChild(button);
+  }
+  placeDatePicker();
+}
+
+function activateTab(id) {
+  if (id === "home") {
+    state = { ...state, home: true };
+  } else {
+    const index = liveSetlists.findIndex((setlist) => setlist.id === id);
+    if (index < 0) return;
+    state = selectSetlist(state, index, liveSetlists.length - 1);
+  }
   renderMeetingSelect();
   renderList();
 }
 
-el.meetingSelect.addEventListener("change", () => {
-  activateTab(Number(el.meetingSelect.value));
+el.meetingSelect.addEventListener("click", () => {
+  if (datePickerOpen) closeDatePicker();
+  else openDatePicker();
+});
+function placeDatePicker() {
+  const pop = el.datePicker;
+  pop.style.left = "0px";
+  const overflow = pop.getBoundingClientRect().right - document.documentElement.clientWidth + 12;
+  if (overflow > 0) pop.style.left = `${-overflow}px`;
+}
+el.datePrev.addEventListener("click", () => {
+  const months = pickerMonths();
+  const index = months.indexOf(pickerMonth);
+  if (index > 0) {
+    pickerMonth = months[index - 1];
+    renderDatePicker();
+  }
+});
+el.dateNext.addEventListener("click", () => {
+  const months = pickerMonths();
+  const index = months.indexOf(pickerMonth);
+  if (index >= 0 && index < months.length - 1) {
+    pickerMonth = months[index + 1];
+    renderDatePicker();
+  }
+});
+document.addEventListener("pointerdown", (event) => {
+  if (!datePickerOpen) return;
+  if (el.datePicker.contains(event.target) || el.meetingSelect.contains(event.target)) return;
+  closeDatePicker();
+});
+document.addEventListener("keydown", (event) => {
+  if (datePickerOpen && event.key === "Escape") {
+    closeDatePicker();
+    el.meetingSelect.focus();
+  }
 });
 
 /** Listado bajo las pestañas: Home (índice) o la reunión activa. */

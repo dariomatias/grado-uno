@@ -92,6 +92,11 @@ const expected = [
     ["Revelación", "F"], ["Santo por siempre", "F"], ["Cuán grande es Dios", "F"],
     ["Confía en Dios (Trust In God)", "Bb"]
   ]],
+  ["2026-11-01", [
+    ["En el nombre de Jesús", "C"], ["Anything Is Possible (Todo es posible)", "A"], ["Decimos amén", "F"],
+    ["Santo por siempre / Agnus Dei", "F"], ["Salón del trono", "F"],
+    ["Sufrido Hijo de Dios", "F"], ["Gracias por la cruz (Digno es el Señor)", "A"]
+  ]],
   ["ensayo-general", [
     ["Mover tu corazón", "Eb"]
   ]]
@@ -133,8 +138,8 @@ test("each lineup is a date, a group and the sheet order", () => {
 });
 
 test("setlists in order and key (septiembre, octubre y Ensayo general)", () => {
-  assert.equal(setlists.length, 19);
-  assert.equal(setlists.flatMap((item) => item.songs).length, 120);
+  assert.equal(setlists.length, 20);
+  assert.equal(setlists.flatMap((item) => item.songs).length, 127);
   assert.deepEqual(
     setlists.map((item) => [item.id, item.songs.map((s) => [s.title, s.assignedKey])]),
     expected
@@ -147,7 +152,7 @@ test("short labels are exact", () => {
     "27/09/2026",
     "02/10/2026", "03/10/2026", "04/10/2026", "09/10/2026", "10/10/2026", "11/10/2026",
     "16/10/2026", "17/10/2026", "18/10/2026", "23/10/2026", "24/10/2026", "25/10/2026",
-    "30/10/2026", "31/10/2026", "Ensayo"
+    "30/10/2026", "31/10/2026", "01/11/2026", "Ensayo"
   ]);
 });
 
@@ -691,7 +696,7 @@ test("Toda lengua y toda nación replaces Adiós al ayer on 09/10 and is charted
 });
 
 test("Praise is charted in C and plays as Alabar on 9 de octubre", () => {
-  assert.equal(songs.length, 89);
+  assert.equal(songs.length, 95);
   const praise = songs.find((s) => s.id === "praise");
   assert.equal(praise.title, "Praise");
   assert.equal(praise.chartKey, "C");
@@ -757,7 +762,7 @@ test("Domingo 18/10: Confía, Ruido y En tu mover quedan en la nota del PDF", ()
 
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
-  assert.equal(allAppearanceKeys().length, 120);
+  assert.equal(allAppearanceKeys().length, 127);
 });
 
 test("Ensayo general is a general reunion, exempt from the 7-song rule, with Mover tu corazón (confirmed, original key Eb)", () => {

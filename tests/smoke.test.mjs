@@ -18,9 +18,13 @@ test("index has semantic landmarks and a skip link", () => {
   assert.match(html, /<main/);
 });
 
-test("the date picker is a dropdown with the service dates", () => {
+test("the date picker is a calendar with the service dates", () => {
   assert.match(html, /id="meetingSelect"/);
   assert.match(html, /aria-label="Elegir fecha"/);
+  assert.match(html, /id="datePicker"/);
+  assert.match(html, /Grupo A/);
+  assert.match(html, /Grupo B/);
+  assert.match(html, /Grupo C/);
   assert.doesNotMatch(html, /role="tablist"/);
   for (const label of [
     "04/09/2026", "13/09/2026", "18/09/2026",
