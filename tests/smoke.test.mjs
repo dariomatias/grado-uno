@@ -40,11 +40,17 @@ test("stage controls are present", () => {
   assert.match(html, /Metrónomo/);
 });
 
-test("chord voicing popover is wired", () => {
-  assert.match(html, /id="chordPopover"[^>]*role="dialog"/);
-  assert.match(html, /Capo sugerido/);
-  assert.match(html, /Digitación no disponible/);
+test("a measure can be edited and the chord diagram no longer opens", () => {
+  assert.match(html, /parseDegreeMeasure/);
+  assert.match(html, /Grados del compás/);
+  assert.match(html, /applyMeasureEdits/);
+  assert.match(html, /worship-setlist:measures:v1/);
+  assert.match(html, /Editar compás/);
+  assert.match(html, /Compás guardado/);
   assert.match(html, /voicings-module:start/);
+  assert.match(html, /Capo sugerido/);
+  assert.doesNotMatch(html, /id="chordPopover"/);
+  assert.doesNotMatch(html, /ver cómo tocarlo/);
 });
 
 test("fullscreen stage scrolls on its own and has a pseudo-fullscreen fallback", () => {
@@ -110,6 +116,24 @@ test("degree subscripts and manual capo are wired", () => {
   assert.match(html, /setAttribute\("aria-label", "Capo"\)/);
   assert.match(html, /Capo automático/);
   assert.match(html, /capoOverrides/);
+});
+
+test("the scale rail lists degrees beside the chart and follows the capo shapes", () => {
+  assert.match(html, /scaleDegrees\(/);
+  assert.match(html, /className = "scale-rail"/);
+  assert.match(html, /aria-label", "Grados de la escala"/);
+  assert.match(html, /position: sticky/);
+  assert.match(html, /shapeForCapo\(sounding, stageCapo, transposeChord\)/);
+  assert.match(html, /Capo \$\{stageCapo\} · suena en \$\{sounding\}/);
+});
+
+test("edits sync to the shared Firestore library after sign-in", () => {
+  assert.match(html, /id="accountButton"/);
+  assert.match(html, />Entrar</);
+  assert.match(html, /FIRESTORE_DATABASE = "worship"/);
+  assert.match(html, /collection: "lyrics"/);
+  assert.match(html, /collection: "measures"/);
+  assert.match(html, /getFirestore\(app, FIRESTORE_DATABASE\)/);
 });
 
 test("the appearance menu offers the three palettes", () => {

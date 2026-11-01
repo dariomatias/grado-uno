@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { songStructure, structureSummary, chunkMeasures, repeatedPatternSpans, BARS_PER_LINE_OPTIONS } = await extractInlineModule(indexHtmlUrl, "structure-module");
+const { songStructure, structureSummary, chunkMeasures, repeatedPatternSpans, BARS_PER_LINE_OPTIONS, applyMeasureEdits } = await extractInlineModule(indexHtmlUrl, "structure-module");
 const { setlists } = await extractInlineModule(indexHtmlUrl, "content-module");
 
 const song = (title) => setlists.flatMap((s) => s.songs).find((s) => s.title === title);
@@ -137,6 +137,20 @@ test("chunkMeasures cuts a section into rows of 2/4/8 bars; never 6+2", () => {
   assert.deepEqual(chunkMeasures([], 4), []);
   assert.deepEqual(chunkMeasures(eight, 6).map((r) => r.length), [4, 4]); // valor inválido → 4
   assert.deepEqual(BARS_PER_LINE_OPTIONS, [2, 4, 8]);
+});
+
+test("applyMeasureEdits replaces only the edited bars and leaves the source untouched", () => {
+  const sections = [
+    { label: "Verso", measures: [["G"], ["D", "C"]] },
+    { label: "Coro", measures: [["C"], ["G"]] }
+  ];
+  const edited = applyMeasureEdits(sections, { 0: { 1: ["A", "Bm"] }, "1": { "0": ["D"] } });
+  assert.deepEqual(edited[0].measures, [["G"], ["A", "Bm"]]);
+  assert.deepEqual(edited[1].measures, [["D"], ["G"]]);
+  assert.equal(edited[0].label, "Verso");
+  assert.deepEqual(sections[0].measures, [["G"], ["D", "C"]]);
+  assert.equal(applyMeasureEdits(sections, null), sections);
+  assert.deepEqual(applyMeasureEdits(sections, { 0: { 3: ["E"] } })[0].measures, sections[0].measures);
 });
 
 test("every song defaults to 4 bars per line", () => {

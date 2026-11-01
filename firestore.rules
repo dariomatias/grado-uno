@@ -1,0 +1,274 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Shared worship library for signed-in team accounts. The public site
+    // still renders the bundled chart. Firestore holds the catalog copy and
+    // the edits that used to live only in this browser.
+    //
+    // Collection: songs
+    // Document ID: song id [a-z0-9-]{1,80}, equal to field id
+    // Fields:
+    //   - id: string (required, immutable, matches document id)
+    //   - title: string (required, 1..200)
+    //   - assignedKey: string (required, ^[A-G](#|b)?$)
+    //   - chartKey: string (required, same pattern)
+    //   - sections: list (required, size < 80) - printed chart
+    //   - groups: list (required, 1..3 of A|B|C)
+    //   - sourceStatus: string (required, pending|confirmed)
+    //   - artist: string (optional, < 300)
+    //   - sourceKey: string (optional, < 16)
+    //   - dates: list (optional, size < 40)
+    //   - lyricsUrl, chartUrl, youtubeUrl: https string (optional, < 400)
+    //   - youtubeVideoId: string (optional, 11 url-safe chars)
+    //   - tempoBpm: int (optional, 40..240)
+    //   - beatsPerMeasure: int (optional, 2|3|4|6)
+    //   - capo: int (optional, 0..11)
+    //   - barsPerLine: int (optional, 2|4|8)
+    //   - lyrics: string (optional, < 210000) - bundled field, usually absent
+    //
+    // Collection: lineups
+    // Document ID: {setlistId}:{group}
+    // Fields:
+    //   - id: string (required, matches document id)
+    //   - setlistId: string (required)
+    //   - group: string (required, A|B|C)
+    //   - slots: list (required, size < 40)
+    //   - date: string YYYY-MM-DD (optional; ensayo has none)
+    //
+    // Collection: lyrics
+    // Document ID: {setlistId}:{songId}
+    // Fields:
+    //   - text: string (required, 1..210000)
+    //   - updatedAt: string (required, ISO timestamp, size < 40)
+    //
+    // Collection: measures
+    // Document ID: song id
+    // Fields:
+    //   - edits: map (required, size < 80) - section index -> measure index -> chord letters
+    //
+    // Collection: keys
+    // Document ID: {setlistId}:{songId}
+    // Fields:
+    //   - semis: int (required, -11..11 excluding 0)
+    //
+    // Collection: assignments
+    // Document ID: song id
+    // Fields:
+    //   - dateIds: list (required, size < 40)
+    //   - groups: list (required, 0..3 of A|B|C)
+    //
+    // Collection: orders
+    // Document ID: lineup id or setlist id
+    // Fields:
+    //   - ids: list (required, 1..40 song ids)
+    //
+    // Document: meta/catalog
+    // Fields:
+    //   - revision: string (required, < 80)
+    //   - songCount: int (required, 0..500)
+    //   - lineupCount: int (required, 0..100)
+    //   - seededAt: string (required, < 40)
+    //
+    // ===============================================================
+
+    function isMember() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+          "piriz.dario@gmail.com"
+        ];
+    }
+
+    function keyName(value) {
+      return value is string && value.matches('^[A-G](#|b)?m?$');
+    }
+
+    function groupsOk(groups) {
+      return groups is list
+        && groups.size() < 4
+        && (groups.size() == 0
+          || (groups.size() == 1 && groups[0] in ["A", "B", "C"])
+          || (groups.size() == 2 && groups[0] in ["A", "B", "C"] && groups[1] in ["A", "B", "C"])
+          || (groups.size() == 3 && groups[0] in ["A", "B", "C"] && groups[1] in ["A", "B", "C"] && groups[2] in ["A", "B", "C"]));
+    }
+
+    function optionalHttps(field, data) {
+      return !(field in data)
+        || (data[field] is string && data[field].size() < 400 && data[field].matches('^https://.+$'));
+    }
+
+    function isValidSong(data) {
+      return data.keys().hasAll(["id", "title", "assignedKey", "chartKey", "sections", "groups", "sourceStatus"])
+        && data.keys().hasOnly([
+          "id", "title", "artist", "assignedKey", "chartKey", "sourceKey", "sourceStatus",
+          "dates", "groups", "lyricsUrl", "chartUrl", "youtubeUrl", "youtubeVideoId",
+          "tempoBpm", "beatsPerMeasure", "capo", "barsPerLine", "sections", "lyrics"
+        ])
+        && data.id is string && data.id.size() > 0 && data.id.size() < 80 && data.id.matches('^[a-z0-9-]+$')
+        && data.title is string && data.title.size() > 0 && data.title.size() < 200
+        && keyName(data.assignedKey)
+        && keyName(data.chartKey)
+        && data.sourceStatus in ["pending", "confirmed"]
+        && data.sections is list && data.sections.size() < 80
+        && groupsOk(data.groups) && data.groups.size() > 0
+        && (!("artist" in data) || (data.artist is string && data.artist.size() < 300))
+        && (!("sourceKey" in data) || (data.sourceKey is string && data.sourceKey.size() < 16 && keyName(data.sourceKey)))
+        && (!("dates" in data) || (data.dates is list && data.dates.size() < 40))
+        && (!("tempoBpm" in data) || (data.tempoBpm is int && data.tempoBpm >= 40 && data.tempoBpm <= 240))
+        && (!("beatsPerMeasure" in data) || data.beatsPerMeasure in [2, 3, 4, 6])
+        && (!("capo" in data) || (data.capo is int && data.capo >= 0 && data.capo <= 11))
+        && (!("barsPerLine" in data) || data.barsPerLine in [2, 4, 8])
+        && (!("lyrics" in data) || (data.lyrics is string && data.lyrics.size() < 210000))
+        && optionalHttps("lyricsUrl", data)
+        && optionalHttps("chartUrl", data)
+        && optionalHttps("youtubeUrl", data)
+        && (!("youtubeVideoId" in data) || (data.youtubeVideoId is string && data.youtubeVideoId.matches('^[A-Za-z0-9_-]{11}$')));
+    }
+
+    function isValidLineup(data) {
+      return data.keys().hasAll(["id", "setlistId", "group", "slots"])
+        && data.keys().hasOnly(["id", "setlistId", "group", "slots", "date"])
+        && data.id is string && data.id.size() < 80 && data.id.matches('^[a-z0-9-]+(:[A-C])?$')
+        && data.setlistId is string && data.setlistId.size() < 40 && data.setlistId.matches('^[a-z0-9-]+$')
+        && data.group in ["A", "B", "C"]
+        && data.slots is list && data.slots.size() < 40
+        && (!("date" in data) || (data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$')));
+    }
+
+    function isValidLyric(data) {
+      return data.keys().hasOnly(["text", "updatedAt"])
+        && data.keys().hasAll(["text", "updatedAt"])
+        && data.text is string && data.text.size() > 0 && data.text.size() < 210000
+        && data.updatedAt is string && data.updatedAt.size() > 10 && data.updatedAt.size() < 40;
+    }
+
+    function isValidMeasures(data) {
+      return data.keys().hasOnly(["edits"])
+        && data.keys().hasAll(["edits"])
+        && data.edits is map
+        && data.edits.size() > 0
+        && data.edits.size() < 80;
+    }
+
+    function isValidKey(data) {
+      return data.keys().hasOnly(["semis"])
+        && data.keys().hasAll(["semis"])
+        && data.semis is int
+        && data.semis >= -11
+        && data.semis <= 11
+        && data.semis != 0;
+    }
+
+    function isValidAssignment(data) {
+      return data.keys().hasOnly(["dateIds", "groups"])
+        && data.keys().hasAll(["dateIds", "groups"])
+        && data.dateIds is list && data.dateIds.size() < 40
+        && groupsOk(data.groups);
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasOnly(["ids"])
+        && data.keys().hasAll(["ids"])
+        && data.ids is list
+        && data.ids.size() > 0
+        && data.ids.size() < 40;
+    }
+
+    function isValidCatalog(data) {
+      return data.keys().hasOnly(["revision", "songCount", "lineupCount", "seededAt"])
+        && data.keys().hasAll(["revision", "songCount", "lineupCount", "seededAt"])
+        && data.revision is string && data.revision.size() > 0 && data.revision.size() < 80
+        && data.songCount is int && data.songCount >= 0 && data.songCount <= 500
+        && data.lineupCount is int && data.lineupCount >= 0 && data.lineupCount <= 100
+        && data.seededAt is string && data.seededAt.size() > 10 && data.seededAt.size() < 40;
+    }
+
+    match /songs/{songId} {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && songId.matches('^[a-z0-9-]{1,80}$')
+        && request.resource.size() < 900000
+        && isValidSong(request.resource.data)
+        && request.resource.data.id == songId;
+      allow delete: if false;
+    }
+
+    match /lineups/{lineupId} {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && lineupId.size() < 80
+        && lineupId.size() < 80
+        && lineupId.matches('^[a-z0-9-]+(:[A-C])?$')
+        && request.resource.size() < 200000
+        && isValidLineup(request.resource.data)
+        && request.resource.data.id == lineupId;
+      allow delete: if false;
+    }
+
+    match /lyrics/{appearanceId} {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && appearanceId.matches('^[^:]+:[^:]+$')
+        && appearanceId.size() < 160
+        && request.resource.size() < 900000
+        && isValidLyric(request.resource.data);
+      allow delete: if isMember();
+    }
+
+    match /measures/{songId} {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && songId.matches('^[a-z0-9-]{1,80}$')
+        && request.resource.size() < 900000
+        && isValidMeasures(request.resource.data);
+      allow delete: if isMember();
+    }
+
+    match /keys/{appearanceId} {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && appearanceId.matches('^[^:]+:[^:]+$')
+        && appearanceId.size() < 160
+        && request.resource.size() < 2000
+        && isValidKey(request.resource.data);
+      allow delete: if isMember();
+    }
+
+    match /assignments/{songId} {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && songId.matches('^[a-z0-9-]{1,80}$')
+        && request.resource.size() < 20000
+        && isValidAssignment(request.resource.data);
+      allow delete: if isMember();
+    }
+
+    match /orders/{orderId} {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && orderId.size() < 80
+        && orderId.size() < 80
+        && orderId.matches('^[a-z0-9-]+(:[A-C])?$')
+        && request.resource.size() < 20000
+        && isValidOrder(request.resource.data);
+      allow delete: if isMember();
+    }
+
+    match /meta/catalog {
+      allow read: if isMember();
+      allow create, update: if isMember()
+        && request.resource.size() < 10000
+        && isValidCatalog(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

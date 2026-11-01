@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { extractInlineModule, indexHtmlUrl } from "./helpers/extract-inline-module.mjs";
 
-const { transposeChord, semitoneDistance, parseChord, transposeSections, degreeToChord, degreesToSections, chordToDegree } =
+const { transposeChord, semitoneDistance, parseChord, transposeSections, degreeToChord, degreesToSections, chordToDegree, scaleDegrees, parseMeasureText, chordToDegreeToken, parseDegreeMeasure, withDiatonicQuality } =
   await extractInlineModule(indexHtmlUrl, "transposer-module");
 
 test("chordToDegree gives the Nashville degree of a chord in a key (quality excluded)", () => {
@@ -43,6 +43,60 @@ test("degree is invariant under capo (shape vs sounding) and transposition", () 
   assert.equal(chordToDegree("B", "B"), chordToDegree(transposeChord("B", 5), transposeChord("B", 5)));
   assert.equal(chordToDegree("G#m", "B"), "6");
   assert.equal(chordToDegree(transposeChord("G#m", -4), transposeChord("B", -4)), "6");
+});
+
+test("scaleDegrees lists the diatonic triads in the chord spelling", () => {
+  assert.deepEqual(scaleDegrees("G"), [
+    { degree: "1", note: "G" }, { degree: "2", note: "Am" }, { degree: "3", note: "Bm" },
+    { degree: "4", note: "C" }, { degree: "5", note: "D" }, { degree: "6", note: "Em" },
+    { degree: "7", note: "F#dim" }
+  ]);
+  assert.deepEqual(scaleDegrees("F", "flat").map((row) => row.note), ["F", "Gm", "Am", "Bb", "C", "Dm", "Edim"]);
+  assert.deepEqual(scaleDegrees("Bb", "flat").map((row) => row.note), ["Bb", "Cm", "Dm", "Eb", "F", "Gm", "Adim"]);
+  assert.deepEqual(scaleDegrees("G", "flat").map((row) => row.note), ["G", "Am", "Bm", "C", "D", "Em", "Gbdim"]);
+  assert.deepEqual(scaleDegrees("H"), []);
+});
+
+test("parseMeasureText accepts chord symbols separated by spaces", () => {
+  assert.deepEqual(parseMeasureText("  G   C Em ").chords, ["G", "C", "Em"]);
+  assert.deepEqual(parseMeasureText("N.C. D/F#").chords, ["N.C.", "D/F#"]);
+  assert.equal(parseMeasureText("").ok, false);
+  assert.equal(parseMeasureText("Hola").ok, false);
+  assert.equal(parseMeasureText("1").ok, false);
+});
+
+test("degree tokens keep the chord quality and round-trip", () => {
+  assert.equal(chordToDegreeToken("C", "G"), "4");
+  assert.equal(chordToDegreeToken("Em", "G"), "6m");
+  assert.equal(chordToDegreeToken("Bm7", "G"), "3m7");
+  assert.equal(chordToDegreeToken("F#dim", "G"), "7°");
+  assert.equal(chordToDegreeToken("D/F#", "G"), "5/7");
+  assert.equal(chordToDegreeToken("F", "G"), "b7");
+  assert.equal(chordToDegreeToken("N.C.", "G"), "N.C.");
+  assert.equal(degreeToChord("b7", "G"), "F");
+  assert.equal(degreeToChord("#4", "C"), "F#");
+  assert.equal(degreeToChord("1/b3", "C"), "C/D#");
+  for (const chord of ["G", "Am", "Bm", "C", "D", "Em", "F#dim", "D/F#", "F", "Csus2"]) {
+    assert.equal(degreeToChord(chordToDegreeToken(chord, "G"), "G"), chord, chord);
+  }
+  assert.deepEqual(parseDegreeMeasure("  4  6 5 3 ").degrees, ["4", "6", "5", "3"]);
+  assert.equal(parseDegreeMeasure("6m").ok, false);
+  assert.equal(parseDegreeMeasure("G").ok, false);
+  assert.equal(parseDegreeMeasure("b7 #4").ok, true);
+  assert.equal(parseDegreeMeasure("").ok, false);
+  assert.equal(withDiatonicQuality("6"), "6m");
+  assert.equal(withDiatonicQuality("2"), "2m");
+  assert.equal(withDiatonicQuality("3"), "3m");
+  assert.equal(withDiatonicQuality("4"), "4");
+  assert.equal(withDiatonicQuality("7"), "7°");
+  assert.equal(withDiatonicQuality("b7"), "b7");
+  assert.equal(withDiatonicQuality("5/7"), "5/7");
+  assert.equal(withDiatonicQuality("6/4"), "6m/4");
+  assert.equal(degreeToChord(withDiatonicQuality("4"), "G"), "C");
+  assert.equal(degreeToChord(withDiatonicQuality("6"), "G"), "Em");
+  assert.equal(degreeToChord(withDiatonicQuality("3"), "G"), "Bm");
+  assert.equal(degreeToChord(withDiatonicQuality("7"), "G"), "F#dim");
+  assert.equal(degreeToChord(withDiatonicQuality("1"), "G"), "G");
 });
 
 test("degreeToChord converts Nashville numbers into the key's natural spelling", () => {

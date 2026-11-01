@@ -1,4 +1,29 @@
 {
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json",
+    "edition": "enterprise",
+    "database": "worship",
+    "location": "southamerica-east1"
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Setlist de Worship",
+        "supportEmail": "piriz.dario@gmail.com",
+        "authorizedRedirectUris": [
+          "https://grado-uno-app.web.app",
+          "https://grado-uno-app.firebaseapp.com",
+          "http://localhost"
+        ]
+      }
+    },
+    "authorizedDomains": [
+      "localhost",
+      "grado-uno-app.web.app",
+      "grado-uno-app.firebaseapp.com"
+    ]
+  },
   "hosting": {
     "public": "public",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],

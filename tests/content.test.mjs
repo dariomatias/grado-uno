@@ -95,7 +95,8 @@ const expected = [
   ["2026-11-01", [
     ["En el nombre de Jesús", "C"], ["Anything Is Possible (Todo es posible)", "A"], ["Decimos amén", "F"],
     ["Santo por siempre / Agnus Dei", "F"], ["Salón del trono", "F"],
-    ["Sufrido Hijo de Dios", "F"], ["Gracias por la cruz (Digno es el Señor)", "A"]
+    ["Sufrido Hijo de Dios", "F"], ["Gracias por la cruz (Digno es el Señor)", "A"],
+    ["There's Nothing That Our God Can't Do", "G"]
   ]],
   ["ensayo-general", [
     ["Mover tu corazón", "Eb"]
@@ -139,7 +140,7 @@ test("each lineup is a date, a group and the sheet order", () => {
 
 test("setlists in order and key (septiembre, octubre y Ensayo general)", () => {
   assert.equal(setlists.length, 20);
-  assert.equal(setlists.flatMap((item) => item.songs).length, 127);
+  assert.equal(setlists.flatMap((item) => item.songs).length, 128);
   assert.deepEqual(
     setlists.map((item) => [item.id, item.songs.map((s) => [s.title, s.assignedKey])]),
     expected
@@ -567,6 +568,63 @@ test("No Hay Otro Nombre: Cifra Club chart (Hillsong Worship, G) — full verses
   assert.deepEqual([...chords].sort(), ["Am", "Bm", "C", "D", "D/F#", "Em", "G", "G/B"]);
 });
 
+test("Salón del trono is Kari Jobe's Throne Room in Ab and plays in F on 1 de noviembre", () => {
+  const song = songs.find((s) => s.id === "salon-del-trono");
+  assert.equal(song.chartKey, "Ab");
+  assert.equal(song.sourceKey, "Ab");
+  assert.equal(song.artist, "Kari Jobe");
+  assert.equal(song.chartUrl, null);
+  assert.equal(song.lyrics, null);
+  assert.equal(song.sourceStatus, "confirmed");
+  assert.equal(song.tempoBpm, 87);
+  assert.equal(song.beatsPerMeasure, 2);
+  assert.deepEqual(song.sections[0].measures, [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"]]);
+  assert.equal(song.sections[1].cue, "You rendered heaven");
+  assert.equal(song.sections.find((s) => s.label === "Puente").repeats, 3);
+  assert.deepEqual(song.sections.find((s) => s.label === "Puente").measures.at(-1), ["Abmaj7/C"]);
+  const nov = setlists.find((sl) => sl.id === "2026-11-01").songs.find((s) => s.id === "salon-del-trono");
+  assert.equal(nov.assignedKey, "F");
+  assert.equal(nov.chartKey, "Ab");
+  assert.equal(semitoneDistance(nov.chartKey, nov.assignedKey), -3);
+  assert.deepEqual(transposeSections(song.sections, -3, "flat")[0].measures, [["Bbmaj7"], ["C(add4)"], ["Dm7"], ["C(add4)"]]);
+});
+
+test("There's Nothing That Our God Can't Do is the Passion chart in G on 1 de noviembre", () => {
+  const song = songs.find((s) => s.id === "theres-nothing-that-our-god-cant-do");
+  assert.equal(song.artist, "Passion");
+  assert.equal(song.chartKey, "G");
+  assert.equal(song.sourceKey, "G");
+  assert.equal(song.capo, null);
+  assert.equal(song.tempoBpm, 105);
+  assert.equal(song.chartUrl, null);
+  assert.equal(song.lyrics, null);
+  assert.deepEqual(song.sections[0].measures, [["G"], ["C"]]);
+  assert.deepEqual(song.sections[1].measures, [["G", "C"], ["G", "C"], ["G", "C"], ["Em", "D"], ["C"]]);
+  assert.equal(song.sections.find((s) => s.label === "Puente").measures.length, 4);
+  const nov = setlists.find((sl) => sl.id === "2026-11-01").songs;
+  assert.equal(nov.at(-1).id, "theres-nothing-that-our-god-cant-do");
+  assert.equal(nov.at(-1).assignedKey, "G");
+});
+
+test("Santo por siempre is the La IBI chart in G and plays in F on 31 de octubre", () => {
+  const song = songs.find((s) => s.id === "santo-por-siempre");
+  assert.equal(song.artist, "La IBI");
+  assert.equal(song.chartKey, "G");
+  assert.equal(song.sourceKey, "G");
+  assert.equal(song.capo, null);
+  assert.equal(song.chartUrl, "https://www.cifraclub.com/la-ibi/santo-por-siempre/");
+  assert.equal(song.lyrics, null);
+  assert.deepEqual(song.sections[0].measures, [["C", "Em", "D", "Bm"], ["Em", "D", "G"]]);
+  assert.deepEqual(song.sections[1].measures, [["G"], ["C", "G"], ["Em", "D"], ["C"]]);
+  assert.equal(song.sections.find((s) => s.cue === "Si te ha perdonado").measures[0][0], "C");
+  assert.deepEqual(song.sections.at(-1).measures, [["Am7"], ["D"], ["G", "C", "G"]]);
+  const oct16 = setlists.find((sl) => sl.id === "2026-10-16").songs.find((s) => s.id === "santo-por-siempre");
+  const oct31 = setlists.find((sl) => sl.id === "2026-10-31").songs.find((s) => s.id === "santo-por-siempre");
+  assert.equal(oct16.assignedKey, "G");
+  assert.equal(oct31.assignedKey, "F");
+  assert.equal(semitoneDistance(oct31.chartKey, oct31.assignedKey), -2);
+});
+
 test("Amor es como fuego is charted and plays in Bb on 9 de octubre", () => {
   const fuego = songs.find((s) => s.id === "amor-es-como-fuego");
   assert.equal(fuego.chartKey, "E");
@@ -696,7 +754,7 @@ test("Toda lengua y toda nación replaces Adiós al ayer on 09/10 and is charted
 });
 
 test("Praise is charted in C and plays as Alabar on 9 de octubre", () => {
-  assert.equal(songs.length, 95);
+  assert.equal(songs.length, 96);
   const praise = songs.find((s) => s.id === "praise");
   assert.equal(praise.title, "Praise");
   assert.equal(praise.chartKey, "C");
@@ -762,7 +820,7 @@ test("Domingo 18/10: Confía, Ruido y En tu mover quedan en la nota del PDF", ()
 
 test("appearanceKey composes setlist and song ids", () => {
   assert.equal(appearanceKey("2026-09-13", "jehova"), "2026-09-13:jehova");
-  assert.equal(allAppearanceKeys().length, 127);
+  assert.equal(allAppearanceKeys().length, 128);
 });
 
 test("Ensayo general is a general reunion, exempt from the 7-song rule, with Mover tu corazón (confirmed, original key Eb)", () => {

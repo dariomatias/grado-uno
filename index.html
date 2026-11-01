@@ -101,6 +101,7 @@
         color: var(--muted); font-size: .85rem;
       }
       header.app .theme select { min-height: 44px; }
+      #accountButton { max-width: 14rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       main { padding: 16px; max-width: 1100px; margin: 0 auto; }
       #statusMessage {
         position: fixed; bottom: 0; left: 0; right: 0; margin: 0;
@@ -245,6 +246,31 @@
       #stageView .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
       #stageView .position { color: var(--muted); font-variant-numeric: tabular-nums; }
       #stageView h2 { margin: 4px 0; font-size: clamp(1.3rem, 4vw, 2rem); }
+      /* Partitura a la izquierda; la escala queda fija a la derecha mientras se scrollea. */
+      .stage-layout {
+        display: grid; grid-template-columns: minmax(0, 1fr) 9.25rem; gap: 16px; align-items: start;
+      }
+      .scale-rail {
+        position: sticky; top: 8px; z-index: 4;
+        background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 10px 8px;
+      }
+      .scale-rail h3 { margin: 0 0 2px; font-size: .85rem; text-align: center; color: var(--gold-strong); }
+      .scale-rail .hint { margin: 0 0 8px; text-align: center; font-size: .72rem; line-height: 1.3; }
+      .scale-rail table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+      .scale-rail caption { caption-side: top; text-align: center; padding-bottom: 6px; }
+      .scale-rail th { font-size: .7rem; font-weight: 600; color: var(--muted); text-align: left; padding: 0 4px 4px; }
+      .scale-rail td { padding: 7px 4px; border-top: 1px solid var(--border); }
+      .scale-rail td.deg { color: var(--muted); font-weight: 700; width: 1.6rem; }
+      .scale-rail td.note { color: var(--gold-strong); font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
+      @media (max-width: 720px) {
+        .stage-layout { grid-template-columns: 1fr; }
+        .scale-rail { order: -1; top: 0; }
+        .scale-rail table, .scale-rail tbody { display: block; }
+        .scale-rail thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .scale-rail tr { display: inline-flex; align-items: baseline; gap: 4px; margin: 0 6px 6px 0; border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; }
+        .scale-rail td { border: 0; padding: 2px 0; width: auto; }
+      }
       .keyline { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
       .transpose-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
       /* Estructura: recorrido de la canción con chips que llevan a cada bloque */
@@ -312,30 +338,33 @@
         border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
         font-size: clamp(1.1rem, 3.5vw, 1.6rem); font-weight: 700;
       }
-      /* Acordes como botones: hover o tap muestran la digitación */
+      /* El compás entero se toca para editarlo. El acorde es sólo la letra. */
+      .bar[role="button"], .measure[role="button"] { cursor: pointer; width: 100%; font: inherit; color: inherit; text-align: inherit; }
+      .bar[role="button"]:hover, .bar[role="button"]:focus-visible,
+      .measure[role="button"]:hover, .measure[role="button"]:focus-visible { background: var(--panel-2); }
+      .bar.edited, .measure.edited { background: color-mix(in srgb, var(--gold) 14%, transparent); }
+      .bar.editing { display: flex; flex-direction: column; align-items: stretch; grid-template-columns: none; }
+      .measure.editing { display: flex; flex-direction: column; align-items: stretch; }
       .chord {
-        background: none; border: 1px solid transparent; border-radius: 8px;
-        padding: 6px 10px; min-height: 44px; min-width: 44px;
-        color: var(--gold-strong); font: inherit; font-weight: 700; cursor: pointer;
+        background: none; border: 0; border-radius: 8px;
+        padding: 6px 10px; min-height: 44px; min-width: 0;
+        color: var(--gold-strong); font: inherit; font-weight: 700;
       }
-      .chord:hover, .chord:focus-visible, .chord[aria-expanded="true"] {
-        border-color: var(--gold); background: var(--panel-2);
+      .measure-edit { display: flex; flex-direction: column; gap: 4px; width: 100%; min-width: 0; }
+      .measure-edit input {
+        width: 100%; box-sizing: border-box; font: inherit; font-weight: 700;
+        color: var(--text); background: var(--panel); border: 1px solid var(--gold);
+        border-radius: 6px; padding: 6px;
       }
+      .measure-edit .err { margin: 0; font-size: .75rem; font-weight: 600; }
+      .edit-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+      .edit-actions button { font-size: .75rem; padding: 4px 8px; }
       .capo-hint { color: var(--gold-strong); }
       /* Grado de la escala como subíndice de cada acorde */
       .chord sub.deg {
         font-size: .55em; line-height: 1; margin-left: 2px;
         color: var(--muted); font-weight: 600; vertical-align: sub;
       }
-      #chordPopover {
-        position: absolute; z-index: 60; width: 240px;
-        background: var(--panel); border: 1px solid var(--gold); border-radius: 12px;
-        padding: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, .55);
-      }
-      #chordPopover h4 { margin: 0 0 2px; font-size: 1.2rem; color: var(--gold-strong); }
-      #chordPopover .cap { color: var(--muted); font-size: .85rem; margin: 0 0 8px; }
-      #chordPopover svg { display: block; width: 100%; height: auto; }
-      #chordPopover .frets { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .85rem; margin: 6px 0 0; }
       .panel {
         background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
         padding: 12px; margin: 12px 0;
@@ -377,7 +406,7 @@
     <a class="skip-link" href="#mainContent">Saltar al contenido</a>
     <header class="app">
       <h1>Setlist de Worship</h1>
-      <p>Lista general · por fecha · acordes transponibles · letras locales</p>
+      <p>Lista general · por fecha · acordes transponibles</p>
       <label class="theme">
         Apariencia
         <select id="themeSelect" aria-label="Apariencia">
@@ -386,6 +415,7 @@
           <option value="pizarra">Pizarra</option>
         </select>
       </label>
+      <button type="button" id="accountButton">Entrar</button>
     </header>
 
     <main id="mainContent">
@@ -417,9 +447,6 @@
     </main>
 
     <p id="statusMessage" aria-live="polite" role="status"></p>
-
-    <!-- Popover de digitación: se llena al tocar/clic sobre un acorde (sin hover) -->
-    <div id="chordPopover" role="dialog" aria-labelledby="chordPopoverTitle" hidden></div>
 
     <dialog id="lyricsDialog" aria-labelledby="lyricsDialogTitle">
       <h3 id="lyricsDialogTitle">Letra de la canción</h3>
@@ -1396,7 +1423,8 @@ const meetings = insertOctoberWeekends([
       { id: "santo-por-siempre-agnus-dei", key: "F" },
       { id: "salon-del-trono", key: "F" },
       { id: "sufrido-hijo-de-dios", key: "F" },
-      { id: "gracias-por-la-cruz", key: "A" }
+      { id: "gracias-por-la-cruz", key: "A" },
+      { id: "theres-nothing-that-our-god-cant-do", key: "G" }
     ],
     songs: []
   },
@@ -2015,7 +2043,32 @@ const grupoBSongs = [
     chartUrl: "https://www.cifraclub.com/elevation-worship/no-vas-a-parar/"
   }),
   grupoB("a-ti-adoramos", "A ti adoramos", "D", "2026-10-16"),
-  grupoB("santo-por-siempre", "Santo por siempre", "G", "2026-10-16", { groups: ["B", "C"] }),
+  // Cifra Club, Adoración La IBI, tono G, sin capo. El 31/10 está en F:
+  // el escenario transpone. La tercera parte no escribe acorde en la primera
+  // línea. Los de una misma línea comparten el compás. Sólo acordes.
+  grupoB("santo-por-siempre", "Santo por siempre", "G", "2026-10-16", {
+    groups: ["B", "C"],
+    artist: "La IBI",
+    sourceKey: "G",
+    chartUrl: "https://www.cifraclub.com/la-ibi/santo-por-siempre/",
+    sections: [
+      { type: "intro", label: "Intro", repeats: 1, measures: [["C", "Em", "D", "Bm"], ["Em", "D", "G"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Mil generaciones", measures: [["G"], ["C", "G"], ["Em", "D"], ["C"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Los que nos precedieron", measures: [["G"], ["C", "G"], ["Em", "D"], ["C"]] },
+      { type: "prechorus", label: "Pre-coro", repeats: 1, cue: "Tu nombre, es más", measures: [["Em"], ["D"], ["Em", "D", "C"], ["Em"], ["D"], ["Em", "D", "Am7"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Claman ángeles", measures: [["C"], ["Em", "D"], ["Bm7"], ["Em"], ["Am7"], ["D"], ["G"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Si te ha perdonado", measures: [["C", "G"], ["Em", "D"], ["C"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Si te ha libertado", measures: [["G"], ["C", "G"], ["Em", "D"], ["C"]] },
+      { type: "prechorus", label: "Pre-coro", repeats: 1, cue: "Cantaremos siempre amén", measures: [["Em", "D", "Am"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Claman ángeles", measures: [["C"], ["Em", "D"], ["Bm7"], ["Em"], ["Am7"], ["D"], ["G"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Canta el pueblo al", measures: [["C"], ["Em", "D"], ["Bm7"], ["Em"], ["Am7"], ["D"], ["G"]] },
+      { type: "prechorus", label: "Pre-coro", repeats: 1, cue: "Tu nombre, es más", measures: [["Em"], ["D"], ["Em", "D", "C"], ["Em"], ["D"], ["Em", "D", "Am7"]] },
+      { type: "prechorus", label: "Pre-coro", repeats: 1, cue: "Tu nombre, es más", measures: [["Em"], ["D"], ["Em", "D", "C"], ["Em"], ["D"], ["Em", "D", "Am7"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Claman ángeles", measures: [["C"], ["Em", "D"], ["Bm7"], ["Em"], ["Am7"], ["D"], ["G"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Canta el pueblo al", measures: [["C"], ["Em", "D"], ["Bm7"], ["Em"], ["Am7"], ["D"], ["G"]] },
+      { type: "outro", label: "Final", repeats: 1, cue: "Y por siempre es", measures: [["Am7"], ["D"], ["G", "C", "G"]] }
+    ]
+  }),
   grupoB("digno-worthy", "Digno (Worthy)", "C", "2026-10-16", {
     groups: ["B", "C"],
     artist: "Elevation Worship",
@@ -2210,10 +2263,29 @@ const grupoAOctober = [
       { type: "outro", label: "Final", repeats: 2, cue: "Y por siempre es", measures: [["Gm"], ["C"], ["F", "Dm"]] }
     ]
   }),
-  // Scribd y Chordify no publican una cifra escrita. Sigue pendiente.
+  // Kari Jobe, Throne Room (The Blessing). Worship Together, tono impreso Ab,
+  // sin capo. MultiTracks: 6/8 a 87; el metrónomo usa ese pulso (dos tiempos
+  // por compás). La reunión está en F: el escenario transpone. Sólo acordes.
   grupoB("salon-del-trono", "Salón del trono", "F", "2026-11-01", {
     groups: ["A"],
-    artist: "Versión «Cristo está aquí»"
+    artist: "Kari Jobe",
+    chartKey: "Ab",
+    sourceKey: "Ab",
+    tempoBpm: 87,
+    beatsPerMeasure: 2,
+    sections: [
+      { type: "intro", label: "Intro", repeats: 1, measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "You rendered heaven", measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"]] },
+      { type: "prechorus", label: "Canal", repeats: 1, cue: "What are they singing", measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb/G"], ["Ab"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb/G"], ["Ab"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Holy, holy, holy", measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "The train of His", measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"]] },
+      { type: "prechorus", label: "Canal", repeats: 1, cue: "Lion of Judah", measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb/G"], ["Ab"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb/G"], ["Ab"]] },
+      { type: "interlude", label: "Interludio", repeats: 1, measures: [["Dbmaj7", "Eb(add4)"], ["Fm7"], ["Dbmaj7", "Eb(add4)"], ["Fm7"]] },
+      { type: "bridge", label: "Puente", repeats: 3, cue: "Blessing and honor", measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Ab"], ["Abmaj7/C"]] },
+      { type: "prechorus", label: "Canal", repeats: 2, cue: "What are they singing", measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb/G"], ["Ab"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb/G"], ["Ab"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "Holy, holy, holy", measures: [["Ab"], ["Abmaj7/C"], ["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Abmaj7/C"], ["Dbmaj7"], ["Eb(add4)"]] },
+      { type: "outro", label: "Final", repeats: 3, measures: [["Dbmaj7"], ["Eb(add4)"], ["Fm7"], ["Eb(add4)"]] }
+    ]
   }),
   // Cifra Club, tono Db, sin capo. La reunión está en F: el escenario transpone.
   // La lista de acordes del encabezado no es un compás. Sólo acordes.
@@ -2242,6 +2314,30 @@ const grupoAOctober = [
       { type: "intro", label: "Intro", repeats: 1, measures: [["A", "D", "E", "A"]] },
       { type: "verse", label: "Verso", repeats: 1, cue: "Gracias por la cruz", measures: [["A", "D", "E", "A"], ["A", "D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"], ["A", "D", "E", "A"], ["D", "E", "A"], ["F#m"], ["E", "D", "Bm", "A", "E"]] },
       { type: "chorus", label: "Coro", repeats: 1, cue: "Digno es el Señor", measures: [["A", "E"], ["Bm7", "A", "D"], ["E", "D", "C#", "D"], ["Bm", "A", "E"], ["A", "E"], ["E", "D", "C#", "D"], ["Bm", "A", "E", "D"], ["Bm", "A", "E", "D"]] }
+    ]
+  }),
+  // Ultimate Guitar, Passion. Formas impresas en G; el encabezado dice capo 1
+  // y tonalidad Ab. No se fija capo: en el escenario restaría esas formas.
+  // Los acordes de una misma línea comparten el compás. 105 bpm. Sólo acordes.
+  grupoB("theres-nothing-that-our-god-cant-do", "There's Nothing That Our God Can't Do", "G", "2026-11-01", {
+    groups: ["A"],
+    artist: "Passion",
+    sourceKey: "G",
+    tempoBpm: 105,
+    sections: [
+      { type: "intro", label: "Intro", repeats: 1, measures: [["G"], ["C"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Just one word You", measures: [["G", "C"], ["G", "C"], ["G", "C"], ["Em", "D"], ["C"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "There's nothing that our", measures: [["G"], ["C"], ["Em", "D"], ["C"]] },
+      { type: "verse", label: "Verso", repeats: 1, cue: "Just one word You", measures: [["G", "C"], ["G", "C"], ["G", "C"], ["Em", "D"], ["C"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "There's nothing that our", measures: [["G"], ["C"], ["Em", "D"], ["C"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "There's nothing that our", measures: [["G"], ["C"], ["Em", "D"], ["C"]] },
+      { type: "interlude", label: "Interludio", repeats: 1, cue: "I believe I gotta", measures: [["G"]] },
+      { type: "bridge", label: "Puente", repeats: 1, cue: "I will believe for", measures: [["G"], ["C"], ["G"], ["C"]] },
+      { type: "bridge", label: "Puente", repeats: 1, cue: "I will believe for", measures: [["G"], ["C"], ["Em", "D"], ["C"]] },
+      { type: "bridge", label: "Puente", repeats: 1, cue: "I will believe for", measures: [["G"], ["C"], ["Em", "D"], ["C"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "There's nothing that our", measures: [["G"], ["C"], ["Em", "D"], ["C"]] },
+      { type: "chorus", label: "Coro", repeats: 1, cue: "There's nothing that our", measures: [["G"], ["C"], ["Em", "D"], ["C"]] },
+      { type: "outro", label: "Final", repeats: 1, cue: "Oh-woah oh-woah", measures: [["G"], ["C"], ["Em", "D"], ["C"], ["G"], ["C"], ["Em", "D"], ["C"], ["G"]] }
     ]
   })
 ];
@@ -2395,16 +2491,36 @@ export function transposeSections(sections, semitones, accidentalMode = "sharp")
 // natural de esa tonalidad (bemoles en F/Bb/Eb/Ab/Db/Gb, sostenidos en el resto).
 const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
 const FLAT_KEYS = new Set(["F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"]);
-const DEGREE_RE = /^([1-7])([^/]*)(?:\/([1-7]))?$/;
+const DEGREE_NAMES = ["1", "b2", "2", "b3", "3", "4", "#4", "5", "b6", "6", "b7", "7"];
+const DEGREE_RE = /^((?:b|#)?)([1-7])([^/]*)(?:\/((?:b|#)?)([1-7]))?$/;
+const BARE_DEGREE_RE = /^((?:b|#)?)([1-7])(?:\/((?:b|#)?)([1-7]))?$/;
+/** En mayor: 2, 3 y 6 menores; 7 disminuido; el resto (1, 4, 5 y los cromáticos) mayores. */
+const TRIAD_QUALITY = { "2": "m", "3": "m", "6": "m", "7": "°" };
+
+/** Agrega la cualidad que corresponde al grado. "6" → "6m", "7" → "7°", "b7" → "b7". */
+export function withDiatonicQuality(token) {
+  if (token === "N.C.") return token;
+  const m = BARE_DEGREE_RE.exec(String(token ?? "").trim());
+  if (!m) return token;
+  const name = `${m[1] || ""}${m[2]}`;
+  const quality = TRIAD_QUALITY[name] ?? "";
+  const bass = m[4] ? `/${m[3] || ""}${m[4]}` : "";
+  return name + quality + bass;
+}
 
 export function degreeToChord(token, keyRoot) {
   const m = DEGREE_RE.exec(String(token ?? "").trim());
   const rootPc = keyToPitchClass(keyRoot);
-  if (!m || rootPc === null) return token; // no es un grado (p. ej. "N.C."): intacto
+  if (!m || rootPc === null) return token;
+  const interval = (accidental, digit) => DEGREE_NAMES.indexOf(`${accidental || ""}${digit}`);
+  const rootIv = interval(m[1], m[2]);
+  if (rootIv < 0) return token;
   const table = FLAT_KEYS.has(keyRoot) ? FLAT_NOTES : SHARP_NOTES;
-  const note = (deg) => table[mod12(rootPc + MAJOR_SCALE[Number(deg) - 1])];
-  const suffix = m[2] === "°" ? "dim" : m[2];
-  return note(m[1]) + suffix + (m[3] ? `/${note(m[3])}` : "");
+  const noteAt = (iv) => table[mod12(rootPc + iv)];
+  const bassIv = m[5] ? interval(m[4], m[5]) : -1;
+  if (m[5] && bassIv < 0) return token;
+  const suffix = m[3] === "°" ? "dim" : m[3];
+  return noteAt(rootIv) + suffix + (bassIv >= 0 ? `/${noteAt(bassIv)}` : "");
 }
 
 export function degreesToSections(sections, keyRoot) {
@@ -2417,14 +2533,62 @@ export function degreesToSections(sections, keyRoot) {
 // Inversa: acorde → grado en la tonalidad (números, estilo Nashville). Los no
 // diatónicos llevan alteración (b3, #4, b7); los acordes con bajo van "1/3".
 // La calidad (m, 7…) no se incluye: ya está en el símbolo del acorde.
-const DEGREE_NAMES = ["1", "b2", "2", "b3", "3", "4", "#4", "5", "b6", "6", "b7", "7"];
-
 export function chordToDegree(chord, keyRoot) {
   const parsed = parseChord(chord);
   const keyPc = keyToPitchClass(keyRoot);
   if (!parsed || keyPc === null) return "";
   const deg = (note) => DEGREE_NAMES[mod12(keyToPitchClass(note) - keyPc)];
   return deg(parsed.root) + (parsed.bass ? `/${deg(parsed.bass)}` : "");
+}
+
+/** Igual que chordToDegree, pero conserva la cualidad (6m, 7°, 4sus2) para poder editar y volver. */
+export function chordToDegreeToken(chord, keyRoot) {
+  if (chord === "N.C.") return "N.C.";
+  const parsed = parseChord(chord);
+  const keyPc = keyToPitchClass(keyRoot);
+  if (!parsed || keyPc === null) return chord;
+  const deg = (note) => DEGREE_NAMES[mod12(keyToPitchClass(note) - keyPc)];
+  const suffix = parsed.suffix === "dim" ? "°" : parsed.suffix;
+  return deg(parsed.root) + suffix + (parsed.bass ? `/${deg(parsed.bass)}` : "");
+}
+
+/** Cualidad de la tríada diatónica: 1, 4 y 5 mayores; 2, 3 y 6 menores; 7 disminuido. */
+const DIATONIC_TRIAD = ["", "m", "m", "", "", "m", "dim"];
+
+/** Los siete grados de la escala mayor de `keyRoot`, con la tríada de cada uno. */
+export function scaleDegrees(keyRoot, accidentalMode = "sharp") {
+  const rootPc = keyToPitchClass(keyRoot);
+  if (rootPc === null) return [];
+  const table = accidentalMode === "flat" ? FLAT_NOTES : SHARP_NOTES;
+  return MAJOR_SCALE.map((interval, index) => ({
+    degree: String(index + 1),
+    note: table[mod12(rootPc + interval)] + DIATONIC_TRIAD[index]
+  }));
+}
+
+/** Texto de un compás en grados pelados: "4 6 5 3". La cualidad la pone la escala. */
+export function parseDegreeMeasure(text) {
+  if (typeof text !== "string") return { ok: false, error: "El compás no puede quedar vacío." };
+  const degrees = text.trim().split(/\s+/).filter(Boolean);
+  if (degrees.length === 0) return { ok: false, error: "El compás no puede quedar vacío." };
+  const known = (accidental, digit) => DEGREE_NAMES.includes(`${accidental || ""}${digit}`);
+  for (const token of degrees) {
+    if (token === "N.C.") continue;
+    const bare = BARE_DEGREE_RE.exec(token);
+    if (bare && known(bare[1], bare[2]) && (!bare[4] || known(bare[3], bare[4]))) continue;
+    if (DEGREE_RE.exec(token)) return { ok: false, error: `Escribí sólo el grado, sin la cualidad: «${token}».` };
+    return { ok: false, error: `No reconozco el grado «${token}».` };
+  }
+  return { ok: true, degrees };
+}
+export function parseMeasureText(text) {
+  if (typeof text !== "string") return { ok: false, error: "El compás no puede quedar vacío." };
+  const chords = text.trim().split(/\s+/).filter(Boolean);
+  if (chords.length === 0) return { ok: false, error: "El compás no puede quedar vacío." };
+  for (const chord of chords) {
+    if (chord !== "N.C." && !parseChord(chord)) return { ok: false, error: `No reconozco «${chord}».` };
+  }
+  return { ok: true, chords };
 }
 /* transposer-module:end */
 
@@ -2856,6 +3020,23 @@ export function songStructure(sections) {
     .map((e) => ({ type: e.type, count: e.labels.size }));
 
   return { roadmap: namedRoadmap, blocks: namedBlocks, typeSummary };
+}
+
+/** Copia las secciones reemplazando los compases editados. `edits` es { sección: { compás: [acordes] } }. */
+export function applyMeasureEdits(sections, edits) {
+  if (!edits || typeof edits !== "object") return sections;
+  return sections.map((section, si) => {
+    const byMeasure = edits[si] ?? edits[String(si)];
+    if (!byMeasure || typeof byMeasure !== "object") return section;
+    let changed = false;
+    const measures = section.measures.map((measure, mi) => {
+      const next = byMeasure[mi] ?? byMeasure[String(mi)];
+      if (!Array.isArray(next) || next.length === 0) return measure;
+      changed = true;
+      return next.slice();
+    });
+    return changed ? { ...section, measures } : section;
+  });
 }
 
 export function structureSummary(typeSummary, labels = SECTION_TYPE_LABELS) {
@@ -3428,7 +3609,7 @@ syncStoredLineups({
   "2026-11-01": [
     "en-el-nombre-de-jesus-houghton", "anything-is-possible", "decimos-amen",
     "santo-por-siempre-agnus-dei", "salon-del-trono", "sufrido-hijo-de-dios",
-    "gracias-por-la-cruz"
+    "gracias-por-la-cruz", "theres-nothing-that-our-god-cant-do"
   ]
 }, "worship-setlist:group-a-nov-1-lineup:v1");
 
@@ -3455,9 +3636,15 @@ const el = {
   lyricsFile: document.getElementById("lyricsFile"),
   lyricsSave: document.getElementById("lyricsSave"),
   lyricsCancel: document.getElementById("lyricsCancel"),
-  popover: document.getElementById("chordPopover"),
-  themeSelect: document.getElementById("themeSelect")
+  themeSelect: document.getElementById("themeSelect"),
+  accountButton: document.getElementById("accountButton")
 };
+
+let suppressPublish = false;
+let cloudPublish = () => {};
+function publishChange(op) {
+  if (!suppressPublish) cloudPublish(op);
+}
 
 const THEME_STORAGE_KEY = "worship-setlist:theme:v1";
 const THEMES = ["tinta", "papel", "pizarra"];
@@ -3483,12 +3670,11 @@ let librarySongId = null;
 let dialogTargetKey = null;
 let metronome = null;
 /** Capo vigente en el escenario (manual o sugerido) y tono real que suena;
- *  la partitura muestra las formas para ese capo y los popovers lo usan. */
+ *  la partitura muestra las formas para ese capo. */
 let stageCapo = 0;
 /** Compases por línea vigentes en el escenario (override de sesión o dato de la canción). */
 let stageBarsPerLine = 4;
 let stageKeyRoot = "C";
-let popoverTrigger = null;
 
 /* ---- Almacenamiento de letras (defensivo) ---- */
 const lyricsStore = (() => {
@@ -3517,19 +3703,99 @@ const lyricsStore = (() => {
     all: () => ({ ...memory }),
     set(key, text) {
       memory[key] = { text, updatedAt: new Date().toISOString() };
-      return flush();
+      const ok = flush();
+      publishChange({ collection: "lyrics", id: key, data: memory[key] });
+      return ok;
     },
     remove(key) {
       delete memory[key];
-      return flush();
+      const ok = flush();
+      publishChange({ collection: "lyrics", id: key, data: null });
+      return ok;
     },
     replaceAll(next) {
       memory = { ...next };
-      return flush();
+      const ok = flush();
+      publishChange({ collection: "lyrics", sync: { ...memory }, encode: (entry) => entry });
+      return ok;
+    },
+    hydrate(next) {
+      if (JSON.stringify(memory) === JSON.stringify(next)) return false;
+      memory = { ...next };
+      flush();
+      return true;
     },
     get persistent() { return persistent; }
   };
 })();
+
+const MEASURES_STORAGE_KEY = "worship-setlist:measures:v1";
+const measureStore = (() => {
+  let memory = {};
+  let persistent = true;
+  try {
+    memory = sanitizeMeasureEdits(JSON.parse(localStorage.getItem(MEASURES_STORAGE_KEY) || "{}"));
+  } catch {
+    persistent = false;
+    memory = {};
+  }
+  const flush = () => {
+    if (!persistent) return false;
+    try {
+      localStorage.setItem(MEASURES_STORAGE_KEY, JSON.stringify(memory));
+      return true;
+    } catch {
+      persistent = false;
+      return false;
+    }
+  };
+  return {
+    forSong: (songId) => memory[songId] ?? null,
+    has: (songId, sectionIndex, measureIndex) => {
+      const chords = memory[songId]?.[sectionIndex]?.[measureIndex] ?? memory[songId]?.[String(sectionIndex)]?.[String(measureIndex)];
+      return Array.isArray(chords) && chords.length > 0;
+    },
+    setSong(songId, edits) {
+      const clean = sanitizeMeasureEdits({ [songId]: edits })[songId];
+      if (!clean) delete memory[songId];
+      else memory[songId] = clean;
+      const ok = flush();
+      publishChange({ collection: "measures", id: songId, data: clean ? { edits: clean } : null });
+      return ok;
+    },
+    all: () => JSON.parse(JSON.stringify(memory)),
+    hydrate(next) {
+      const clean = sanitizeMeasureEdits(next);
+      if (JSON.stringify(clean) === JSON.stringify(memory)) return false;
+      memory = clean;
+      flush();
+      return true;
+    },
+    get persistent() { return persistent; }
+  };
+})();
+
+function sanitizeMeasureEdits(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const out = {};
+  for (const [songId, sections] of Object.entries(raw)) {
+    if (!sections || typeof sections !== "object" || Array.isArray(sections)) continue;
+    const songEdits = {};
+    for (const [si, measures] of Object.entries(sections)) {
+      if (!/^\d+$/.test(si) || !measures || typeof measures !== "object" || Array.isArray(measures)) continue;
+      const measureEdits = {};
+      for (const [mi, chords] of Object.entries(measures)) {
+        if (!/^\d+$/.test(mi) || !Array.isArray(chords)) continue;
+        const parsed = parseMeasureText(chords.join(" "));
+        if (!parsed.ok) continue;
+        measureEdits[mi] = parsed.chords;
+      }
+      if (Object.keys(measureEdits).length) songEdits[si] = measureEdits;
+    }
+    if (Object.keys(songEdits).length) out[songId] = songEdits;
+  }
+  return out;
+}
 
 const KEYS_STORAGE_KEY = "worship-setlist:keys:v1";
 const ASSIGNMENTS_STORAGE_KEY = "worship-setlist:assignments:v1";
@@ -3544,9 +3810,11 @@ function readKeyOverrides() {
 }
 
 function writeKeyOverrides(transpositions) {
+  const parsed = parseKeyOverrides(transpositions);
   try {
-    localStorage.setItem(KEYS_STORAGE_KEY, JSON.stringify(parseKeyOverrides(transpositions)));
+    localStorage.setItem(KEYS_STORAGE_KEY, JSON.stringify(parsed));
   } catch { /* la tonalidad sigue en esta sesión */ }
+  publishChange({ collection: "keys", sync: parsed, encode: (semis) => ({ semis }) });
 }
 
 state = { ...state, transpositions: { ...state.transpositions, ...readKeyOverrides() } };
@@ -3566,8 +3834,16 @@ const assignmentStore = (() => {
     get: (songId) => memory[songId],
     all: () => memory,
     save(songId, dateIds, groups) {
-      memory = { ...memory, [songId]: { dateIds: [...dateIds], groups: normalizeGroups(groups) } };
+      const entry = { dateIds: [...dateIds], groups: normalizeGroups(groups) };
+      memory = { ...memory, [songId]: entry };
       flush();
+      publishChange({ collection: "assignments", id: songId, data: entry });
+    },
+    hydrate(next) {
+      if (JSON.stringify(memory) === JSON.stringify(next)) return false;
+      memory = { ...next };
+      flush();
+      return true;
     }
   };
 })();
@@ -3604,6 +3880,15 @@ const orderStore = (() => {
         : setlist?.id ?? setlist;
       memory = { ...memory, [key]: [...ids] };
       flush();
+      publishChange({ collection: "orders", id: key, data: ids.length ? { ids: [...ids] } : null });
+    },
+    all: () => ({ ...memory }),
+    hydrate(next) {
+      const parsed = parseSongOrders(next);
+      if (JSON.stringify(memory) === JSON.stringify(parsed)) return false;
+      memory = parsed;
+      flush();
+      return true;
     }
   };
 })();
@@ -4374,7 +4659,6 @@ function openStageAt(setlistIndex, songIndex, opener, fromHome) {
 function backToSetlist() {
   stopMetronome();
   destroyVideo();
-  hideChordPopover();
   void exitStageFullscreen(); // el listado vive fuera de #stageView
   state = { ...state, view: "setlist", home: returnToHome };
   librarySongId = null;
@@ -4392,7 +4676,6 @@ function renderStage() {
   const sl = inLibrary ? { id: "general", songs: [song] } : activeSetlist();
   const semis = transposeFor(song);
   const chordSemis = semis + chartSemis(song);
-  hideChordPopover();
   el.stageView.innerHTML = "";
 
   const toolbar = document.createElement("div");
@@ -4439,14 +4722,19 @@ function renderStage() {
   toolbar.append(back, pos, layoutBtn, labelMode, simplifySelect, fs);
   el.stageView.appendChild(toolbar);
 
+  const layout = document.createElement("div");
+  layout.className = "stage-layout";
+  const main = document.createElement("div");
+  main.className = "stage-main";
+
   const h2 = document.createElement("h2");
   h2.textContent = song.title;
-  el.stageView.appendChild(h2);
+  main.appendChild(h2);
 
   const artist = document.createElement("div");
   artist.className = "meta";
   artist.textContent = song.artist;
-  el.stageView.appendChild(artist);
+  main.appendChild(artist);
 
   // Enlaces externos de la canción (nueva pestaña; no se extrae contenido).
   const links = document.createElement("div");
@@ -4454,7 +4742,7 @@ function renderStage() {
   links.style.margin = "8px 0";
   links.appendChild(externalLink("Cifra Club", song.chartUrl));
   links.appendChild(externalLink("YouTube", song.youtubeUrl));
-  el.stageView.appendChild(links);
+  main.appendChild(links);
 
   // Key line + transpose controls
   const keyline = document.createElement("div");
@@ -4478,10 +4766,10 @@ function renderStage() {
   // a mano para esta aparición. Con capo, la partitura muestra las FORMAS que se
   // digitan; el grado (subíndice) es siempre el del tono real, invariante al capo.
   // Acordes transpuestos y, si se pidió, simplificados (menos acordes de paso).
-  const transposed = simplifySections(
-    song.sections.length ? transposeSections(song.sections, chordSemis, chordSpelling(song, semis)) : [],
-    state.simplify ?? "none"
-  );
+  const played = song.sections.length
+    ? transposeSections(applyMeasureEdits(song.sections, measureStore.forSong(song.id)), chordSemis, chordSpelling(song, semis))
+    : [];
+  const transposed = simplifySections(played, state.simplify ?? "none");
   const soundingChords = [...new Set(transposed.flatMap((s) => s.measures.flat()))];
   stageKeyRoot = currentKey(song);
   const suggestion = suggestCapo(stageKeyRoot, transposeChord, soundingChords);
@@ -4552,28 +4840,40 @@ function renderStage() {
     announce(`${n} compases por línea`);
   });
   keyline.appendChild(lineSelect);
-  el.stageView.appendChild(keyline);
+  main.appendChild(keyline);
 
   // Sections
   if (song.sections.length === 0) {
     const p = document.createElement("p");
     p.className = "pending";
     p.textContent = "Partitura no disponible.";
-    el.stageView.appendChild(p);
+    main.appendChild(p);
   } else {
     // 1) Estructura: recorrido en orden con repeticiones e indicaciones.
     // 2) Bloques únicos: cada secuencia de acordes una sola vez, con todas las
-    //    secciones que la usan. Con capo se leen las formas; el popover y el
-    //    grado siempre parten del acorde real (sounding).
-    const structure = songStructure(transposed);
-    el.stageView.appendChild(renderRoadmap(structure));
+    //    secciones que la usan. Con capo se leen las formas; el grado es el del
+    //    acorde real. Tocar un compás lo edita y el cambio queda guardado.
+    const structure = songStructure(played);
+    main.appendChild(renderRoadmap(structure));
     const ol = document.createElement("ol");
     ol.className = "sections";
     structure.blocks.forEach((block) => {
+      const level = state.simplify ?? "none";
+      const displaySounding = simplifySections([{ measures: block.measures }], level)[0].measures;
       const shapes = stageCapo
-        ? transposeSections([{ measures: block.measures }], -stageCapo, "sharp")[0].measures
-        : block.measures;
-      const li = renderSection({ label: block.title, repeats: 1, measures: shapes, cue: block.cue }, { measures: block.measures }, stageKeyRoot);
+        ? transposeSections([{ measures: displaySounding }], -stageCapo, "sharp")[0].measures
+        : displaySounding;
+      const li = renderSection(
+        { label: block.title, repeats: 1, measures: shapes, cue: block.cue },
+        { measures: displaySounding },
+        stageKeyRoot,
+        {
+          soundingMeasures: block.measures,
+          occurrences: block.occurrences,
+          isEdited: (mi) => block.occurrences.some((si) => measureStore.has(song.id, si, mi)),
+          onEdit: (bar, mi, sounding) => openMeasureEditor(bar, { song, chordSemis, occurrences: block.occurrences, measureIndex: mi, sounding })
+        }
+      );
       li.id = `block-${block.id}`;
       if (block.occurrences.length > 1) {
         const uses = document.createElement("span");
@@ -4583,12 +4883,12 @@ function renderStage() {
       }
       ol.appendChild(li);
     });
-    el.stageView.appendChild(ol);
+    main.appendChild(ol);
   }
 
-  el.stageView.appendChild(renderLyricsPanel(song));
-  el.stageView.appendChild(renderVideoPanel(song));
-  el.stageView.appendChild(renderMetronomePanel(song));
+  main.appendChild(renderLyricsPanel(song));
+  main.appendChild(renderVideoPanel(song));
+  main.appendChild(renderMetronomePanel(song));
 
   // Prev / next
   const nav = document.createElement("div");
@@ -4598,7 +4898,51 @@ function renderStage() {
   const next = button("Siguiente →", () => stepSong(1));
   next.disabled = inLibrary || state.selectedSongIndex === sl.songs.length - 1;
   nav.append(prev, next);
-  el.stageView.appendChild(nav);
+  main.appendChild(nav);
+  layout.append(main, renderScaleRail(song, semis));
+  el.stageView.appendChild(layout);
+}
+
+/**
+ * Barra de la escala que se digita, fija mientras se scrollea la partitura.
+ * Con capo la partitura muestra formas (tono real − capo); la tabla usa esa
+ * misma tonalidad para que el grado 1 sea la nota que se lee en los acordes.
+ */
+function renderScaleRail(song, semis) {
+  const sounding = currentKey(song);
+  const key = shapeForCapo(sounding, stageCapo, transposeChord);
+  const spelling = stageCapo ? "sharp" : chordSpelling(song, semis);
+  const aside = document.createElement("aside");
+  aside.className = "scale-rail";
+  aside.setAttribute("aria-label", "Grados de la escala");
+  const heading = document.createElement("h3");
+  heading.textContent = key;
+  const played = stageCapo ? document.createElement("p") : null;
+  if (played) {
+    played.className = "hint";
+    played.textContent = `Capo ${stageCapo} · suena en ${sounding}`;
+  }
+  const table = document.createElement("table");
+  const caption = document.createElement("caption");
+  caption.className = "hint";
+  caption.textContent = "Grado y acorde";
+  const head = document.createElement("thead");
+  head.innerHTML = `<tr><th scope="col">Grado</th><th scope="col">Acorde</th></tr>`;
+  const body = document.createElement("tbody");
+  for (const row of scaleDegrees(key, spelling)) {
+    const tr = document.createElement("tr");
+    const degree = document.createElement("td");
+    degree.className = "deg";
+    degree.textContent = row.degree;
+    const note = document.createElement("td");
+    note.className = "note";
+    note.textContent = row.note;
+    tr.append(degree, note);
+    body.appendChild(tr);
+  }
+  table.append(caption, head, body);
+  aside.append(heading, ...(played ? [played] : []), table);
+  return aside;
 }
 
 /** Recorrido de la canción: "Contiene: …" + chips en orden que llevan a su bloque. */
@@ -4647,10 +4991,11 @@ function renderRoadmap(structure) {
 
 /**
  * @param section  sección a MOSTRAR (formas, si hay capo)
- * @param sounding misma sección con los acordes reales (para grado y popover)
+ * @param sounding misma sección con los acordes reales (para el grado)
  * @param keyRoot  tono real vigente, para el grado
+ * @param edit     si está, cada compás se puede editar
  */
-function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
+function renderSection(section, sounding = section, keyRoot = stageKeyRoot, edit = null) {
   const li = document.createElement("li");
   li.className = "section";
   const label = document.createElement("div");
@@ -4671,10 +5016,11 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
   const perLine = stageBarsPerLine;
   const soundingMeasures = sounding.measures ?? section.measures;
 
-  function appendRows(parent, slice, soundSlice, fill) {
+  function appendRows(parent, slice, soundSlice, fill, baseIndex) {
     const rows = chunkMeasures(slice, perLine);
     let measures = null;
     slice.forEach((measure, mi) => {
+      const absolute = baseIndex + mi;
       if (mi % perLine === 0) {
         measures = document.createElement("div");
         measures.className = grid ? "bars" : "measures";
@@ -4685,18 +5031,15 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
       }
       const m = document.createElement("div");
       m.className = grid ? "bar" : "measure";
-      // En la grilla cada compás reparte su ancho entre sus acordes: 1 = todo el
-      // compás, 2 = mitad y mitad, 3–4 = por tiempo.
       if (grid) m.style.gridTemplateColumns = `repeat(${measure.length}, minmax(0, 1fr))`;
+      const soundingMeasure = edit?.soundingMeasures?.[absolute] ?? soundSlice[mi] ?? measure;
+      const edited = Boolean(edit?.isEdited(absolute));
+      if (edited) m.classList.add("edited");
       measure.forEach((shape, ci) => {
         const real = soundSlice[mi]?.[ci] ?? shape;
         const degree = chordToDegree(real, keyRoot);
         const degreeFirst = (state.chordLabel ?? "note") === "degree" && Boolean(degree);
-        // Cada acorde es un botón: tap/clic muestra cómo digitarlo.
-        // Por defecto el texto es la nota (forma a digitar) y el subíndice el grado.
-        // El toggle invierte: grado grande, nota en el subíndice.
-        const c = document.createElement("button");
-        c.type = "button";
+        const c = document.createElement("span");
         c.className = "chord";
         c.textContent = degreeFirst ? degree : shape;
         const subText = degreeFirst ? shape : degree;
@@ -4706,18 +5049,28 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
           sub.textContent = subText;
           c.appendChild(sub);
         }
-        const suena = shape !== real ? `, suena ${real}` : "";
-        c.setAttribute(
-          "aria-label",
-          degreeFirst
-            ? `Grado ${degree}, nota ${shape}${suena}: ver cómo tocarlo`
-            : `Acorde ${shape}${degree ? `, grado ${degree}` : ""}${suena}: ver cómo tocarlo`
-        );
-        c.setAttribute("aria-haspopup", "dialog");
-        c.setAttribute("aria-expanded", "false");
-        attachChordPopover(c, real);
         m.appendChild(c);
       });
+      if (edit) {
+        m.tabIndex = 0;
+        m.setAttribute("role", "button");
+        const shared = edit.occurrences.length > 1 ? " El cambio se guarda en cada aparición de este bloque." : "";
+        const degreeText = soundingMeasure.map((chord) => chord === "N.C." ? "N.C." : chordToDegree(chord, keyRoot)).join(" ");
+        m.setAttribute("aria-label", `${edited ? "Editar compás editado" : "Editar compás"}: ${degreeText}.${shared}`);
+        const start = () => edit.onEdit(m, absolute, soundingMeasure);
+        m.addEventListener("click", (e) => {
+          if (m.classList.contains("editing")) return;
+          if (e.target.closest("input, button")) return;
+          start();
+        });
+        m.addEventListener("keydown", (e) => {
+          if (m.classList.contains("editing")) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            start();
+          }
+        });
+      }
       measures.appendChild(m);
     });
     // La última fila incompleta mantiene el ancho de columna: en la grilla lo da
@@ -4742,14 +5095,14 @@ function renderSection(section, sounding = section, keyRoot = stageKeyRoot) {
       pattern.setAttribute("aria-label", `${slice.map((m) => m.join(" ")).join(", ")}, ${span.repeats} veces`);
       const body = document.createElement("div");
       body.className = "pattern-body";
-      appendRows(body, slice, soundSlice, false);
+      appendRows(body, slice, soundSlice, false, span.start);
       const badge = document.createElement("span");
       badge.className = "repeats";
       badge.textContent = `× ${span.repeats}`;
       pattern.append(body, badge);
       li.appendChild(pattern);
     } else {
-      appendRows(li, slice, soundSlice, true);
+      appendRows(li, slice, soundSlice, true, span.start);
     }
   }
   return li;
@@ -5198,7 +5551,6 @@ function updateFullscreenButton() {
 function setPseudoFullscreen(on) {
   el.stageView.classList.toggle(PSEUDO_FS, on);
   document.body.classList.toggle("pseudo-fullscreen-open", on);
-  hideChordPopover();
   updateFullscreenButton();
   if (on) announce("Pantalla completa. Escape o el botón para salir.");
 }
@@ -5227,172 +5579,103 @@ async function exitStageFullscreen() {
 
 for (const ev of ["fullscreenchange", "webkitfullscreenchange"]) {
   document.addEventListener(ev, () => {
-    hideChordPopover(); // las coordenadas cambian con el modo
     updateFullscreenButton();
   });
 }
 
-/* ---- Popover de digitación: sólo por tap/clic (sin hover ni foco) ----
-   Decisión de Darío: en escenario el popover no debe aparecer al mover el
-   puntero. Con teclado, Enter/Espacio sobre el acorde disparan el clic. */
-function attachChordPopover(btn, chord) {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (popoverTrigger === btn) hideChordPopover(); // segundo tap: cierra
-    else showChordPopover(btn, chord);
-  });
+/* ---- Edición de un compás: el cambio se guarda en la tonalidad de la cifra ---- */
+function rememberStageScroll(fn) {
+  const y = window.scrollY;
+  const sy = el.stageView.scrollTop;
+  fn();
+  window.scrollTo(0, y);
+  el.stageView.scrollTop = sy;
 }
 
-function showChordPopover(btn, chord) {
-  if (popoverTrigger && popoverTrigger !== btn) popoverTrigger.setAttribute("aria-expanded", "false");
-  popoverTrigger = btn;
-  btn.setAttribute("aria-expanded", "true");
-  el.popover.replaceChildren(...buildChordPopoverContent(chord));
-  el.popover.hidden = false;
-  positionPopover(btn);
+function chartChordSpelling(song) {
+  const key = song.chartKey || song.assignedKey;
+  return FLAT_KEYS.has(key) ? "flat" : "sharp";
 }
 
-function hideChordPopover() {
-  el.popover.hidden = true;
-  if (popoverTrigger) popoverTrigger.setAttribute("aria-expanded", "false");
-  popoverTrigger = null;
+function degreesToChart(degrees, chordSemis, song) {
+  const key = stageKeyRoot;
+  const sounding = degrees.map((token) => degreeToChord(withDiatonicQuality(token), key));
+  if (!chordSemis) return sounding;
+  const spelling = chartChordSpelling(song);
+  return sounding.map((chord) => chord === "N.C." ? chord : transposeChord(chord, -chordSemis, spelling));
 }
 
-function positionPopover(btn) {
-  const pop = el.popover;
-  const r = btn.getBoundingClientRect();
-  const width = pop.offsetWidth || 240;
-  const inStage = isStageFullscreen();
-  // En pantalla completa el popover debe vivir DENTRO de #stageView (lo que
-  // queda fuera del elemento fullscreen no se ve) y posicionarse relativo a
-  // él, que es fijo y tiene su propio scroll.
-  const container = inStage ? el.stageView : document.body;
-  if (pop.parentElement !== container) container.appendChild(pop);
-  if (inStage) {
-    const s = el.stageView.getBoundingClientRect();
-    const maxLeft = el.stageView.clientWidth - width - 8;
-    let left = r.left - s.left + el.stageView.scrollLeft + r.width / 2 - width / 2;
-    left = Math.max(8, Math.min(left, maxLeft));
-    pop.style.left = `${left}px`;
-    pop.style.top = `${r.bottom - s.top + el.stageView.scrollTop + 8}px`;
-  } else {
-    const viewport = document.documentElement.clientWidth;
-    let left = r.left + window.scrollX + r.width / 2 - width / 2;
-    left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + viewport - width - 8));
-    pop.style.left = `${left}px`;
-    pop.style.top = `${r.bottom + window.scrollY + 8}px`;
-  }
-}
-
-document.addEventListener("click", (e) => {
-  if (!el.popover.hidden && !el.popover.contains(e.target)) hideChordPopover();
-});
-document.addEventListener("keydown", (e) => {
-  if (e.key !== "Escape") return;
-  if (!el.popover.hidden) {
-    const trigger = popoverTrigger;
-    hideChordPopover();
-    trigger?.focus();
-  } else if (el.stageView.classList.contains("pseudo-fullscreen")) {
-    setPseudoFullscreen(false); // Escape sale del modo pseudo (la API real ya lo hace sola)
-  }
-});
-
-function buildChordPopoverContent(sounding) {
-  const title = document.createElement("h4");
-  title.id = "chordPopoverTitle";
-  const cap = document.createElement("p");
-  cap.className = "cap";
-  const nodes = [title, cap];
-
-  if (sounding === "N.C.") {
-    title.textContent = "N.C.";
-    cap.textContent = "Sin acorde.";
-    return nodes;
-  }
-
-  const shape = shapeForCapo(sounding, stageCapo, transposeChord);
-  const degree = chordToDegree(sounding, stageKeyRoot);
-  const grado = degree ? ` · grado ${degree}` : "";
-  title.textContent = shape;
-  cap.textContent = stageCapo
-    ? `Con capo ${stageCapo}: digitás ${shape}, suena ${sounding}${grado}.`
-    : `Sin capo${grado}.`;
-
-  const v = findVoicing(shape);
-  if (!v) {
-    const p = document.createElement("p");
-    p.className = "pending";
-    p.textContent = "Digitación no disponible.";
-    nodes.push(p);
-    return nodes;
-  }
-  nodes.push(renderChordDiagram(v));
-  const frets = document.createElement("p");
-  frets.className = "frets";
-  frets.textContent = `Trastes (grave → agudo): ${v.frets.join(" ")}`;
-  nodes.push(frets);
-  if (v.note) {
-    const n = document.createElement("p");
-    n.className = "cap";
-    n.textContent = v.note;
-    nodes.push(n);
-  }
-  return nodes;
-}
-
-/** Diagrama de acorde en SVG: 6 cuerdas (grave a la izquierda), 5 trastes. */
-function renderChordDiagram(v) {
-  const NS = "http://www.w3.org/2000/svg";
-  const fretted = v.frets.filter((f) => f !== "x" && f > 0);
-  const maxFret = fretted.length ? Math.max(...fretted) : 0;
-  const baseFret = maxFret > 4 ? Math.min(...fretted) : 1;
-  const W = 200, H = 220, left = 34, top = 40, sx = 27, sy = 30;
-
-  const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", `Diagrama de ${v.symbol}. Trastes grave a agudo: ${v.frets.join(", ")}.`);
-  const mk = (tag, attrs, text) => {
-    const node = document.createElementNS(NS, tag);
-    for (const [k, val] of Object.entries(attrs)) node.setAttribute(k, val);
-    if (text != null) node.textContent = text;
-    svg.appendChild(node);
-    return node;
-  };
-
-  for (let s = 0; s < 6; s++) {
-    mk("line", { x1: left + s * sx, y1: top, x2: left + s * sx, y2: top + 5 * sy, stroke: "var(--muted)", "stroke-width": 1 });
-  }
-  for (let f = 0; f <= 5; f++) {
-    const nut = f === 0 && baseFret === 1;
-    mk("line", { x1: left, y1: top + f * sy, x2: left + 5 * sx, y2: top + f * sy, stroke: nut ? "var(--text)" : "var(--muted)", "stroke-width": nut ? 5 : 1 });
-  }
-  if (baseFret > 1) {
-    mk("text", { x: left - 20, y: top + sy * 0.65, fill: "var(--muted)", "font-size": 12, "text-anchor": "middle" }, `${baseFret}`);
-  }
-  if (v.barre) {
-    const row = v.barre.fret - baseFret + 1;
-    mk("rect", {
-      x: left + v.barre.from * sx - 9, y: top + (row - 0.5) * sy - 9,
-      width: (v.barre.to - v.barre.from) * sx + 18, height: 18, rx: 9, fill: "var(--gold)"
-    });
-  }
-  v.frets.forEach((f, s) => {
-    const x = left + s * sx;
-    if (f === "x") {
-      mk("text", { x, y: top - 12, fill: "var(--error)", "font-size": 15, "text-anchor": "middle", "font-weight": 700 }, "×");
-    } else if (f === 0) {
-      mk("circle", { cx: x, cy: top - 16, r: 5, fill: "none", stroke: "var(--text)", "stroke-width": 1.5 });
-    } else {
-      const y = top + (f - baseFret + 0.5) * sy;
-      mk("circle", { cx: x, cy: y, r: 10, fill: "var(--gold)" });
-      const finger = v.fingers[s];
-      if (finger) mk("text", { x, y: y + 4, fill: "var(--on-accent)", "font-size": 12, "text-anchor": "middle", "font-weight": 700 }, String(finger));
+function openMeasureEditor(bar, { song, chordSemis, occurrences, measureIndex, sounding }) {
+  bar.classList.add("editing");
+  bar.removeAttribute("role");
+  bar.tabIndex = -1;
+  const form = document.createElement("form");
+  form.className = "measure-edit";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = sounding.map((chord) => chord === "N.C." ? "N.C." : chordToDegree(chord, stageKeyRoot)).join(" ");
+  input.spellcheck = false;
+  input.autocomplete = "off";
+  input.placeholder = "1 5 6 4";
+  input.setAttribute("aria-label", "Grados del compás, separados por espacios");
+  const err = document.createElement("p");
+  err.className = "err";
+  err.hidden = true;
+  const actions = document.createElement("div");
+  actions.className = "edit-actions";
+  const cancel = () => rememberStageScroll(() => renderStage());
+  const save = () => {
+    const parsed = parseDegreeMeasure(input.value);
+    if (!parsed.ok) {
+      err.hidden = false;
+      err.textContent = parsed.error;
+      input.focus();
+      return;
     }
+    const stored = degreesToChart(parsed.degrees, chordSemis, song);
+    const edits = structuredClone(measureStore.forSong(song.id) ?? {});
+    const unchanged = (si) => {
+      const original = song.sections[si]?.measures?.[measureIndex];
+      return Array.isArray(original)
+        && original.length === stored.length
+        && original.every((chord, i) => chord === stored[i]);
+    };
+    for (const si of occurrences) {
+      const key = String(si);
+      edits[key] = { ...(edits[key] ?? {}) };
+      if (unchanged(si)) delete edits[key][String(measureIndex)];
+      else edits[key][String(measureIndex)] = stored;
+      if (Object.keys(edits[key]).length === 0) delete edits[key];
+    }
+    const persisted = measureStore.setSong(song.id, edits);
+    rememberStageScroll(() => renderStage());
+    announce(persisted ? "Compás guardado" : "Compás guardado sólo para esta sesión");
+  };
+  actions.append(
+    button("Guardar", save),
+    button("Cancelar", cancel)
+  );
+  form.append(input, err, actions);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    save();
   });
-  return svg;
+  input.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    e.preventDefault();
+    e.stopPropagation();
+    cancel();
+  });
+  bar.replaceChildren(form);
+  input.focus();
+  input.select();
 }
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && el.stageView.classList.contains("pseudo-fullscreen")) {
+    setPseudoFullscreen(false);
+  }
+});
 
 /* ---- Helpers ---- */
 function button(label, onClick, ariaLabel) {
@@ -5406,10 +5689,308 @@ function button(label, onClick, ariaLabel) {
 
 window.addEventListener("pagehide", stopMetronome);
 
+/* ---- Base compartida (Firestore) ----
+   onSnapshot, y no un pipeline: las letras, los compases, el orden y la
+   tonalidad tienen que aparecer en el otro navegador sin recargar. */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDaDncoiPWI9w0vh4igwO4ZHffR8Vxpfu4",
+  authDomain: "grado-uno-app.firebaseapp.com",
+  projectId: "grado-uno-app",
+  storageBucket: "grado-uno-app.firebasestorage.app",
+  messagingSenderId: "362470323168",
+  appId: "1:362470323168:web:0d42cb29bebaa4192df185"
+};
+const FIRESTORE_DATABASE = "worship";
+const FIREBASE_SDK = "https://www.gstatic.com/firebasejs/11.10.0";
+
+function definedFields(object) {
+  const out = {};
+  for (const [key, value] of Object.entries(object)) {
+    if (value !== undefined && value !== null) out[key] = value;
+  }
+  return out;
+}
+
+function songRecord(song) {
+  return definedFields({
+    id: song.id,
+    title: song.title,
+    artist: song.artist,
+    assignedKey: song.assignedKey,
+    chartKey: song.chartKey,
+    sourceKey: song.sourceKey,
+    sourceStatus: song.sourceStatus,
+    dates: (song.dates || []).map((tag) => definedFields(tag)),
+    groups: song.groups,
+    lyricsUrl: song.lyricsUrl,
+    chartUrl: song.chartUrl,
+    youtubeUrl: song.youtubeUrl,
+    youtubeVideoId: song.youtubeVideoId,
+    tempoBpm: song.tempoBpm,
+    beatsPerMeasure: song.beatsPerMeasure,
+    capo: song.capo,
+    barsPerLine: song.barsPerLine,
+    sections: (song.sections || []).map((section) => definedFields({
+      type: section.type,
+      label: section.label,
+      cue: section.cue,
+      repeats: section.repeats,
+      measures: (section.measures || []).map((bar) => ({ chords: bar }))
+    })),
+    lyrics: song.lyrics
+  });
+}
+
+function lineupRecord(lineup) {
+  return definedFields({
+    id: lineup.id,
+    setlistId: lineup.setlistId,
+    date: lineup.date,
+    group: lineup.group,
+    slots: lineup.slots.map((slot) => definedFields({
+      position: slot.position,
+      songId: slot.songId,
+      key: slot.key,
+      title: slot.title
+    }))
+  });
+}
+
+function refreshAfterRemote() {
+  if (document.querySelector(".measure-edit")) return;
+  rebuildLive();
+  if (el.stageView.hidden) {
+    renderMeetingSelect();
+    renderList();
+  } else {
+    rememberStageScroll(() => renderStage());
+  }
+}
+
+async function startCloud() {
+  let appMod, authMod, fsMod;
+  try {
+    [appMod, authMod, fsMod] = await Promise.all([
+      import(`${FIREBASE_SDK}/firebase-app.js`),
+      import(`${FIREBASE_SDK}/firebase-auth.js`),
+      import(`${FIREBASE_SDK}/firebase-firestore.js`)
+    ]);
+  } catch {
+    el.accountButton.addEventListener("click", () => announce("No se pudo abrir la base. Los cambios quedan en este navegador."));
+    return;
+  }
+  const app = appMod.initializeApp(FIREBASE_CONFIG);
+  const auth = authMod.getAuth(app);
+  const db = fsMod.getFirestore(app, FIRESTORE_DATABASE);
+  const remoteIds = {};
+  const unsubscribers = [];
+  let accountAction = null;
+
+  const renderAccount = () => {
+    const user = auth.currentUser;
+    if (!user) {
+      el.accountButton.textContent = "Entrar";
+      el.accountButton.setAttribute("aria-label", "Entrar con Google");
+      return;
+    }
+    el.accountButton.textContent = user.email || "Salir";
+    el.accountButton.setAttribute("aria-label", `Salir de ${user.email || "la cuenta"}`);
+  };
+
+  async function commitOps(ops) {
+    for (let i = 0; i < ops.length; i += 400) {
+      const batch = fsMod.writeBatch(db);
+      for (const op of ops.slice(i, i + 400)) {
+        if (op.type === "delete") batch.delete(op.ref);
+        else batch.set(op.ref, op.data);
+      }
+      await batch.commit();
+    }
+  }
+
+  cloudPublish = async (op) => {
+    if (!auth.currentUser) return;
+    try {
+      if (op.sync) {
+        const known = remoteIds[op.collection] ?? new Set();
+        const ops = [];
+        for (const [id, value] of Object.entries(op.sync)) {
+          ops.push({ type: "set", ref: fsMod.doc(db, op.collection, id), data: op.encode(value) });
+        }
+        for (const id of known) {
+          if (!(id in op.sync)) ops.push({ type: "delete", ref: fsMod.doc(db, op.collection, id) });
+        }
+        await commitOps(ops);
+        return;
+      }
+      const ref = fsMod.doc(db, op.collection, op.id);
+      if (op.data == null) await fsMod.deleteDoc(ref);
+      else await fsMod.setDoc(ref, op.data);
+    } catch (err) {
+      announce(err.code === "permission-denied"
+        ? "Esta cuenta no puede guardar en la base."
+        : "No se pudo guardar en la base. Quedó en este navegador.");
+    }
+  };
+
+  function reconcile(name, local, remote, encode, hydrate) {
+    const uploads = {};
+    const merged = { ...remote };
+    for (const [key, value] of Object.entries(local)) {
+      const newerLyric = name === "lyrics"
+        && remote[key]
+        && String(value?.updatedAt || "") > String(remote[key]?.updatedAt || "");
+      if (!(key in remote) || newerLyric) {
+        merged[key] = value;
+        uploads[key] = value;
+      }
+    }
+    for (const [key, value] of Object.entries(uploads)) {
+      cloudPublish({ collection: name, id: key, data: encode(value) });
+    }
+    if (JSON.stringify(merged) === JSON.stringify(local)) return;
+    let changed = false;
+    suppressPublish = true;
+    try { changed = hydrate(merged) === true; }
+    finally { suppressPublish = false; }
+    if (changed) refreshAfterRemote();
+  }
+
+  function watch(name, localOf, remoteOf, encode, hydrate) {
+    const unsubscribe = fsMod.onSnapshot(fsMod.collection(db, name), (snap) => {
+      const remote = {};
+      snap.forEach((item) => {
+        const value = remoteOf(item.data());
+        if (value != null) remote[item.id] = value;
+      });
+      remoteIds[name] = new Set(Object.keys(remote));
+      reconcile(name, localOf(), remote, encode, hydrate);
+    }, () => announce("No se pudo leer la base. Los cambios quedan en este navegador."));
+    unsubscribers.push(unsubscribe);
+  }
+
+  function listen() {
+    watch(
+      "lyrics",
+      () => lyricsStore.all(),
+      (data) => data,
+      (entry) => entry,
+      (next) => lyricsStore.hydrate(next)
+    );
+    watch(
+      "measures",
+      () => measureStore.all(),
+      (data) => data?.edits ?? null,
+      (edits) => ({ edits }),
+      (next) => measureStore.hydrate(next)
+    );
+    watch(
+      "keys",
+      () => parseKeyOverrides(state.transpositions),
+      (data) => data?.semis,
+      (semis) => ({ semis }),
+      (next) => {
+        const parsed = parseKeyOverrides(next);
+        if (JSON.stringify(parsed) === JSON.stringify(parseKeyOverrides(state.transpositions))) return false;
+        state = { ...state, transpositions: parsed };
+        try { localStorage.setItem(KEYS_STORAGE_KEY, JSON.stringify(parsed)); } catch { /* sigue en memoria */ }
+        return true;
+      }
+    );
+    watch(
+      "assignments",
+      () => assignmentStore.all(),
+      (data) => data,
+      (entry) => entry,
+      (next) => assignmentStore.hydrate(next)
+    );
+    watch(
+      "orders",
+      () => orderStore.all(),
+      (data) => data?.ids ?? null,
+      (ids) => ({ ids }),
+      (next) => orderStore.hydrate(next)
+    );
+  }
+
+  async function catalogRevision() {
+    const body = JSON.stringify({ songs: songs.map(songRecord), lineups: lineups.map(lineupRecord) });
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(body));
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function ensureCatalog() {
+    const revision = await catalogRevision();
+    const metaRef = fsMod.doc(db, "meta", "catalog");
+    const current = await fsMod.getDoc(metaRef);
+    if (current.exists() && current.data().revision === revision) return;
+    const ops = [];
+    for (const song of songs) {
+      ops.push({ type: "set", ref: fsMod.doc(db, "songs", song.id), data: songRecord(song) });
+    }
+    for (const lineup of lineups) {
+      ops.push({ type: "set", ref: fsMod.doc(db, "lineups", lineup.id), data: lineupRecord(lineup) });
+    }
+    ops.push({
+      type: "set",
+      ref: metaRef,
+      data: {
+        revision,
+        songCount: songs.length,
+        lineupCount: lineups.length,
+        seededAt: new Date().toISOString()
+      }
+    });
+    await commitOps(ops);
+  }
+
+  try {
+    const redirectResult = await authMod.getRedirectResult(auth);
+    if (redirectResult?.user) announce("Los cambios se guardan en la cuenta.");
+  } catch (err) {
+    if (err.code !== "auth/popup-closed-by-user") announce("No se pudo entrar con Google.");
+  }
+
+  authMod.onAuthStateChanged(auth, async (user) => {
+    for (const stop of unsubscribers.splice(0)) stop();
+    renderAccount();
+    if (!user) return;
+    try {
+      await ensureCatalog();
+      listen();
+    } catch (err) {
+      announce(err.code === "permission-denied"
+        ? "Esta cuenta no puede usar la base."
+        : "No se pudo conectar con la base. Los cambios quedan en este navegador.");
+      console.error(err);
+    }
+  });
+
+  accountAction = async () => {
+    if (auth.currentUser) {
+      await authMod.signOut(auth);
+      announce("Saliste. Los cambios siguen en este navegador.");
+      return;
+    }
+    const provider = new authMod.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    try {
+      await authMod.signInWithRedirect(auth, provider);
+    } catch (err) {
+      if (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request") return;
+      announce("No se pudo entrar con Google.");
+      console.error(err);
+    }
+  };
+  el.accountButton.addEventListener("click", () => accountAction());
+  renderAccount();
+}
+
 /* ---- Boot ---- */
 rebuildLive();
 renderMeetingSelect();
 renderList();
+startCloud();
     </script>
   </body>
 </html>
